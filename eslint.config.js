@@ -6,6 +6,8 @@ export default tseslint.config(
     ignores: [
       "node_modules/**",
       "**/dist/**",
+      "examples/chatbot-comparison/*/release/**",
+      "examples/chatbot-comparison/*/vendor/**",
       ".reference/**",
       ".runtime/**",
       "artifacts/**",

@@ -1,3 +1,4 @@
+import { publicApiUrl, previewOrigin } from "./deployment";
 import {
   AgentToRendererMessageSchema,
   ActionMessageSchema,
@@ -201,10 +202,7 @@ export const openapi = {
     description:
       "Local development API using official A2UI v1.0. HTTP sessions, ordering, events and render policies are platform APIs. Request schemas share the server's validators. Internal bridge routes are documented for diagnostics, not Agent-generated receipts.",
   },
-  servers: [
-    { url: "http://localhost:5173/api/v1" },
-    { url: "http://127.0.0.1:3001/api/v1" },
-  ],
+  servers: [{ url: publicApiUrl }, { url: "http://127.0.0.1:3001/api/v1" }],
   paths: {
     "/health": {
       get: operation(
@@ -556,7 +554,7 @@ export const openapi = {
       },
     },
     "/artifacts/{buildId}/{filename}": {
-      servers: [{ url: "http://127.0.0.1:4173" }],
+      servers: [{ url: previewOrigin }],
       parameters: [
         path("buildId"),
         {

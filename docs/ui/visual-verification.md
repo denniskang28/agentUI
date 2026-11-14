@@ -59,6 +59,28 @@
 
 复现：先运行 `pnpm reference` 和 `pnpm dev`，安装示例插件，再运行 `pnpm visual:reference:matrix`、`pnpm visual:reference`、`pnpm visual:capture`、`pnpm visual:matrix`、`pnpm visual:states`、`pnpm exec tsx scripts/capture-recovery-states.ts`、`pnpm exec tsx scripts/capture-benchmarks.ts`、`pnpm exec tsx scripts/capture-plugin-details.ts`。最后用 Python/Pillow 执行 `scripts/visual_contact_sheets.py` 和 `scripts/visual_diff.py`。Pillow 仅用于证据生成，不是应用运行依赖。
 
+## Chatbot integration — additional visual evidence
+
+原参考与 MVP 视觉验收保持上述记录。本次新增 Chatbot 无对应参考 ZIP 页面；复用既有 Token 语言，两个应用共享聊天壳，内部传统手写卡与上传插件有意采用各自实现，不声称像素一致。
+
+`artifacts/chatbot-visual/matrix.json` 记录两应用 × 中英文 × 明暗 × 1440×900 / 1280×800 / 375×812 × 审批/风险，共 48 张实际固定视口截图，以及 viewport、scrollY、documentWidth。`review-sheets/` 提供 8 张索引；已逐组检查并复核窄屏审批和 1280 风险等单张。四份 `*-trace.json` 是同一浏览器的实际 SSE 事件，不是手写响应样例。
+
+修复传统版风险表的 min-content 网格撑开根页面，改为约束轨道并在表内滚动；最终所有根文档宽度不超过 viewport。手机审批按钮换行，风险末列通过内部横滚访问。真实手机尺寸审批和滚动单元格下钻补充 DOM/Action 验证。共享聊天壳与模式切换入口的差异属于必要框架配置；业务原文保留中文或双语。
+
+截图使用真实页面滚动到当前 UI，以避免粘性输入栏覆盖主要操作。Chrome 整页捕获曾把离屏的跨域嵌套 iframe 栅格化为错误窄列；实际 DOM 宽度和固定视口捕获正常，最终只使用固定视口原图，没有修改 UI、裁切掩盖或添加遮罩。保留截图中的实际滚动、表内横滚和现有 Sandbox 高度空间，不将根页面无越界解释为所有列同时可见。
+
+原 ZIP SHA256 仍为 `7b1e5d5f71577e61a8b947dd05903c75da318761a45f48d047af3eb2d78a6b5a`；未修改 `.reference`。新场景的动态交互证据与原 52 项回归详见独立 chatbot integration acceptance。
+
+## Library documentation — 2026-11-14
+
+API & Docs keeps the reference's 220px desktop navigation, 904px article limit, tokens, header and responsive horizontal navigation. The new Library group, six article buttons, default Library overview, detailed data tables and guide links are intentional additions requested for developer adoption. The original Quickstart/reference group remains. Reference docs-1440-light.png was reviewed against the new desktop page for layout; new content has no matching original reference, so no similarity percentage is reported.
+
+`pnpm exec tsx scripts/capture-library-docs.ts` captured 26 real states: overview in both locales × three fixed viewports (1440×900, 1280×800, 375×812) × light/dark; five other article entrances in both locales; dark code at 1280; horizontally scrolled comparison table at 375. Matrix and unmasked images: artifacts/library-docs/visual/. Three review-sheet JPGs provide an index. Reviewed the sheets and full-size desktop overview, English mobile dark overview, mobile comparison table and dark code views.
+
+The first mobile capture exposed pre-wrap breaking architecture/code alignment. Docs pre blocks now preserve whitespace and scroll horizontally inside the reader. Comparison tables also scroll locally; the whole page stays within the viewport. Switching articles resets reader scroll to the start. Actual browser tests verify these behaviors and locale retains the current article. There is no fabricated English reference or paint/performance metric.
+
+Original UI ZIP SHA256 remains 7b1e5d5f71577e61a8b947dd05903c75da318761a45f48d047af3eb2d78a6b5a. Neither ZIP nor .reference was edited.
+
 ## 2026-11-14 — CapabilityProfile visual evidence
 
 Reference is the six-dimension insurance card approved in this chat: teal score outline/fill, neutral dashed target, dimension rows, subject/scenario controls and evidence region. This new component has no counterpart in the original ZIP; ZIP/.reference remain untouched. Intentional differences include generic title without insurance-only branding, existing Host typography/spacing, theme defaults, configurable dimensions and missing-score state.

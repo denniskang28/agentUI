@@ -1,3 +1,4 @@
+import { apiBase } from "../../../../packages/protocol/src/browser-deployment";
 import { useEffect, useRef, useState } from "react";
 import {
   templateMeta,
@@ -83,7 +84,7 @@ export function Plugins({
     const form = new FormData();
     if (uploaded.name.endsWith(".tsx")) form.append("metadata", metadata);
     form.append("file", uploaded);
-    const response = await fetch("/api/v1/plugins", {
+    const response = await fetch(`${apiBase}/plugins`, {
       method: "POST",
       body: form,
     });
@@ -112,7 +113,7 @@ export function Plugins({
     setError("");
     try {
       for (const name of ["finance-risk-heatmap.zip", "expense-approval.zip"]) {
-        const response = await fetch(`/api/v1/demo-files/${name}`);
+        const response = await fetch(`${apiBase}/demo-files/${name}`);
         if (!response.ok) throw new Error("DEMO_NOT_AVAILABLE");
         await upload(
           new File([await response.blob()], name, { type: "application/zip" }),

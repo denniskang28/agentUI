@@ -106,7 +106,12 @@ function ExpenseApproval({ data }: { data: Data }) {
       comment,
     });
     if (intent.current.signature !== signature)
-      intent.current = { signature, key: crypto.randomUUID() };
+      intent.current = {
+        signature,
+        key: Array.from(crypto.getRandomValues(new Uint8Array(16)), (byte) =>
+          byte.toString(16).padStart(2, "0"),
+        ).join(""),
+      };
     locked.current = true;
     setPending(true);
     setCommentRequired(false);

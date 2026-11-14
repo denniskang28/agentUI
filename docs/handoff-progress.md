@@ -59,6 +59,22 @@ pnpm dev
 
 当前无阻塞本地 MVP 交付的必需事项。后续新增需求应形成新的范围和验收条件。
 
+## 2026-11-14 — Chatbot integration incremental Goal
+
+双入口 Library、静态 embedded Host、baseline/with-agent-ui 两套独立应用以及真实打包/部署流程已实现。原 Runtime 复用和必要绑定通知修复保留原 52 项 E2E 行为；本次单独维护 `chatbot-integration-progress.md` 与 `chatbot-integration-acceptance.md`，不重写旧 J01–J40 完成记录。
+
+复现：按 `examples/chatbot-comparison/README.md` 准备、npm ci 和构建，再 `pnpm chatbot:demo`；打开 localhost:5180、localhost:5181，Host 127.0.0.1:4183。新增检查命令为 `pnpm chatbot:compare`、`pnpm chatbot:test`、`pnpm chatbot:consumer`、`pnpm chatbot:visual`。停止用 Ctrl+C。仅本地分发，不公开发布。
+
+## 2026-11-14 — Library documentation addition
+
+Delivered six Chinese/English Library guides (12 Markdown files), indexed at docs/developer/README.md and shown in Playground API & Docs. Root, package, comparison and both demo READMEs link the guides. Existing Playground quickstart/API/plugin/component reference remains available as a separate group.
+
+Verified: pnpm typecheck, pnpm lint, pnpm build; pnpm test (14 files / 61 tests); documentation Playwright (3 tests); pnpm chatbot:compare (14 identical files, 8 allowed differences, no unexpected difference). Build retains chunk-size warnings, without errors.
+
+pnpm docs:verify checked 12 strict TS/TSX snippets, executed 2 server examples, parsed 14 JSON blocks, applied 18 batches through installed public exports/official Core/release plugin schemas, validated 2 Actions and 2 normalized outputs, and checked 42 inter-guide links. artifacts/library-docs/verification.json records results. pnpm dev is running locally at http://localhost:5173; no public deployment was performed for this documentation addition.
+
+Visual evidence: 26 fixed-viewport states under artifacts/library-docs/visual, including both locales, light/dark overview at 1440/1280/375, all six article entrances, code and horizontally scrolled comparison tables. Details in docs/ui/visual-verification.md. This is a completed incremental documentation request, not a new Goal or a change to prior Goal completion.
+
 ## 2026-11-14 — CapabilityProfile component addition
 
 已按本次授权将能力画像接入企业 Catalog、Gallery、组件发现/模板 API、官方 Runtime 和 Library。默认虚构保险代理人六维；支持自定义 3–8 维、1–12 场景目标、颜色/填充强度及独立明细/说明开关。绑定选择写入官方 Data Model 并发送完整 Action，缺失分数不补零。用法见 docs/developer/capability-profile.md。
@@ -66,3 +82,7 @@ pnpm dev
 验证：66 项单元/API 测试和新增 4 项 E2E 通过；全量 58 项 E2E 首次 57 通过，1 个 Sandbox Benchmark 等待超时，单项及整组 6 项 Benchmark 复跑通过，未宣称首次全绿。typecheck/lint/build、library:build、embedded Host 构建通过，保留原有大 chunk 提示。12 张固定尺寸/主题/语言截图和配置截图在 artifacts/capability/visual。
 
 已安装实际 .tgz，以公开 server/protocol/react 入口和编译后的独立静态 Host 验证渲染、颜色、隐藏明细、真实 Action、评分 patch 与选择保持。证据在 artifacts/capability/consumer/report.json、installed-host.png。artifacts/chatbot-release 的 Host/内置 manifest 已更新，已有插件制品保留；没有公网部署。旧 Goal 和验收编号不变。
+
+## 2026-11-14 — Runnable fresh checkout
+
+补齐两套对照 Demo、构建/启动/验证源码与双语指南。新增 `pnpm setup:demo` 与 `pnpm dev:all`，默认准备两个真实示例插件；生成发布产物不纳入本次提交。已从独立待提交快照重新安装和准备，验证实际 Playground 插件交互、仓库外两套 Demo、66 项单元/集成测试及文档示例。准确命令、环境和测试边界见 [fresh-checkout-acceptance.md](fresh-checkout-acceptance.md)。

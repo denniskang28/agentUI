@@ -963,6 +963,9 @@
   letter-spacing: 0.08em;
   color: var(--color-neutral-700);
 }
+.docs-nav-item + .docs-nav-item strong {
+  margin-top: 18px;
+}
 .docs-nav button {
   display: block;
   width: calc(100% - 16px);
@@ -1006,6 +1009,40 @@
 }
 .docs-article pre {
   line-height: 1.6;
+  max-width: 100%;
+  overflow: auto;
+  flex-shrink: 0;
+  white-space: pre;
+  overflow-wrap: normal;
+}
+.docs-article a {
+  color: var(--color-accent-700);
+  overflow-wrap: anywhere;
+}
+.docs-article li {
+  line-height: 1.7;
+  margin-bottom: 6px;
+}
+.docs-table {
+  overflow: auto;
+  max-width: 100%;
+  flex-shrink: 0;
+}
+.docs-table table {
+  border-collapse: collapse;
+  width: 100%;
+  min-width: 560px;
+}
+.docs-table th,
+.docs-table td {
+  padding: 10px 12px;
+  border: 1px solid var(--color-divider);
+  text-align: left;
+  vertical-align: top;
+  line-height: 1.6;
+}
+.docs-table th {
+  background: var(--color-bg);
 }
 .docs-article select {
   max-width: 320px;
@@ -1207,6 +1244,9 @@
     width: auto;
     margin: 0;
     padding: 6px 10px;
+  }
+  .docs-nav-item {
+    flex: none;
   }
   .docs-main {
     padding: 20px 16px;

@@ -1,3 +1,4 @@
+import { previewOrigin } from "./deployment";
 import { randomUUID, createHash } from "node:crypto";
 import {
   mkdir,
@@ -265,6 +266,7 @@ export class PluginRegistry {
           await readFile(path.join(root, dir, "record.json"), "utf8"),
         ) as RecordData;
         const prev = this.records.get(record.id);
+        record.entry.bundleUrl = `${previewOrigin}/artifacts/${record.buildId}/plugin.js`;
         record.entry.actions = record.manifest.capabilities.includes(
           "agent.action",
         )
@@ -450,7 +452,7 @@ export class PluginRegistry {
         const css = await stat(path.join(output, "plugin.css"));
         if (css.size > 500000)
           throw new ApiError(413, "ARTIFACT_TOO_LARGE", "样式产物超过 500 KB");
-        stylesheetUrl = `http://127.0.0.1:4173/artifacts/${buildId}/plugin.css`;
+        stylesheetUrl = `${previewOrigin}/artifacts/${buildId}/plugin.css`;
       } catch (error) {
         if ((error as { code?: string }).code !== "ENOENT") throw error;
       }
@@ -475,7 +477,7 @@ export class PluginRegistry {
         defaults: catalog.defaults ?? {},
         fields: catalog.fields ?? [],
         templates: catalog.templates ?? ["full"],
-        bundleUrl: `http://127.0.0.1:4173/artifacts/${buildId}/plugin.js`,
+        bundleUrl: `${previewOrigin}/artifacts/${buildId}/plugin.js`,
         actions: manifest.capabilities.includes("agent.action")
           ? manifest.actions
           : [],

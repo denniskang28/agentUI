@@ -1,9 +1,10 @@
+import { apiBase } from "../../../packages/protocol/src/browser-deployment";
 export async function api<T = any>(
   path: string,
   body?: unknown,
   method = body === undefined ? "GET" : "POST",
 ): Promise<T> {
-  const response = await fetch("/api/v1" + path, {
+  const response = await fetch(apiBase + path, {
     method,
     headers: body === undefined ? {} : { "Content-Type": "application/json" },
     body: body === undefined ? undefined : JSON.stringify(body),

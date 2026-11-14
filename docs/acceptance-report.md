@@ -69,6 +69,30 @@
 
 无尚未完成的必需验收项。上述后续范围不作为已交付能力。
 
+## Chatbot integration — separate incremental acceptance
+
+本次新增范围独立于上述原 MVP J01–J40。模板/原始 A2UI 双入口包、独立静态 Host、两套完整 Chatbot、真实构建插件、仓库外消费者、部署/停止、完整 Action、恢复和双语视觉证据的十项完成条件逐项记录于 [chatbot-integration-acceptance.md](chatbot-integration-acceptance.md)。
+
+原 52 项浏览器回归已在共享 runtime 修改后通过；本次单元/集成为 14 文件/61 项。两应用代码对照为 14 相同/8 允许差异/0 未声明差异。新范围的最终浏览器和消费者结果见该独立验收及 artifacts/chatbot-checks、artifacts/chatbot-consumer 的实际日志。本地部署 Demo 使用演示身份和内存状态，不增加生产认证、真实 LLM 或可选函数 RPC 的能力声明。
+
+## Library documentation — incremental acceptance (2026-11-14)
+
+| Requirement | Evidence / result |
+| --- | --- |
+| Complete library guidance in Playground | Six canonical bilingual guides; Library is the default API & Docs group; existing Playground reference retained |
+| Integration and overall architecture | Actual public package imports, server/React examples, complete batch transport, Host/manifest responsibilities |
+| Full A2UI and convenience coexistence | Complete expense template and four-command raw sequences, choices/comparison, mixed updates, structural and null boundaries |
+| Events and lifecycle | Full Action, ownership/authorization, business idempotency, ready vs data, ACK vs paint, replay/reset/disposal/errors |
+| Baseline versus integration | Actual domain payload and Actions, file-level migration, same Agents/orchestration/business services, walkthrough |
+| Packaging and deployment | Tarball/Host/plugin release, standalone run, build/runtime variables, Cookie/CSP/Origin, versions and troubleshooting |
+| README discovery | Root + package + comparison + both applications link canonical guides |
+| Executable documentation | pnpm docs:verify: 12 strict examples, 2 server executions, 18 real Core batches, 42 links; report in artifacts/library-docs |
+| Browser behavior | 3 documentation E2E: retained original guides, library navigation/language, narrow code/table scrolling and no root overflow |
+| Regression / build | typecheck/lint/build pass; 61 tests in 14 files pass; compare 14 identical / 8 allowed differences |
+| Visual evidence | 26 actual states, 3 review sheets; both languages/themes, fixed 1440×900 / 1280×800 / 375×812 |
+
+No production deployment or additional protocol capability is implied. Build emits existing large-chunk notices. Existing MVP/Chatbot acceptance remains separately scoped above.
+
 ## 2026-11-14 — CapabilityProfile incremental acceptance
 
 | 范围 | 实际证据 |
@@ -81,3 +105,7 @@
 | 回归 | 66 单元/API 测试通过；全量 E2E 首次 57/58，1 个 Sandbox Benchmark 等待超时后单项及整组 6 项 Benchmark 复跑通过 |
 
 新组件范围独立于原 J01–J40。默认人物、分数与目标均为示例，不是实际能力测量。本轮为本地交付。
+
+## 2026-11-14 — Runnable fresh checkout
+
+补齐两套对照 Demo、构建/启动/验证源码与双语指南。新增 `pnpm setup:demo` 与 `pnpm dev:all`，默认准备两个真实示例插件；生成发布产物不纳入本次提交。已从独立待提交快照重新安装和准备，验证实际 Playground 插件交互、仓库外两套 Demo、66 项单元/集成测试及文档示例。准确命令、环境和测试边界见 [fresh-checkout-acceptance.md](fresh-checkout-acceptance.md)。

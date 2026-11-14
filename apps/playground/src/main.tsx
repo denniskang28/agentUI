@@ -1,4 +1,8 @@
 import {
+  previewOrigin,
+  apiBase,
+} from "../../../packages/protocol/src/browser-deployment";
+import {
   useCallback,
   useEffect,
   useMemo,
@@ -398,7 +402,7 @@ function App() {
         }
         setPhase("就绪");
         eventSource = new EventSource(
-          `/api/v1/preview-sessions/${session}/events?after=${connection.eventCursor}`,
+          `${apiBase}/preview-sessions/${session}/events?after=${connection.eventCursor}`,
         );
         eventSource.addEventListener("messages.queued", (event) => {
           const e = JSON.parse((event as MessageEvent).data);
@@ -510,7 +514,7 @@ function App() {
       ? JSON.stringify(copyMessages, null, 2)
       : copyTab === "config"
         ? JSON.stringify({ ...config, locale }, null, 2)
-        : `# POST /api/v1/preview-sessions → open previewUrl → wait for preview.connected\ncurl -X POST http://localhost:5173/api/v1/preview-sessions/$SESSION_ID/messages \\\n  -H 'Content-Type: application/json' \\\n  -d '${JSON.stringify({ batchId: "batch-001", firstSequence: 1, messages: copyMessages }, null, 2).replace(/'/g, "'\\''")}'`;
+        : `# POST /api/v1/preview-sessions → open previewUrl → wait for preview.connected\ncurl -X POST ${location.origin}${apiBase}/preview-sessions/$SESSION_ID/messages \\\n  -H 'Content-Type: application/json' \\\n  -d '${JSON.stringify({ batchId: "batch-001", firstSequence: 1, messages: copyMessages }, null, 2).replace(/'/g, "'\\''")}'`;
   const groups = ["基础展示", "布局", "数据展示", "表单与交互", "已安装插件"];
   const shownSurfaces =
     surfaceId === "all"
@@ -1551,7 +1555,7 @@ function App() {
                         )}
                         <iframe
                           ref={preview.iframe}
-                          src="http://127.0.0.1:4173"
+                          src={previewOrigin}
                           title="Preview Host"
                           sandbox="allow-scripts allow-same-origin"
                           referrerPolicy="no-referrer"

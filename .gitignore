@@ -7,3 +7,19 @@ test-results/
 playwright-report/
 .DS_Store
 *.tsbuildinfo
+
+# Reproducible chatbot release assets; regenerate with pnpm chatbot:prepare.
+examples/chatbot-comparison/*/vendor/
+examples/chatbot-comparison/*/release/
+
+# Generated local releases and verification outputs; keep their source scripts.
+artifacts/packages/
+artifacts/chatbot-release/
+artifacts/chatbot-checks/
+artifacts/chatbot-consumer/
+artifacts/chatbot-visual/
+artifacts/library-docs/
+artifacts/capability/consumer/app.js
+artifacts/capability/consumer/batches.json
+artifacts/local-setup/
+examples/chatbot-comparison/integration-diff.json

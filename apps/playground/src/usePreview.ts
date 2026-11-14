@@ -1,3 +1,5 @@
+import { browserId } from "../../../packages/protocol/src/browser-id";
+import { previewOrigin } from "../../../packages/protocol/src/browser-deployment";
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { ComponentEntry } from "../../../packages/catalog/src/index";
 import { isJsonEnvelope } from "../../../packages/protocol/src/bridge";
@@ -111,7 +113,7 @@ export function usePreview(
           reject(new Error("PREVIEW_NOT_CONNECTED"));
           return;
         }
-        const requestId = crypto.randomUUID();
+        const requestId = browserId();
         const timer = setTimeout(
           () => {
             pending.current.delete(requestId);
@@ -145,7 +147,7 @@ export function usePreview(
     [send],
   );
   const reset = useCallback(
-    (id = crypto.randomUUID(), override?: Partial<RunConfig>) => {
+    (id = browserId(), override?: Partial<RunConfig>) => {
       currentRun.current = id;
       setRunId(id);
       count.current = 0;
@@ -177,7 +179,7 @@ export function usePreview(
     const receive = (event: MessageEvent) => {
       if (
         event.source !== iframe.current?.contentWindow ||
-        event.origin !== "http://127.0.0.1:4173" ||
+        event.origin !== previewOrigin ||
         event.data?.type !== "preview.ready"
       )
         return;
@@ -270,7 +272,7 @@ export function usePreview(
                 }
               : undefined;
           const record: ActionRecord = {
-            actionId: crypto.randomUUID(),
+            actionId: browserId(),
             runId: currentRun.current,
             timestamp: new Date().toISOString(),
             action: m.action,
@@ -386,7 +388,7 @@ export function usePreview(
       };
       iframe.current?.contentWindow?.postMessage(
         { type: "preview.init" },
-        "http://127.0.0.1:4173",
+        previewOrigin,
         [channel.port2],
       );
       reset();

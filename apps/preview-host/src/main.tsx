@@ -1,3 +1,4 @@
+import { mainOrigin } from "../../../packages/protocol/src/browser-deployment";
 import { useSyncExternalStore } from "react";
 import { createRoot } from "react-dom/client";
 import { A2uiSurface, type ReactCatalogComponent } from "@a2ui/react";
@@ -161,7 +162,7 @@ function App() {
 window.addEventListener("message", (event) => {
   if (
     event.source !== parent ||
-    event.origin !== "http://localhost:5173" ||
+    event.origin !== mainOrigin ||
     event.data?.type !== "preview.init" ||
     !event.ports[0] ||
     port
@@ -273,5 +274,5 @@ window.addEventListener("message", (event) => {
 new ResizeObserver(() =>
   post("resize", { height: document.body.scrollHeight }),
 ).observe(document.body);
-parent.postMessage({ type: "preview.ready" }, "http://localhost:5173");
+parent.postMessage({ type: "preview.ready" }, mainOrigin);
 createRoot(document.getElementById("root")!).render(<App />);

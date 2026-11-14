@@ -1,3 +1,4 @@
+import { mainOrigin, previewOrigin, publicApiUrl } from "./deployment";
 import Fastify from "fastify";
 import cors from "@fastify/cors";
 import multipart from "@fastify/multipart";
@@ -29,21 +30,16 @@ import Ajv from "ajv";
 export async function createServer() {
   const app = Fastify({ bodyLimit: 2_000_000, logger: false });
   await app.register(cors, {
-    origin: ["http://localhost:5173", "http://127.0.0.1:4173"],
+    origin: [mainOrigin, previewOrigin],
     credentials: false,
   });
   app.addHook("onRequest", async (req) => {
     const origin = req.headers.origin;
-    if (
-      origin &&
-      !["http://localhost:5173", "http://127.0.0.1:4173", "null"].includes(
-        origin,
-      )
-    )
+    if (origin && ![mainOrigin, previewOrigin, "null"].includes(origin))
       throw new ApiError(
         403,
         "ORIGIN_FORBIDDEN",
-        "仅允许本地 Playground 和 Preview Host",
+        "仅允许已配置的 Playground 和 Preview Host",
       );
     if (origin === "null" && !req.url.startsWith("/artifacts/"))
       throw new ApiError(403, "ORIGIN_FORBIDDEN", "Sandbox 不能调用平台 API");
@@ -112,7 +108,7 @@ export async function createServer() {
       schema: entry.schema ?? componentSchemas?.[entry.component],
       inputSchema,
       wireSchema: componentSchemas?.[entry.component],
-      catalogSchemaUrl: `/api/v1/catalogs/${encodeURIComponent(catalog?.id ?? "")}`,
+      catalogSchemaUrl: `${new URL(publicApiUrl).pathname}/catalogs/${encodeURIComponent(catalog?.id ?? "")}`,
       templateIds: entry.templates.map((t) => `${entry.key}~${t}`),
     };
   };
@@ -275,7 +271,7 @@ export async function createServer() {
       "Content-Type": "text/event-stream",
       "Cache-Control": "no-cache",
       Connection: "keep-alive",
-      "Access-Control-Allow-Origin": "http://localhost:5173",
+      "Access-Control-Allow-Origin": mainOrigin,
     });
     reply.raw.write(": connected\n\n");
     replay.forEach((e) =>

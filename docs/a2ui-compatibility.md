@@ -26,6 +26,24 @@ Outside the verified MVP scope: optional renderer/agent function RPC and complet
 
 Primary references inspected: [official client integration guide](https://a2ui.org/guides/client-integration/) and installed public declarations/implementation. The actual npm exports and browser tests take precedence over stale version examples in package READMEs.
 
+## 2026-11-14 — standalone Chatbot integration
+
+`@enterprise/agent-ui@0.1.0` bundles public protocol/server/react exports and declarations. Official v1_0 Core and React 0.15.0 remain the owners of validation, Surfaces, binding and Actions. No private SDK import or invented SDK API is introduced. The separate embedded Host reuses the original Runtime Catalog/PluginMount, with an explicit asset-origin Context rather than a second renderer.
+
+A real template partial-data scenario exposed a binder edge: views could retain the initial empty object after granular `/view/field` patches. PolicyView subscribes to the official DataModel, resolves the original `data` binding through public dataContext and clones each notification snapshot before passing it to the view/policy. This keeps plugin instances and local input stable without replacing Core state. Both new dual-entry tests and the original 52 browser tests exercise the change.
+
+Convenience patch shallowly updates supplied business fields; arrays replace, omitted fields remain and explicit null is preserved. Raw v1.0 path-null still deletes. Data readiness is separate from data completeness. Template/raw can update the same Surface; raw structure changes invalidating the binding reject later convenience patches, and raw deletion clears the identity mapping. Input sequence and generated wire-message count are deliberately distinct.
+
+The package/Host use transport enterprise-agent-ui/1, Host version 0.1.0 and Plugin SDK 1.0. Parent/source/version/manifest/assets/run/order are checked. Full normalized Action metadata and JSON extension fields survive the public callback; no optional function RPC or untested full Catalog support is inferred. Install/build/use of the actual tarball was verified outside the repository, including independent static Host deployment. See chatbot-integration-acceptance.md and the package README for exact limits and evidence.
+
+中文：双入口是平台适配层，共用官方 Core/Renderer；便捷入口不替代原始消息或裁减完整 Action。绑定通知适配只读取公开 DataModel，不维护另一套业务状态。支持范围和单版本配套部署约束均以真实消费者与浏览器验证为准。
+
+## 2026-11-14 — Public library guide compatibility verification
+
+The six bilingual library guides describe current 0.1.0 public exports, enterprise-agent-ui/1 envelopes, official wire 1.0, Core/Renderer 0.15.0 and Plugin SDK 1.0. They explicitly limit claims to verified commands/Catalog/plugin Actions; optional function RPC is not claimed. No SDK/protocol implementation or compatibility version was changed by this documentation work.
+
+pnpm docs:verify loads the standalone consumer's installed @enterprise/agent-ui package and real release manifest. Both language variants' TypeScript examples pass strict checking. Documented raw create/updateDataModel/updateComponents/delete and expense template readiness/result/deletion batches execute through official Core. Displayed normalized Text output is compared exactly with Adapter output, including creation defaults and policies. Complete Action samples are validated without dropping source/context metadata. See artifacts/library-docs/verification.json.
+
 ## 2026-11-14 — CapabilityProfile enterprise component
 
 CapabilityProfile is project-defined in the enterprise Catalog, not an official SDK radar component. Wire 1.0 and Core/React 0.15.0 remain unchanged. It uses public createComponentImplementation, @path and dataContext.set; capability.scenarioChange/capability.dimensionSelect are project business events in the existing full official Action envelope.

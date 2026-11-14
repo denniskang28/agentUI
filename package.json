@@ -20,7 +20,18 @@
     "visual:matrix": "tsx scripts/capture-layout-matrix.ts",
     "visual:reference:matrix": "tsx scripts/capture-reference-matrix.ts",
     "visual:states": "tsx scripts/capture-ui-states.ts",
-    "library:build": "tsx scripts/build-agent-ui.ts"
+    "library:build": "tsx scripts/build-agent-ui.ts",
+    "setup:demo": "tsx scripts/setup-demo.ts",
+    "dev:all": "tsx scripts/run-local-demo.ts",
+    "chatbot:prepare": "pnpm library:build && pnpm demos:package && tsx scripts/sync-runtime-assets.ts && vite build --config apps/embedded-host/vite.config.ts && tsx scripts/export-chatbot-artifacts.ts && tsx scripts/prepare-chatbot-demos.ts",
+    "chatbot:host": "tsx scripts/serve-embedded-host.ts",
+    "chatbot:compare": "tsx scripts/compare-chatbot-demos.ts",
+    "chatbot:test": "playwright test --config playwright.chatbot.config.ts",
+    "chatbot:consumer": "tsx scripts/verify-chatbot-consumers.ts",
+    "chatbot:visual": "tsx scripts/capture-chatbot-matrix.ts",
+    "docs:verify": "tsx scripts/verify-library-guides.ts",
+    "capability:consumer": "tsx artifacts/capability/verify-consumer.ts",
+    "chatbot:demo": "tsx scripts/run-chatbot-demos.ts"
   },
   "pnpm": {
     "onlyBuiltDependencies": [

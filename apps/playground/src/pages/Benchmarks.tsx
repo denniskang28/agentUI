@@ -1,3 +1,4 @@
+import { previewOrigin } from "../../../../packages/protocol/src/browser-deployment";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "../../../../packages/i18n/src/index";
 import {
@@ -509,7 +510,7 @@ export function Benchmarks({
           <div className="benchmark-preview">
             <iframe
               ref={preview.iframe}
-              src="http://127.0.0.1:4173"
+              src={previewOrigin}
               title="Benchmark Preview Host"
               sandbox="allow-scripts allow-same-origin"
               referrerPolicy="no-referrer"

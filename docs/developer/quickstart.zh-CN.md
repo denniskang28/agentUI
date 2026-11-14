@@ -1,5 +1,7 @@
 # Agent 接入快速开始
 
+本文是 Playground 开发预览 API 的快速开始。要把可部署 Library 放进你自己的 Chatbot，请先读 [Library 架构与选型](library-overview.zh-CN.md) 和 [接入步骤](library-integration.zh-CN.md)。
+
 本平台接收 A2UI v1.0 JSON / JSON Array / JSONL。消息由官方 Core 与 React Renderer 处理。HTTP 会话、消息序号、模板、渲染策略和 Plugin SDK 是本项目接口。
 
 ## 启动本地服务

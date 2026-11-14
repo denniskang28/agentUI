@@ -1,5 +1,7 @@
 # Agent Quickstart
 
+This quickstart covers Playground development preview APIs. To embed the deployable library in your own chatbot, start with [Library architecture](library-overview.en-US.md) and [Integration](library-integration.en-US.md).
+
 The platform accepts A2UI v1.0 JSON, JSON arrays and JSONL. The official Core and React renderer process messages. HTTP sessions, sequence numbers, templates, render policies and the Plugin SDK are project APIs.
 
 ## Start the local services

@@ -1,3 +1,4 @@
+import { mainUrl } from "./deployment";
 import { randomUUID, createHash } from "node:crypto";
 import type { ServerResponse } from "node:http";
 import {
@@ -97,7 +98,7 @@ export class SessionStore {
       sessionId: s.id,
       runId: s.runId,
       status: s.connected ? "connected" : "waiting_for_preview",
-      previewUrl: `http://localhost:5173/playground?session=${s.id}`,
+      previewUrl: `${new URL(process.env.PUBLIC_MAIN_URL ? "" : "playground", mainUrl).href}?session=${s.id}`,
       expiresAt: new Date(s.expiresAt).toISOString(),
       lastReceivedSequence: s.received,
       lastAppliedSequence: s.applied,

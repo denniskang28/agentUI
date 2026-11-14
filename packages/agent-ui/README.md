@@ -126,3 +126,20 @@ Four official wire commands and the project's verified Catalog/plugin Actions ar
 See the prepared standalone demo's README, COMPARISON.md and DEPLOYMENT.md for working frontend/server code, normal React comparison, artifact layout, launch/stop commands, headers, cookie rules and upgrades. Preparation requires the controlled Docker builder; deployed chat runtime requires neither Playground nor Builder.
 
 完整前后端接入、传统 React 对照、制品清单、启动/停止、响应头、Cookie 与升级见随附 Demo 文档。准备插件需要受控 Docker Builder；已部署聊天运行不依赖 Playground/Builder。
+
+## Library 完整使用指南 / Complete library guides
+
+从现有 Chatbot 接入 Library，阅读下面六篇；Playground 的 **API & Docs → Library 接入指南** 同步展示同一份中英文文档。
+
+For existing chatbot integration, follow these six guides, also available in Playground **API & Docs → Library integration guides**.
+
+| 文档 / Guide | 简体中文 | English |
+| --- | --- | --- |
+| 架构与选型 / Architecture | [中文](../../docs/developer/library-overview.zh-CN.md) | [English](../../docs/developer/library-overview.en-US.md) |
+| 接入步骤 / Integration | [中文](../../docs/developer/library-integration.zh-CN.md) | [English](../../docs/developer/library-integration.en-US.md) |
+| 完整 A2UI 与便捷模板 / Inputs | [中文](../../docs/developer/library-inputs.zh-CN.md) | [English](../../docs/developer/library-inputs.en-US.md) |
+| 事件与生命周期 / Events | [中文](../../docs/developer/library-events.zh-CN.md) | [English](../../docs/developer/library-events.en-US.md) |
+| Demo 改造对照 / Migration | [中文](../../docs/developer/library-demo-migration.zh-CN.md) | [English](../../docs/developer/library-demo-migration.en-US.md) |
+| 打包部署 / Deployment | [中文](../../docs/developer/library-deployment.zh-CN.md) | [English](../../docs/developer/library-deployment.en-US.md) |
+
+[全部文档 / All documentation](../../docs/developer/README.md)

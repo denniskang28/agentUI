@@ -1,5 +1,12 @@
 # Implementation decisions
 
+## 2026-11-14 — Public comparison deployment
+
+- Deploy baseline and integrated chat under separate `/demos/` prefixes on the existing IP, preserving the root site. Vite base controls assets, business fetch and EventSource URLs; variant-specific conversation storage prevents the two demos reusing one session ID on the same Origin.
+- Run each backend as its own non-root systemd service on loopback, with locked Linux dependencies and production static files. The integrated Host has its own site and exact parent allowlist, retaining nested opaque Sandbox and Host-only Native execution. No business credentials are forwarded to that Host.
+- Use the existing browserId/getRandomValues mechanism for the embedded Host and secure random bytes for the handwritten approval key, supporting the requested HTTP demo. Keep deterministic demo Agents, identity and in-memory business semantics explicit.
+- Validate public health responses as JSON with status=ok. On this server, loopback Nginx plus an IP Host header reached another existing server block and returned unrelated HTML; use the actual public URL and assert its body instead of counting HTTP 200 alone.
+
 ## 2026-11-14 — Recover the discovered component catalog
 
 Playground 的内置初始列表仅作接口加载前的回退，不能在一次发现请求失败后永久冒充完整目录。发现失败使用独立、双语的列表状态和有上限的退避间隔持续恢复；导航与窗口/网络恢复触发同步。成功响应相同时复用已有列表引用，避免打断编辑和预览。安装/卸载仍使用现有 reload 合同；不执行或重新安装上传代码。
@@ -46,6 +53,32 @@ Playground 的内置初始列表仅作接口加载前的回退，不能在一次
 - Capture scripts wait for actual preview nodes and frame paint opportunities. The old reference Text locator matched a textarea before preview completion; it now waits for the reference preview paragraph. This changes only evidence capture, never the original reference.
 - Final acceptance combines the Chinese unmasked comparisons, English matrix, detail/state screenshots and real interaction regression. It does not derive a fidelity percentage from pixel differences or claim production authentication/persistent sessions.
 
+- An IP-based HTTP page lacks `crypto.randomUUID`. Generate request UUIDs and sandbox nonces through `crypto.getRandomValues`, preserving secure randomness without requiring HTTPS for the demonstration. The Expense Approval example similarly uses a 128-bit random idempotency key. Verify actual public rendering and Action completion rather than treating an HTTP 200 or successful build as proof of a working demo.
+
+## 2026-11-14 — Chatbot Library and comparison demos
+
+- Deliver one package with three public subpaths, rather than three mutually versioned packages. ESM bundles include project implementation and accompanying declarations; exact upstream runtime dependencies remain declared. The tarball is installed into independent npm consumers, not linked to monorepo source.
+- Keep the business shell, deterministic agents, orchestrator and actual demo service identical in two applications. Replace only presentation/Action adapters, renderer and deployment inputs. Check file hashes against an explicit difference whitelist; do not claim percentage savings.
+- Reuse the original Catalog, Policy and PluginMount in a separate static Host. Set plugin asset origin through Context, preserving the original Preview default. Approved build artifacts and manifest are exported once; deployed chat does not run Playground or Builder.
+- Server Core validates bounded replay history atomically, while Host Core owns interactive state. Identity mappings contain template/version associations only. Defer schema validation of partial business data until ready, preserve explicit null despite official path-null deletion, and invalidate convenience mapping when raw structure breaks its binding.
+- Distinguish repeated readiness messages from a new iframe document with documentId. React effects detach resources without permanently disposing a client that StrictMode may replay. A new run/runtime mounts a new Host/client; same-run document reload replays ordered history.
+- The shared runtime reads binding notifications through official DataModel/dataContext and copies resolved values for notification snapshots, preserving plugin instance identity. Original recovery, input, locale and timer cleanup tests remain the regression boundary.
+- Treat network offline/online as explicit SSE close/reconnect with the last processed cursor. UI event IDs and run IDs prevent duplicates and stale updates. Business authorization/readiness/ownership and idempotency remain backend responsibilities, even when an Action came from a genuine plugin.
+- Give each Vite application its own dependency cache; sharing the default cache caused observed Outdated Optimize Dep 504 responses after dependency/build changes. Exclude generated dist declarations from the root source typecheck to avoid concurrent rebuild races.
+- Keep standalone demo backends as readable TypeScript run by installed tsx; npm ci includes complete dependencies. Library and Host are compiled deployment artifacts. The supplied Node static Host server uses only Node built-ins. POSIX process groups let launchers stop descendants; the external consumer verifies ports close after deployment stops.
+- Use actual fixed-viewport screenshots after scrolling to the UI. Chromium full-page capture produced distorted offscreen nested cross-origin iframe rasterization although DOM dimensions and viewport captures were correct. Do not edit UI or mask content for evidence. Retain table-internal horizontal scrolling and document reserved Sandbox height.
+- Consumer health polling uses Node's HTTP client with no pooled agent. The current macOS Node 24 undici build produced an uncaught setTypeOfService EINVAL while polling terminated sockets; switching this test utility avoids the observed tooling crash without changing product transport.
+
+以上选择均在本地授权范围内执行。新增交付的范围、18 项 Chatbot 浏览器场景、仓库外消费者与视觉证据见 chatbot-integration-acceptance.md；不把可选 RPC、生产鉴权、持久化或真实模型当作已实现能力。
+
+## 2026-11-14 — Library developer documentation in API & Docs
+
+- Use six canonical bilingual Markdown articles under docs/developer/library-*: architecture/choices, integration, input paths, events/lifecycle, baseline migration, packaging/deployment. Playground reads the same files that repository READMEs link; no parallel hand-copied UI documentation.
+- Make Library overview the default article, with a Library group above the retained Playground reference. Explicitly distinguish package API, demo-owned business HTTP/SSE and Playground preview API; distinguish handwritten baseline from direct official SDK integration.
+- Templates simplify authoring, while full official wire messages remain available. Document conservative binding invalidation, creation-time structural parameters, shallow patch/null semantics, run/input sequencing, complete Action and separate business idempotency.
+- Keep the Markdown reader text-only and React-escaped. Add safe guide links and native tables without HTML execution, remote Markdown or extra runtime dependencies. Keep code/architecture whitespace with local horizontal scrolling; reset reader position when changing articles.
+- Verify examples against the installed public package and genuine release manifest, not invented SDK signatures. docs:verify typechecks snippets, executes the server examples and applies documented JSON through real official Core and published plugin schemas. Verification requires a prepared/installed standalone consumer.
+
 ## 2026-11-14 — Configurable capability profile
 
 - 企业组件 CapabilityProfile（key capability-profile，组件版本 1.0.0）与保险示例分离；复用现有 Catalog，使用 React SVG 实现可检查的雷达图，不增加依赖。官方 Core/Renderer 继续拥有 Surface、绑定、业务状态及 Action。
@@ -53,3 +86,7 @@ Playground 的内置初始列表仅作接口加载前的回退，不能在一次
 - currentColor/targetColor 仅接受 hex，省略跟随主题；fillOpacity 0–40。showDimensions/showDetails 独立；绑定选择写入 Data Model，字面量 data 只保留本地展示选择。
 - 新增 color 表单字段并同步 OpenAPI；嵌套维度/目标走 JSON 编辑器，避免简单行编辑器损坏对象。公开 protocol 入口提供 capabilityProfileSchema/CapabilityProfileData；Runtime/Adapter 复用语义校验，deferred 数据在 ready 后校验完整性。
 - 维持现有本地包/Host 版本 0.1.0，消费新组件需同步更新包、Host 和 manifest。实际 .tgz 安装 + 静态 Host 已验证；不宣称旧 Host 具备新实现，没有公网发布。
+
+## 2026-11-14 — Runnable fresh checkout
+
+补齐两套对照 Demo、构建/启动/验证源码与双语指南。新增 `pnpm setup:demo` 与 `pnpm dev:all`，默认准备两个真实示例插件；生成发布产物不纳入本次提交。已从独立待提交快照重新安装和准备，验证实际 Playground 插件交互、仓库外两套 Demo、66 项单元/集成测试及文档示例。准确命令、环境和测试边界见 [fresh-checkout-acceptance.md](fresh-checkout-acceptance.md)。
