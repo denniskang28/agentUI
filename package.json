@@ -19,7 +19,8 @@
     "visual:capture": "tsx scripts/capture-implementation.ts",
     "visual:matrix": "tsx scripts/capture-layout-matrix.ts",
     "visual:reference:matrix": "tsx scripts/capture-reference-matrix.ts",
-    "visual:states": "tsx scripts/capture-ui-states.ts"
+    "visual:states": "tsx scripts/capture-ui-states.ts",
+    "library:build": "tsx scripts/build-agent-ui.ts"
   },
   "pnpm": {
     "onlyBuiltDependencies": [

@@ -68,3 +68,16 @@
 - 本地启动命令、地址、复现方式和已知限制在 README / handoff-progress.md；核心接入说明提供中文与英文版本。浏览器大包警告保留，本地服务不含生产鉴权或持久会话。
 
 无尚未完成的必需验收项。上述后续范围不作为已交付能力。
+
+## 2026-11-14 — CapabilityProfile incremental acceptance
+
+| 范围 | 实际证据 |
+| --- | --- |
+| Catalog/API | capability-profile、五种模板、两个 Action 和 color 字段可发现；真实 Fastify 测试 |
+| 数据/就绪 | ID、范围、颜色校验；缺失分数保留，deferred 不完整输入与 ready 校验；capability unit/API tests |
+| DOM/交互 | 场景与维度真实点击、Action、评分/config patch、语言切换保留状态；新增 4 E2E |
+| 外观 | 自定义颜色与填充、隐藏明细居中、说明独立开关；12 张双语/明暗/固定尺寸截图及配置截图 |
+| Library | 实际打包安装，以公开 React client + 编译静态 Host 验证 Action 和更新；artifacts/capability/consumer/report.json |
+| 回归 | 66 单元/API 测试通过；全量 E2E 首次 57/58，1 个 Sandbox Benchmark 等待超时后单项及整组 6 项 Benchmark 复跑通过 |
+
+新组件范围独立于原 J01–J40。默认人物、分数与目标均为示例，不是实际能力测量。本轮为本地交付。

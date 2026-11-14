@@ -51,3 +51,11 @@ pnpm dev
 - 375px 的热力图、插件表、目录和 Inspector 保留内部滚动；英文没有原始参考图。真实 API/插件身份/Benchmark 和必要窄屏修复是已记录的设计差异。
 
 当前无阻塞本地 MVP 交付的必需事项。后续新增需求应形成新的范围和验收条件。
+
+## 2026-11-14 — CapabilityProfile component addition
+
+已按本次授权将能力画像接入企业 Catalog、Gallery、组件发现/模板 API、官方 Runtime 和 Library。默认虚构保险代理人六维；支持自定义 3–8 维、1–12 场景目标、颜色/填充强度及独立明细/说明开关。绑定选择写入官方 Data Model 并发送完整 Action，缺失分数不补零。用法见 docs/developer/capability-profile.md。
+
+验证：66 项单元/API 测试和新增 4 项 E2E 通过；全量 58 项 E2E 首次 57 通过，1 个 Sandbox Benchmark 等待超时，单项及整组 6 项 Benchmark 复跑通过，未宣称首次全绿。typecheck/lint/build、library:build、embedded Host 构建通过，保留原有大 chunk 提示。12 张固定尺寸/主题/语言截图和配置截图在 artifacts/capability/visual。
+
+已安装实际 .tgz，以公开 server/protocol/react 入口和编译后的独立静态 Host 验证渲染、颜色、隐藏明细、真实 Action、评分 patch 与选择保持。证据在 artifacts/capability/consumer/report.json、installed-host.png。artifacts/chatbot-release 的 Host/内置 manifest 已更新，已有插件制品保留；没有公网部署。旧 Goal 和验收编号不变。

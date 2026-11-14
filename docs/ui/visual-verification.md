@@ -58,3 +58,11 @@
 上述捕获记录未发现根文档横向越界；关键弹窗按钮没有超出视口。真实交互、焦点、草稿和实例保持由 52 项 E2E 验证补充，截图不用于替代行为测试。最终生产构建、类型、Lint、47 项单元/集成及 52 项 E2E 通过。
 
 复现：先运行 `pnpm reference` 和 `pnpm dev`，安装示例插件，再运行 `pnpm visual:reference:matrix`、`pnpm visual:reference`、`pnpm visual:capture`、`pnpm visual:matrix`、`pnpm visual:states`、`pnpm exec tsx scripts/capture-recovery-states.ts`、`pnpm exec tsx scripts/capture-benchmarks.ts`、`pnpm exec tsx scripts/capture-plugin-details.ts`。最后用 Python/Pillow 执行 `scripts/visual_contact_sheets.py` 和 `scripts/visual_diff.py`。Pillow 仅用于证据生成，不是应用运行依赖。
+
+## 2026-11-14 — CapabilityProfile visual evidence
+
+Reference is the six-dimension insurance card approved in this chat: teal score outline/fill, neutral dashed target, dimension rows, subject/scenario controls and evidence region. This new component has no counterpart in the original ZIP; ZIP/.reference remain untouched. Intentional differences include generic title without insurance-only branding, existing Host typography/spacing, theme defaults, configurable dimensions and missing-score state.
+
+artifacts/capability/visual contains 12 actual screenshots at 1440×900 / 1280×800 / 375×812, both locales and themes, plus configured-chart-only-1440.png showing custom colors and hidden breakdown. All use the same fictional input. Business labels remain verbatim in English mode; platform labels translate. Browser checks find no component horizontal overflow and verify independent display switches. Mobile uses existing Preview tab/scroll regions.
+
+Inspected full-size Chinese desktop light and English mobile dark against the approved card for colors, spacing, labels and layout. artifacts/capability/consumer/installed-host.png also shows the genuine installed Library + static Host with custom colors and centered chart. No similarity percentage or fabricated English reference is claimed.

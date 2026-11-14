@@ -1,5 +1,8 @@
+import { browserId } from "../../protocol/src/browser-id";
+import { PluginAssetOrigin } from "./asset-origin";
 import {
   useEffect,
+  useContext,
   useRef,
   useState,
   Component,
@@ -30,6 +33,8 @@ import { isJsonEnvelope, isPluginAction } from "../../protocol/src/bridge";
 import { CommitProbe, useRuntimeMeasurement } from "./measurement";
 import type { MeasurementStage } from "../../protocol/src/measurement";
 import { validateEnterprise } from "../../protocol/src/enterprise";
+import { CapabilityProfile } from "./CapabilityProfile";
+import type { CapabilityProfileData } from "../../protocol/src/capability";
 import * as echarts from "echarts/core";
 import { BarChart, LineChart, PieChart } from "echarts/charts";
 import {
@@ -54,26 +59,45 @@ function withPolicy(
   validate?: (data: unknown) => { valid: boolean; errors?: unknown },
   measuredPlugin = false,
 ) {
-  return createComponentImplementation(api, (props: Props) => (
-    <ComponentPolicy
-      context={props.context}
-      data={props.props.data}
-      validate={validate}
-    >
-      {measuredPlugin ? (
-        <View {...props} />
-      ) : (
-        <CommitProbe
-          target={{
-            surfaceId: props.context.dataContext.surface?.id ?? "",
-            componentId: props.context.componentModel.id,
-          }}
-        >
-          <View {...props} />
-        </CommitProbe>
-      )}
-    </ComponentPolicy>
-  ));
+  function PolicyView(props: Props) {
+    const model = props.context.dataContext.dataModel;
+    const [, update] = useState(0);
+    useEffect(() => {
+      const sub = model.subscribe("/", () => update((value) => value + 1));
+      return () => sub.unsubscribe();
+    }, [model]);
+    // Resolve the binding from official Core on each model notification. Nested
+    // object patches must reach plugin data even when a binder snapshot retains
+    // an earlier object. This is a render subscription, not a second DataModel.
+    const rawData = props.context.componentModel.properties.data;
+    const data =
+      rawData === undefined
+        ? props.props.data
+        : structuredClone(
+            props.context.dataContext.resolveDynamicValue(rawData),
+          );
+    const resolved =
+      rawData === undefined
+        ? props
+        : { ...props, props: { ...props.props, data } };
+    return (
+      <ComponentPolicy context={props.context} data={data} validate={validate}>
+        {measuredPlugin ? (
+          <View {...resolved} />
+        ) : (
+          <CommitProbe
+            target={{
+              surfaceId: props.context.dataContext.surface?.id ?? "",
+              componentId: props.context.componentModel.id,
+            }}
+          >
+            <View {...resolved} />
+          </CommitProbe>
+        )}
+      </ComponentPolicy>
+    );
+  }
+  return createComponentImplementation(api, PolicyView);
 }
 export class RenderBoundary extends Component<
   { children: ReactNode; onError?: (error: string) => void },
@@ -468,6 +492,45 @@ export async function makeCatalogs(
                 })
               }
             />
+          ) : api.name === "CapabilityProfile" ? (
+            <CapabilityProfile
+              data={data as CapabilityProfileData}
+              onSelect={(field, value) => {
+                const binding: unknown = context.componentModel.properties.data;
+                const path =
+                  binding && typeof binding === "object" && "@path" in binding
+                    ? binding["@path"]
+                    : undefined;
+                const bound = typeof path === "string";
+                if (bound)
+                  context.dataContext.set(
+                    `${path.replace(/\/$/, "")}/${field}`,
+                    value,
+                  );
+                void context.dispatchAction({
+                  event: {
+                    name:
+                      field === "scenarioId"
+                        ? "capability.scenarioChange"
+                        : "capability.dimensionSelect",
+                    context: {
+                      subjectId: data.subjectId,
+                      scenarioId:
+                        field === "scenarioId"
+                          ? value
+                          : (data.scenarioId ??
+                            (
+                              data.scenarios as CapabilityProfileData["scenarios"]
+                            )[0].id),
+                      ...(field === "selectedDimensionId"
+                        ? { dimensionId: value }
+                        : {}),
+                    },
+                  },
+                });
+                return bound;
+              }}
+            />
           ) : (
             <Chart
               data={data}
@@ -592,6 +655,7 @@ function PluginMount({
   dispatch: (name: string, context?: Record<string, unknown>) => void;
   onError: (error: string) => void;
 }) {
+  const assetOrigin = useContext(PluginAssetOrigin);
   const probe = useRuntimeMeasurement();
   const requestId = probe.requestId;
   const root = useRef<HTMLDivElement>(null);
@@ -626,7 +690,7 @@ function PluginMount({
     let disposed = false;
     let frame: HTMLIFrameElement | undefined;
     let stylesheet: HTMLLinkElement | undefined;
-    const nonce = crypto.randomUUID();
+    const nonce = browserId();
     const fail = (error: string) => {
       if (!disposed) {
         const diagnostic = error.startsWith("PLUGIN_")
@@ -711,7 +775,7 @@ function PluginMount({
       const pluginStyles = entry.stylesheetUrl
         ? `<link rel="stylesheet" href="${entry.stylesheetUrl.replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;")}">`
         : "";
-      frame.srcdoc = `<!doctype html><html data-theme="${theme}"><head><meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline' http://127.0.0.1:4173; style-src 'unsafe-inline' http://127.0.0.1:4173; connect-src 'none'; img-src data:; font-src 'none'; form-action 'none'; base-uri 'none'"><link rel="stylesheet" href="http://127.0.0.1:4173/runtime.css">${pluginStyles}</head><body style="margin:0"><div id="plugin"></div><script type="module">const loading=import(${safeUrl}).then(module=>({mount:module.mount})).catch(error=>({error:String(error)}));let port,instance,contentCommitted=false,inputAt;addEventListener('click',()=>{inputAt=performance.timeOrigin+performance.now()},true);function reportSize(){if(document.body.scrollHeight>0)contentCommitted=true;if(contentCommitted)port?.postMessage({nonce:${JSON.stringify(nonce)},type:'resize',height:document.body.scrollHeight})}addEventListener('message',e=>{if(e.source!==parent||e.data?.nonce!==${JSON.stringify(nonce)}||!e.ports[0]||port)return;port=e.ports[0];port.onmessage=async e=>{try{const m=e.data;if(m.nonce!==${JSON.stringify(nonce)})return;if(m.type==='update'){const loaded=await loading;if(!loaded.mount){port.postMessage({nonce:${JSON.stringify(nonce)},type:'error',message:'PLUGIN_LOAD_ERROR: '+loaded.error});return}document.documentElement.dataset.theme=m.theme;if(instance)instance.update(m.data,{locale:m.locale,requestId:m.requestId});else instance=loaded.mount(document.getElementById('plugin'),m.data,(name,context)=>{port.postMessage({nonce:${JSON.stringify(nonce)},type:'action',name,context,inputAt});inputAt=undefined},{locale:m.locale,requestId:m.requestId,onProbe:detail=>port.postMessage({nonce:${JSON.stringify(nonce)},type:'probe',...detail}),onCommit:()=>{contentCommitted=true;reportSize()},onError:message=>port.postMessage({nonce:${JSON.stringify(nonce)},type:'error',message})});}if(m.type==='dispose'){instance?.unmount();port.close()}}catch(error){port.postMessage({nonce:${JSON.stringify(nonce)},type:'error',message:String(error)})}};port.postMessage({nonce:${JSON.stringify(nonce)},type:'ready'})});parent.postMessage({type:'sandbox.ready',nonce:${JSON.stringify(nonce)}},'http://127.0.0.1:4173');addEventListener('error',e=>port?.postMessage({nonce:${JSON.stringify(nonce)},type:'error',message:e.message}));new ResizeObserver(reportSize).observe(document.body);</script></body></html>`;
+      frame.srcdoc = `<!doctype html><html data-theme="${theme}"><head><meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline' ${assetOrigin}; style-src 'unsafe-inline' ${assetOrigin}; connect-src 'none'; img-src data:; font-src 'none'; form-action 'none'; base-uri 'none'"><link rel="stylesheet" href="${assetOrigin}/runtime.css">${pluginStyles}</head><body style="margin:0"><div id="plugin"></div><script type="module">const loading=import(${safeUrl}).then(module=>({mount:module.mount})).catch(error=>({error:String(error)}));let port,instance,contentCommitted=false,inputAt;addEventListener('click',()=>{inputAt=performance.timeOrigin+performance.now()},true);function reportSize(){if(document.body.scrollHeight>0)contentCommitted=true;if(contentCommitted)port?.postMessage({nonce:${JSON.stringify(nonce)},type:'resize',height:document.body.scrollHeight})}addEventListener('message',e=>{if(e.source!==parent||e.data?.nonce!==${JSON.stringify(nonce)}||!e.ports[0]||port)return;port=e.ports[0];port.onmessage=async e=>{try{const m=e.data;if(m.nonce!==${JSON.stringify(nonce)})return;if(m.type==='update'){const loaded=await loading;if(!loaded.mount){port.postMessage({nonce:${JSON.stringify(nonce)},type:'error',message:'PLUGIN_LOAD_ERROR: '+loaded.error});return}document.documentElement.dataset.theme=m.theme;if(instance)instance.update(m.data,{locale:m.locale,requestId:m.requestId});else instance=loaded.mount(document.getElementById('plugin'),m.data,(name,context)=>{port.postMessage({nonce:${JSON.stringify(nonce)},type:'action',name,context,inputAt});inputAt=undefined},{locale:m.locale,requestId:m.requestId,onProbe:detail=>port.postMessage({nonce:${JSON.stringify(nonce)},type:'probe',...detail}),onCommit:()=>{contentCommitted=true;reportSize()},onError:message=>port.postMessage({nonce:${JSON.stringify(nonce)},type:'error',message})});}if(m.type==='dispose'){instance?.unmount();port.close()}}catch(error){port.postMessage({nonce:${JSON.stringify(nonce)},type:'error',message:String(error)})}};port.postMessage({nonce:${JSON.stringify(nonce)},type:'ready'})});parent.postMessage({type:'sandbox.ready',nonce:${JSON.stringify(nonce)}},'${assetOrigin}');addEventListener('error',e=>port?.postMessage({nonce:${JSON.stringify(nonce)},type:'error',message:e.message}));new ResizeObserver(reportSize).observe(document.body);</script></body></html>`;
       const onMessage = (event: MessageEvent) => {
         if (
           event.source !== frame?.contentWindow ||

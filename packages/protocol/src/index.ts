@@ -64,7 +64,12 @@ export const defaultRun: RunConfig = {
   container: "card",
 };
 export const enterpriseId = "urn:enterprise:agent-ui:catalog:1";
-export const enterpriseApis = ["KPI", "DataTable", "Chart"].map((name) => ({
+export const enterpriseApis = [
+  "KPI",
+  "DataTable",
+  "Chart",
+  "CapabilityProfile",
+].map((name) => ({
   name,
   schema: z.object({ data: DynamicValueSchema }),
 }));

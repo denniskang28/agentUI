@@ -1,6 +1,42 @@
 import { useSyncExternalStore } from "react";
 export type Locale = "zh-CN" | "en-US";
 export const english = {
+  示例数据: "Sample data",
+  "可配置的能力雷达图，支持场景目标、维度明细与评价依据。":
+    "Configurable capability radar with scenario targets, dimension details and evidence.",
+  评估对象: "Assessment subject",
+  对象说明: "Subject description",
+  当前能力颜色: "Current capability color",
+  目标线颜色: "Target line color",
+  "填充强度 (%)": "Fill intensity (%)",
+  显示能力维度明细: "Show dimension breakdown",
+  显示底部评价说明: "Show assessment details",
+  标记为示例数据: "Mark as sample data",
+  "维度、分数与场景目标可在 JSON 中配置。":
+    "Configure dimensions, scores and scenario targets in JSON.",
+  能力雷达图: "Capability radar",
+  评估场景: "Assessment scenario",
+  当前能力: "Current capability",
+  场景目标: "Scenario target",
+  归一化刻度: "Normalized 0–100",
+  百分制刻度: "0–100 points",
+  未评估: "Not assessed",
+  "部分维度尚未评估，完整数据到达后显示能力轮廓。":
+    "Some dimensions are not assessed. The outline appears when all scores arrive.",
+  能力维度明细: "Dimension breakdown",
+  能力维度: "Dimension",
+  "当前 / 目标": "Current / Target",
+  维度评价说明: "Assessment details",
+  查看维度: "View dimension",
+  尚无完整评分与目标: "Score or target not available",
+  距场景目标分数: "Below target by {value}",
+  高于场景目标分数: "Above target by {value}",
+  达到场景目标: "Target reached",
+  评价依据示例: "Example evidence",
+  评价依据: "Assessment evidence",
+  原始刻度范围: "Original scale: {min}–{max}",
+  维度模型: "Dimension model",
+  分数与目标均为演示设定: "Illustrative scores and targets",
   允许的依赖: "Allowed dependencies",
   不允许: "Not allowed",
   "Node 内置模块、远程导入、自定义构建脚本与任意依赖安装":
@@ -386,6 +422,9 @@ export const chinese: Record<TranslationKey, string> = {
   ...(Object.fromEntries(
     Object.keys(english).map((key) => [key, key]),
   ) as Record<TranslationKey, string>),
+  距场景目标分数: "距场景目标 {value} 分",
+  高于场景目标分数: "高于场景目标 {value} 分",
+  原始刻度范围: "原始刻度：{min}–{max}",
   消息计数: "{count} 条消息",
   等待条件: "等待条件：{path}",
   当前运行: "当前运行：{id}",

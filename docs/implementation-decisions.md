@@ -41,3 +41,11 @@
 - Final visual review restores reference heading line-height 1.12, Docs left alignment/220px navigation/22px heading, and Benchmark 1100px width. Text uses reference 15px body type and actual short-content height instead of a 32px Host minimum. Empty pre-commit plugin frames still retain their established lifecycle protections.
 - Capture scripts wait for actual preview nodes and frame paint opportunities. The old reference Text locator matched a textarea before preview completion; it now waits for the reference preview paragraph. This changes only evidence capture, never the original reference.
 - Final acceptance combines the Chinese unmasked comparisons, English matrix, detail/state screenshots and real interaction regression. It does not derive a fidelity percentage from pixel differences or claim production authentication/persistent sessions.
+
+## 2026-11-14 — Configurable capability profile
+
+- 企业组件 CapabilityProfile（key capability-profile，组件版本 1.0.0）与保险示例分离；复用现有 Catalog，使用 React SVG 实现可检查的雷达图，不增加依赖。官方 Core/Renderer 继续拥有 Surface、绑定、业务状态及 Action。
+- dimensions + 按 ID 对应的 scores/scenario.targets，3–8 维、1–12 场景，均为越高越好。按固定 min/max 归一化，保留原始评分；不推算总分，缺失数据不补零，不完整时不画闭合轮廓。
+- currentColor/targetColor 仅接受 hex，省略跟随主题；fillOpacity 0–40。showDimensions/showDetails 独立；绑定选择写入 Data Model，字面量 data 只保留本地展示选择。
+- 新增 color 表单字段并同步 OpenAPI；嵌套维度/目标走 JSON 编辑器，避免简单行编辑器损坏对象。公开 protocol 入口提供 capabilityProfileSchema/CapabilityProfileData；Runtime/Adapter 复用语义校验，deferred 数据在 ready 后校验完整性。
+- 维持现有本地包/Host 版本 0.1.0，消费新组件需同步更新包、Host 和 manifest。实际 .tgz 安装 + 静态 Host 已验证；不宣称旧 Host 具备新实现，没有公网发布。

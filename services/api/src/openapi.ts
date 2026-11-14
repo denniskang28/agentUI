@@ -623,7 +623,9 @@ export const openapi = {
         {
           key: string,
           label: string,
-          type: { enum: ["text", "number", "textarea", "toggle", "select"] },
+          type: {
+            enum: ["text", "number", "textarea", "toggle", "select", "color"],
+          },
           options: array(string),
           wide: { type: "boolean" },
         },

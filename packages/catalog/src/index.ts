@@ -6,10 +6,12 @@ import {
   type Policy,
 } from "../../protocol/src/index";
 import { enterpriseSchema } from "../../protocol/src/enterprise";
+import { capabilityProfileSchema } from "../../protocol/src/capability";
+import { insuranceCapabilityExample } from "./capability";
 export type Field = {
   key: string;
   label: string;
-  type?: "text" | "number" | "textarea" | "toggle" | "select";
+  type?: "text" | "number" | "textarea" | "toggle" | "select" | "color";
   options?: string[];
   wide?: boolean;
 };
@@ -236,6 +238,31 @@ export const builtins: ComponentEntry[] = [
     ],
     templates: ["full"],
   },
+  {
+    key: "capability-profile",
+    name: "CapabilityProfile",
+    component: "CapabilityProfile",
+    category: "数据展示",
+    icon: "gauge",
+    version: "1.0.0",
+    description: "可配置的能力雷达图，支持场景目标、维度明细与评价依据。",
+    catalogId: enterpriseId,
+    schema: enterpriseSchema("CapabilityProfile"),
+    defaults: insuranceCapabilityExample,
+    fields: [
+      field("title", "标题"),
+      field("subjectName", "评估对象"),
+      field("subtitle", "对象说明", "text", true),
+      field("currentColor", "当前能力颜色", "color"),
+      field("targetColor", "目标线颜色", "color"),
+      field("fillOpacity", "填充强度 (%)", "number", true),
+      field("showDimensions", "显示能力维度明细", "toggle", true),
+      field("showDetails", "显示底部评价说明", "toggle", true),
+      field("sampleData", "标记为示例数据", "toggle", true),
+    ],
+    templates: ["full", "progressive", "on_complete", "streaming", "action"],
+    actions: ["capability.dimensionSelect", "capability.scenarioChange"],
+  },
 ];
 export const templateMeta: Record<string, [string, string]> = {
   full: ["完整数据展示", "一次发送全部数据"],
@@ -251,6 +278,11 @@ export function instantiate(
   surfaceId = "main",
 ): { messages: Message[]; renderPolicy: Policy } {
   const v = structuredClone(values);
+  if (
+    entry.component === "CapabilityProfile" &&
+    entry.catalogId === enterpriseId
+  )
+    capabilityProfileSchema.parse(v);
   let components: Record<string, unknown>[] = [];
   if (entry.catalogId === enterpriseId || entry.pluginId)
     components = [
@@ -364,6 +396,36 @@ export function instantiate(
       renderPolicy: "on_complete",
     };
   if (template === "progressive" || template === "streaming") {
+    if (entry.component === "CapabilityProfile") {
+      const profile = capabilityProfileSchema.parse(v);
+      const ids = profile.dimensions.map((d) => d.id);
+      const firstScores = Object.fromEntries(
+        ids.map((id, i) => [id, i < 2 ? (profile.scores[id] ?? null) : null]),
+      );
+      const updatedScores = { ...profile.scores };
+      const dimension = profile.dimensions[2];
+      const score = updatedScores[dimension.id];
+      if (typeof score === "number")
+        updatedScores[dimension.id] = Math.min(
+          dimension.max ?? 100,
+          score + ((dimension.max ?? 100) - (dimension.min ?? 0)) * 0.05,
+        );
+      return {
+        messages: [
+          createMessage(
+            surfaceId,
+            components,
+            { ...initial, view: { ...v, scores: firstScores } },
+            catalogId,
+          ),
+          patchMessage(surfaceId, profile.scores, "/view/scores"),
+          ...(template === "streaming"
+            ? [patchMessage(surfaceId, updatedScores, "/view/scores")]
+            : []),
+        ],
+        renderPolicy: template === "streaming" ? "live" : "progressive",
+      };
+    }
     const rows = Array.isArray(v.rows) ? v.rows : [];
     const first = {
       ...initial,
@@ -401,10 +463,18 @@ export function recoverTemplateValues(
     const create = messages[0]?.createSurface as
       { surfaceId?: string; dataModel?: { view?: unknown } } | undefined;
     const values =
-      template === "full" || template === "action"
-        ? create?.dataModel?.view
-        : (messages[1]?.updateDataModel as { value?: unknown } | undefined)
-            ?.value;
+      entry.component === "CapabilityProfile" &&
+      (template === "progressive" || template === "streaming")
+        ? {
+            ...(create?.dataModel?.view as Record<string, unknown>),
+            scores: (
+              messages[1]?.updateDataModel as { value?: unknown } | undefined
+            )?.value,
+          }
+        : template === "full" || template === "action"
+          ? create?.dataModel?.view
+          : (messages[1]?.updateDataModel as { value?: unknown } | undefined)
+              ?.value;
     if (
       !values ||
       typeof values !== "object" ||

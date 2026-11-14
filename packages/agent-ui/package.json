@@ -1,0 +1,38 @@
+{
+  "name": "@enterprise/agent-ui",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Embedded A2UI transport, template adapter and isolated React host client",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "exports": {
+    "./protocol": {
+      "types": "./dist/types/packages/agent-ui/src/protocol.d.ts",
+      "import": "./dist/protocol.js"
+    },
+    "./server": {
+      "types": "./dist/types/packages/agent-ui/src/server.d.ts",
+      "import": "./dist/server.js"
+    },
+    "./react": {
+      "types": "./dist/types/packages/agent-ui/src/react.d.ts",
+      "import": "./dist/react.js"
+    }
+  },
+  "peerDependencies": {
+    "react": "^19.0.0"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    }
+  },
+  "dependencies": {
+    "@a2ui/web_core": "0.15.0",
+    "ajv": "8.20.0",
+    "jsonc-parser": "3.3.1",
+    "zod": "3.25.76"
+  }
+}

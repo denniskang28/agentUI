@@ -115,6 +115,24 @@ importers:
         specifier: 5.1.0
         version: 5.1.0(@types/node@26.6.6)(vite@8.3.8(@types/node@26.6.6)(esbuild@0.28.2)(tsx@4.23.15))
 
+  packages/agent-ui:
+    dependencies:
+      '@a2ui/web_core':
+        specifier: 0.15.0
+        version: 0.15.0
+      ajv:
+        specifier: 8.20.0
+        version: 8.20.0
+      jsonc-parser:
+        specifier: 3.3.1
+        version: 3.3.1
+      react:
+        specifier: ^19.0.0
+        version: 19.3.1
+      zod:
+        specifier: 3.25.76
+        version: 3.25.76
+
   packages/catalog: {}
 
   packages/i18n: {}

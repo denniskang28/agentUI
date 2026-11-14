@@ -1,0 +1,296 @@
+.capability-profile {
+  --cp-current: var(--color-accent);
+  --cp-target: var(--color-neutral-600);
+  container-type: inline-size;
+  background: var(--color-bg);
+  color: var(--color-text);
+  border: 1px solid var(--color-divider);
+  border-radius: 10px;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.capability-profile .cp-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 18px 20px;
+  border-bottom: 1px solid var(--color-divider);
+}
+.capability-profile .cp-header h3 {
+  margin: 0;
+  font-size: 16px;
+}
+.capability-profile .cp-badge {
+  font-size: 11px;
+  padding: 3px 8px;
+  border-radius: 6px;
+  color: var(--color-accent-700);
+  background: var(--color-accent-100);
+  white-space: nowrap;
+}
+.capability-profile .cp-profile {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 16px 20px 0;
+}
+.capability-profile .cp-person {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  min-width: 0;
+}
+.capability-profile .cp-avatar {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: var(--color-accent-100);
+  color: var(--color-accent-700);
+  font-size: 15px;
+  font-weight: 600;
+}
+.capability-profile .cp-muted {
+  color: var(--color-neutral-700);
+  font-size: 12px;
+}
+.capability-profile .cp-scenario,
+.capability-profile .cp-detail label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--color-neutral-700);
+  font-size: 12px;
+  min-width: 0;
+}
+.capability-profile select {
+  width: auto;
+  max-width: 100%;
+  min-width: 0;
+}
+.capability-profile .cp-body {
+  display: grid;
+  grid-template-columns: minmax(0, 1.18fr) minmax(0, 1fr);
+  gap: 20px;
+  align-items: center;
+  padding: 20px;
+}
+.capability-profile .cp-chart-area {
+  min-width: 0;
+}
+.capability-profile .cp-chart-only {
+  grid-template-columns: minmax(0, 1fr);
+}
+.capability-profile .cp-chart-only .cp-chart-area {
+  width: 100%;
+  max-width: 440px;
+  margin-inline: auto;
+}
+.capability-profile .cp-legend {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  color: var(--color-neutral-700);
+  font-size: 11px;
+}
+.capability-profile .cp-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.capability-profile .cp-legend i {
+  width: 16px;
+  border-top: 2px solid var(--cp-current);
+}
+.capability-profile .cp-legend .cp-target-line {
+  border-color: var(--cp-target);
+  border-top-style: dashed;
+}
+.capability-profile .cp-scale {
+  margin-left: auto;
+}
+.capability-profile .cp-radar {
+  display: block;
+  width: 100%;
+  height: 300px;
+  overflow: visible;
+}
+.capability-profile .cp-radar text {
+  fill: var(--color-neutral-700);
+  font: 11px var(--font-body);
+}
+.capability-profile .cp-radar .cp-axis-label {
+  fill: var(--color-text);
+  font-size: 12px;
+}
+.capability-profile .cp-grid {
+  stroke: var(--color-divider);
+  stroke-width: 1;
+  fill: none;
+}
+.capability-profile .cp-target-polygon {
+  stroke: var(--cp-target);
+  stroke-width: 1.5;
+  stroke-dasharray: 5 4;
+  fill: none;
+}
+.capability-profile .cp-score-polygon {
+  stroke: var(--cp-current);
+  stroke-width: 2;
+  fill: color-mix(in srgb, var(--cp-current) var(--cp-opacity), transparent);
+}
+.capability-profile .cp-point {
+  fill: var(--cp-current);
+}
+.capability-profile .cp-incomplete {
+  color: var(--color-neutral-700);
+  font-size: 12px;
+  margin-bottom: 8px;
+}
+.capability-profile .cp-list-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  color: var(--color-neutral-700);
+  font-size: 11px;
+  padding: 0 10px 8px;
+}
+.capability-profile .cp-dimensions {
+  display: grid;
+  gap: 4px;
+}
+.capability-profile .cp-dimension {
+  display: block;
+  text-align: left;
+  width: 100%;
+  font: inherit;
+  font-size: 12px;
+  padding: 8px 10px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  min-width: 0;
+}
+.capability-profile .cp-dimension:hover {
+  background: var(--color-surface);
+}
+.capability-profile .cp-dimension[aria-pressed="true"] {
+  background: var(--color-accent-100);
+}
+.capability-profile .cp-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+.capability-profile .cp-numbers {
+  font-variant-numeric: tabular-nums;
+  color: var(--color-neutral-700);
+  flex-shrink: 0;
+}
+.capability-profile .cp-numbers b {
+  color: var(--color-text);
+  font-weight: 600;
+}
+.capability-profile .cp-track {
+  display: block;
+  height: 4px;
+  border-radius: 4px;
+  background: var(--color-neutral-200);
+  position: relative;
+}
+.capability-profile .cp-bar {
+  display: block;
+  height: 4px;
+  border-radius: 4px;
+  background: var(--cp-current);
+  opacity: 0.8;
+}
+.capability-profile .cp-marker {
+  position: absolute;
+  top: -2px;
+  width: 2px;
+  height: 8px;
+  background: var(--cp-target);
+  transform: translateX(-1px);
+}
+.capability-profile .cp-detail {
+  padding: 14px 16px;
+  margin: 0 20px 18px;
+  border-radius: 8px;
+  background: var(--color-surface);
+  font-size: 12px;
+  color: var(--color-neutral-700);
+}
+.capability-profile .cp-detail-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.capability-profile .cp-detail-top strong {
+  color: var(--color-text);
+}
+.capability-profile .cp-detail p {
+  margin: 8px 0;
+}
+.capability-profile .cp-evidence {
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+  flex-wrap: wrap;
+  font-size: 11px;
+}
+.capability-profile .cp-evidence span {
+  color: var(--color-accent-700);
+}
+.capability-profile .cp-footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+  border-top: 1px solid var(--color-divider);
+  padding: 10px 20px;
+  color: var(--color-neutral-700);
+  font-size: 11px;
+}
+@container (max-width:570px) {
+  .capability-profile .cp-body {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+    padding: 16px;
+  }
+  .capability-profile .cp-header {
+    padding: 16px;
+  }
+  .capability-profile .cp-profile {
+    padding: 16px 16px 0;
+  }
+  .capability-profile .cp-detail {
+    margin: 0 16px 16px;
+  }
+  .capability-profile .cp-dimensions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 4px 8px;
+  }
+  .capability-profile .cp-row {
+    flex-wrap: wrap;
+  }
+}
+@media (pointer: coarse) {
+  .capability-profile select {
+    min-height: 44px;
+    font-size: 16px;
+  }
+  .capability-profile .cp-dimension {
+    min-height: 48px;
+  }
+}

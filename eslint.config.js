@@ -5,7 +5,7 @@ export default tseslint.config(
   {
     ignores: [
       "node_modules/**",
-      "dist/**",
+      "**/dist/**",
       ".reference/**",
       ".runtime/**",
       "artifacts/**",

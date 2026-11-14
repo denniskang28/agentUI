@@ -947,7 +947,11 @@ function App() {
                         </div>
                       </div>
                       {Object.entries(draft.values)
-                        .filter(([, value]) => Array.isArray(value))
+                        .filter(
+                          ([, value]) =>
+                            current.component !== "CapabilityProfile" &&
+                            Array.isArray(value),
+                        )
                         .map(([key, value]) => (
                           <ArrayEditor
                             key={key}
@@ -962,6 +966,11 @@ function App() {
                             }
                           />
                         ))}
+                      {current.component === "CapabilityProfile" && (
+                        <p className="muted">
+                          {t("维度、分数与场景目标可在 JSON 中配置。")}
+                        </p>
+                      )}
                       <div className="field-section">
                         <button
                           className="disclosure"
@@ -1762,8 +1771,21 @@ function FieldInput({
       ) : (
         <input
           className="input"
-          type={field.type === "number" ? "number" : "text"}
-          value={String(value ?? "")}
+          type={
+            field.type === "number"
+              ? "number"
+              : field.type === "color"
+                ? "color"
+                : "text"
+          }
+          value={String(
+            value ??
+              (field.type === "color"
+                ? field.key === "targetColor"
+                  ? "#7b848c"
+                  : "#148a7d"
+                : ""),
+          )}
           onChange={(e) =>
             onChange(
               field.type === "number" ? Number(e.target.value) : e.target.value,

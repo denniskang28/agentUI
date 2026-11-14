@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { zodToJsonSchema } from "zod-to-json-schema";
+import { capabilityProfileSchema } from "./capability";
 const scalar = z.union([
   z.string(),
   z.number().finite(),
@@ -7,6 +8,7 @@ const scalar = z.union([
   z.null(),
 ]);
 export const enterpriseDataSchemas = {
+  CapabilityProfile: capabilityProfileSchema,
   KPI: z
     .object({
       label: z.string(),

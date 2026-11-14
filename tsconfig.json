@@ -15,5 +15,6 @@
     "baseUrl": ".",
     "paths": { "@enterprise/*": ["packages/*/src/index.ts"] }
   },
-  "include": ["apps", "packages", "services", "scripts", "tests", "examples/agent.ts", "*.ts"]
+  "include": ["apps", "packages", "services", "scripts", "tests", "examples/agent.ts", "*.ts"],
+  "exclude": ["**/node_modules", "**/dist"]
 }

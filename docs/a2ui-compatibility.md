@@ -25,3 +25,11 @@ Evidence: `tests/unit/protocol.test.ts`, `tests/e2e/foundation.spec.ts`, `tests/
 Outside the verified MVP scope: optional renderer/agent function RPC and complete standard-catalog interaction coverage beyond the gallery. These are not claimed supported merely because the upstream package exports types. The implemented recovery, replay, partial-data policies and failure boundaries have passed the tests listed in the acceptance report. The `@a2ui/markdown-it@0.2.2` transitive peer range reports a 0.14 Core peer mismatch; the current gallery Text view uses plain text and does not depend on that renderer.
 
 Primary references inspected: [official client integration guide](https://a2ui.org/guides/client-integration/) and installed public declarations/implementation. The actual npm exports and browser tests take precedence over stale version examples in package READMEs.
+
+## 2026-11-14 — CapabilityProfile enterprise component
+
+CapabilityProfile is project-defined in the enterprise Catalog, not an official SDK radar component. Wire 1.0 and Core/React 0.15.0 remain unchanged. It uses public createComponentImplementation, @path and dataContext.set; capability.scenarioChange/capability.dimensionSelect are project business events in the existing full official Action envelope.
+
+The public protocol export supplies capabilityProfileSchema/CapabilityProfileData. Discoverable JSON Schema covers structure; shared Runtime/Adapter Zod validation additionally checks cross-field IDs and scales. Raw wire acceptance alone is not business-data validation. Both Hosts reuse the renderer; trusted built-ins remain in the separate Host in either runtimeMode, while uploaded plugins retain additional Sandbox isolation.
+
+Actual installed tarball + compiled static Host verification: artifacts/capability/consumer/report.json. New component consumers must update package, Host and manifest together; no extra SDK API or function RPC is claimed.
