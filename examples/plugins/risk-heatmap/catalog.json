@@ -1,0 +1,151 @@
+{
+  "catalogId": "urn:enterprise:plugin:finance.risk-heatmap",
+  "dataSchema": {
+    "type": "object",
+    "properties": {
+      "title": {
+        "type": "string"
+      },
+      "asOf": {
+        "type": "string"
+      },
+      "showLegend": {
+        "type": "boolean"
+      },
+      "rows": {
+        "type": "array",
+        "maxItems": 2500,
+        "items": {
+          "type": "object",
+          "properties": {
+            "region": {
+              "type": "string"
+            },
+            "group": {
+              "type": "string",
+              "enum": ["APAC", "EMEA", "AMER"]
+            },
+            "credit": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 100
+            },
+            "market": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 100
+            },
+            "liquidity": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 100
+            },
+            "ops": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 100
+            }
+          },
+          "required": [
+            "region",
+            "group",
+            "credit",
+            "market",
+            "liquidity",
+            "ops"
+          ],
+          "additionalProperties": true
+        }
+      }
+    },
+    "required": ["title", "asOf", "showLegend", "rows"],
+    "additionalProperties": true
+  },
+  "defaults": {
+    "title": "区域风险暴露",
+    "asOf": "2026 Q4 · 截至 11-13",
+    "showLegend": true,
+    "rows": [
+      {
+        "group": "APAC",
+        "region": "Japan",
+        "credit": 42,
+        "market": 58,
+        "liquidity": 31,
+        "ops": 55
+      },
+      {
+        "group": "APAC",
+        "region": "Singapore",
+        "credit": 38,
+        "market": 68,
+        "liquidity": 44,
+        "ops": 29
+      },
+      {
+        "group": "APAC",
+        "region": "Australia",
+        "credit": 27,
+        "market": 35,
+        "liquidity": 22,
+        "ops": 41
+      },
+      {
+        "group": "EMEA",
+        "region": "Germany",
+        "credit": 51,
+        "market": 47,
+        "liquidity": 36,
+        "ops": 62
+      },
+      {
+        "group": "EMEA",
+        "region": "United Kingdom",
+        "credit": 45,
+        "market": 73,
+        "liquidity": 52,
+        "ops": 38
+      },
+      {
+        "group": "AMER",
+        "region": "United States",
+        "credit": 33,
+        "market": 61,
+        "liquidity": 28,
+        "ops": 47
+      },
+      {
+        "group": "AMER",
+        "region": "Brazil",
+        "credit": 71,
+        "market": 82,
+        "liquidity": 64,
+        "ops": 58
+      }
+    ]
+  },
+  "fields": [
+    {
+      "key": "title",
+      "label": "标题",
+      "type": "text",
+      "wide": false
+    },
+    {
+      "key": "asOf",
+      "label": "数据时间",
+      "type": "text",
+      "wide": false
+    },
+    {
+      "key": "showLegend",
+      "label": "显示风险等级图例",
+      "type": "toggle",
+      "wide": true
+    }
+  ],
+  "templates": ["full", "progressive", "streaming", "action"],
+  "icon": "grid",
+  "category": "数据展示",
+  "description": "按区域 × 风险类别展示风险值；点击单元格发出 drilldown Action 并展示明细。"
+}

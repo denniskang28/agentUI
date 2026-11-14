@@ -1,0 +1,26 @@
+{
+  "schemaVersion": "enterprise-plugin/1.0",
+  "id": "expense.approval-form",
+  "version": "1.0.0",
+  "displayName": "Expense Approval",
+  "entry": "src/index.tsx",
+  "catalogFile": "catalog.json",
+  "componentType": "ExpenseApprovalForm",
+  "supportedRenderPolicies": [
+    "progressive",
+    "on_complete",
+    "live"
+  ],
+  "defaultRenderPolicy": "progressive",
+  "actions": [
+    "expense.approve",
+    "expense.requestChanges",
+    "expense.reject"
+  ],
+  "capabilities": [
+    "ui.render",
+    "agent.action",
+    "ui.resize"
+  ],
+  "sdkApiVersion": "1.0"
+}

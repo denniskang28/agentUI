@@ -1,0 +1,24 @@
+{
+  "schemaVersion": "enterprise-plugin/1.0",
+  "id": "thirdparty.counter",
+  "version": "1.0.0",
+  "displayName": "Third-party Counter",
+  "entry": "src/index.tsx",
+  "catalogFile": "catalog.json",
+  "componentType": "Counter",
+  "supportedRenderPolicies": [
+    "progressive",
+    "on_complete",
+    "live"
+  ],
+  "defaultRenderPolicy": "progressive",
+  "actions": [
+    "counter.increment"
+  ],
+  "capabilities": [
+    "ui.render",
+    "agent.action",
+    "ui.resize"
+  ],
+  "sdkApiVersion": "1.0"
+}

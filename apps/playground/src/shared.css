@@ -1,0 +1,242 @@
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  font-family:
+    -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB",
+    "Microsoft YaHei", "Segoe UI", sans-serif;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--color-text);
+  background: var(--color-bg);
+}
+button,
+input,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+}
+button {
+  cursor: pointer;
+}
+button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+h1,
+h2,
+h3,
+p {
+  margin-top: 0;
+}
+h3 {
+  font-size: 16px;
+  margin-bottom: 12px;
+}
+h1,
+h2,
+h3 {
+  line-height: 1.12;
+}
+a {
+  color: var(--color-accent-700);
+}
+svg {
+  flex-shrink: 0;
+}
+.btn {
+  border: 1px solid transparent;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+.btn-secondary {
+  color: var(--color-text);
+}
+.btn-ghost {
+  background: transparent;
+  border: 0;
+  padding: 4px 6px !important;
+}
+.btn-icon {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border: 1px solid var(--color-divider);
+  background: transparent;
+}
+.input {
+  display: block;
+  width: 100%;
+  min-height: 32px;
+  border: 1px solid var(--color-divider);
+  padding: 5px 8px;
+  background: var(--color-bg);
+  color: var(--color-text);
+}
+textarea.input {
+  min-height: 60px;
+  resize: vertical;
+}
+input[type="checkbox"],
+input[type="radio"] {
+  accent-color: var(--color-accent);
+}
+.muted {
+  color: var(--color-neutral-700);
+}
+.accent {
+  color: var(--color-accent-700);
+}
+.tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 7px;
+  font-size: 11px;
+  white-space: nowrap;
+}
+.tag-neutral {
+  background: var(--color-neutral-200);
+  color: var(--color-neutral-700);
+}
+.tag-outline {
+  border: 1px solid var(--color-accent-300);
+}
+.seg {
+  display: inline-flex;
+  border: 1px solid var(--color-divider);
+  align-items: center;
+}
+.seg button {
+  border: 0;
+  background: transparent;
+  border-radius: 6px;
+  padding: 4px 10px;
+  white-space: nowrap;
+  color: var(--color-neutral-700);
+  font-size: 12px;
+}
+.seg button[aria-pressed="true"] {
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-weight: 600;
+  box-shadow: 0 1px 2px #10182819;
+}
+.error {
+  background: var(--color-danger-100);
+  border: 1px solid var(--color-danger-300);
+  color: var(--color-danger-700);
+  padding: 10px;
+  border-radius: 10px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+pre,
+code {
+  font-family: var(--font-mono);
+  font-size: 12px;
+}
+pre {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  background: var(--color-surface);
+  border: 1px solid var(--color-divider);
+  padding: 12px;
+  margin: 0;
+}
+.a2-column {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.a2-row {
+  display: flex;
+  gap: 12px;
+}
+.a2-card {
+  padding: 16px;
+  border: 1px solid var(--color-divider);
+  border-radius: 10px;
+}
+.a2-text {
+  display: block;
+  font-size: 15px;
+  white-space: pre-wrap;
+}
+.a2-text.caption {
+  font-size: 12px;
+  color: var(--color-neutral-700);
+}
+.a2-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.a2-check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 0;
+}
+fieldset {
+  border: 0;
+  padding: 0;
+  margin: 0;
+}
+.kpi {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.kpi strong {
+  font-size: 32px;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+td,
+th {
+  padding: 10px 8px;
+  border-bottom: 1px solid var(--color-divider);
+}
+th {
+  font-size: 12px;
+  color: var(--color-neutral-700);
+}
+th button {
+  border: 0;
+  background: transparent;
+  padding: 0;
+}
+.waiting {
+  padding: 10px;
+  color: var(--color-neutral-700);
+}
+.skeleton {
+  height: 32px;
+  margin: 10px 0;
+  background: var(--color-neutral-200);
+  border-radius: 6px;
+  animation: aup-pulse 1.5s infinite;
+}
+section[data-surface] + section[data-surface] {
+  border-top: 1px solid var(--color-divider);
+  padding-top: 16px;
+  margin-top: 16px;
+}
+a2ui-react-host {
+  display: contents;
+}

@@ -1,0 +1,68 @@
+{
+  "name": "agent-ui-platform",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "packageManager": "pnpm@10.32.1",
+  "scripts": {
+    "dev": "tsx scripts/sync-runtime-assets.ts && tsx scripts/dev.ts",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:e2e": "playwright test",
+    "build": "tsx scripts/sync-runtime-assets.ts && vite build --config apps/playground/vite.config.ts && vite build --config apps/preview-host/vite.config.ts",
+    "lint": "eslint .",
+    "format": "prettier --write apps packages services scripts tests",
+    "reference": "python3 -m http.server 8766 --bind 127.0.0.1 --directory .reference",
+    "builder:image": "tsx scripts/build-builder.ts",
+    "demos:package": "tsx scripts/package-demos.ts",
+    "visual:reference": "tsx scripts/capture-reference.ts",
+    "visual:capture": "tsx scripts/capture-implementation.ts",
+    "visual:matrix": "tsx scripts/capture-layout-matrix.ts",
+    "visual:reference:matrix": "tsx scripts/capture-reference-matrix.ts",
+    "visual:states": "tsx scripts/capture-ui-states.ts"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild"
+    ]
+  },
+  "dependencies": {
+    "@a2ui/react": "0.15.0",
+    "@a2ui/web_core": "0.15.0",
+    "@fastify/cors": "11.4.3",
+    "@fastify/multipart": "10.1.8",
+    "@fastify/static": "10.1.11",
+    "@monaco-editor/react": "4.7.0",
+    "@tanstack/react-table": "9.3.1",
+    "ajv": "8.20.0",
+    "echarts": "6.1.0",
+    "esbuild": "0.28.2",
+    "fastify": "5.12.8",
+    "jsonc-parser": "3.3.1",
+    "lucide-react": "1.72.0",
+    "monaco-editor": "0.57.0",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "yauzl": "3.4.0",
+    "zod": "3.25.76",
+    "zod-to-json-schema": "3.25.2",
+    "zustand": "5.1.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "10.0.1",
+    "@playwright/test": "1.65.0",
+    "@types/node": "26.6.6",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "@types/yauzl": "3.4.0",
+    "@vitejs/plugin-react": "6.3.0",
+    "eslint": "10.14.0",
+    "eslint-plugin-react-hooks": "7.1.1",
+    "prettier": "3.10.1",
+    "tsx": "4.23.15",
+    "typescript": "5.9.3",
+    "typescript-eslint": "8.72.2",
+    "vite": "8.3.8",
+    "vitest": "5.1.0"
+  }
+}

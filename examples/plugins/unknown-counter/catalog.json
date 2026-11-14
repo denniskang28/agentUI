@@ -1,0 +1,43 @@
+{
+  "catalogId": "urn:enterprise:plugin:thirdparty.counter",
+  "dataSchema": {
+    "type": "object",
+    "properties": {
+      "value": {
+        "type": "number"
+      },
+      "title": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "value",
+      "title"
+    ],
+    "additionalProperties": true
+  },
+  "defaults": {
+    "value": 0,
+    "title": "Unknown third-party counter"
+  },
+  "fields": [
+    {
+      "key": "value",
+      "label": "数值",
+      "type": "number",
+      "wide": false
+    },
+    {
+      "key": "title",
+      "label": "标题",
+      "type": "text",
+      "wide": false
+    }
+  ],
+  "templates": [
+    "full"
+  ],
+  "icon": "gauge",
+  "category": "已安装插件",
+  "description": "An independently uploaded counter."
+}
