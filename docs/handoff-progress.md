@@ -1,5 +1,11 @@
 # Handoff progress
 
+## 2026-11-14 — Repository privacy
+
+- 将实际部署配置、原始运维文档及生成的日志、trace、截图和报告迁入本地忽略目录，保留兼容路径；运行中的插件 Registry 不移动。公开源码、生成脚本、通用部署示例与原始设计 ZIP 保留。
+- 部署测试使用保留的示例 IP 和域名，继续验证真实 Docker 编译、部署路径及 Origin 边界；lint、typecheck、16 文件 / 66 项测试通过。
+- 清理本地提交历史中的实际部署信息、生成证据文件和个人邮箱；恢复归档、文件清单及提交映射仅本地保存。处理范围与限制见 `repository-privacy.md`。
+
 ## 2026-11-14 — Playground plugin catalog recovery
 
 - 现场复现：Chrome 左侧仅 12 个内置组件，而同一服务的 `/components` 与 `/plugins` 仍返回 4 个实际已安装插件。安装记录和产物未丢失；前端发现列表停留在初始回退值。

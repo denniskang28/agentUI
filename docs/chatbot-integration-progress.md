@@ -2,6 +2,7 @@
 
 2026-11-14。本次增量按 CHATBOT_INTEGRATION_PLAN.md 执行。最终完成条件的逐项核对见 chatbot-integration-acceptance.md；不改写原 MVP J01–J40 的历史记录。
 
+
 ## M1 — 公共契约与官方 SDK
 
 已实现单个可分发包 `@enterprise/agent-ui@0.1.0`，公开 `/protocol`、`/server`、`/react`。三入口独立构建为 ESM，附类型声明和 README；不要求接入方读取仓库 src、使用 TS alias 或 workspace 链接。服务端入口无需 React/DOM。版本锁定 Core/React Renderer 0.15.0、Plugin SDK 1.0、transport enterprise-agent-ui/1。

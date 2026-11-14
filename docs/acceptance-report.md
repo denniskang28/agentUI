@@ -109,3 +109,7 @@ No production deployment or additional protocol capability is implied. Build emi
 ## 2026-11-14 — Runnable fresh checkout
 
 补齐两套对照 Demo、构建/启动/验证源码与双语指南。新增 `pnpm setup:demo` 与 `pnpm dev:all`，默认准备两个真实示例插件；生成发布产物不纳入本次提交。已从独立待提交快照重新安装和准备，验证实际 Playground 插件交互、仓库外两套 Demo、66 项单元/集成测试及文档示例。准确命令、环境和测试边界见 [fresh-checkout-acceptance.md](fresh-checkout-acceptance.md)。
+
+## 2026-11-14 — Repository privacy verification
+
+Local lint, TypeScript strict checking and all 66 unit/integration tests passed after replacing actual server addresses with reserved test values. Raw generated evidence and real operations files are retained locally under an ignored directory; public source, reproducible commands and the original design archive remain available. All reachable local commits are checked for internal deployment markers, machine-specific paths, credential patterns and the former personal email. Pattern scanning is not a guarantee against every possible secret; generated screenshots and traces are excluded from public history. See `repository-privacy.md`.

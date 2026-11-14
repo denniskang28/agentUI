@@ -90,3 +90,7 @@ Playground 的内置初始列表仅作接口加载前的回退，不能在一次
 ## 2026-11-14 — Runnable fresh checkout
 
 补齐两套对照 Demo、构建/启动/验证源码与双语指南。新增 `pnpm setup:demo` 与 `pnpm dev:all`，默认准备两个真实示例插件；生成发布产物不纳入本次提交。已从独立待提交快照重新安装和准备，验证实际 Playground 插件交互、仓库外两套 Demo、66 项单元/集成测试及文档示例。准确命令、环境和测试边界见 [fresh-checkout-acceptance.md](fresh-checkout-acceptance.md)。
+
+## 2026-11-14 — Public repository boundary
+
+Keep deployment instances and raw operational/visual evidence in the ignored local `.private/` area. Preserve source fixtures, capture scripts, general deployment examples and the original reference ZIP. Use reserved example addresses in deployment tests. Rewrite local history to remove internal deployment records, generated evidence and personal email metadata; retain the recovery bundle and commit mapping only in the private area. Existing local aliases preserve deployment and evidence commands.

@@ -73,3 +73,7 @@ For existing chatbot integration, follow these six guides, also available in Pla
 | 打包部署 / Deployment | [中文](docs/developer/library-deployment.zh-CN.md) | [English](docs/developer/library-deployment.en-US.md) |
 
 [全部文档 / All documentation](docs/developer/README.md)
+
+## Repository privacy / 仓库隐私
+
+Commit source code and sanitized configuration examples. Keep actual deployment settings, environment files, raw logs, browser traces and recovery archives in the ignored local `.private/` directory. See [the repository privacy guide](docs/repository-privacy.md). Local development and demo preparation do not require private operations files.

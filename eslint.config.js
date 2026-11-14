@@ -10,6 +10,7 @@ export default tseslint.config(
       "examples/chatbot-comparison/*/vendor/**",
       ".reference/**",
       ".runtime/**",
+      ".private/**",
       "artifacts/**",
       "test-results/**",
       "playwright-report/**",

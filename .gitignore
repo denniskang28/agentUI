@@ -3,8 +3,8 @@ dist/
 .reference/
 .runtime/
 .cache/
-test-results/
-playwright-report/
+test-results
+playwright-report
 .DS_Store
 *.tsbuildinfo
 
@@ -15,11 +15,32 @@ examples/chatbot-comparison/*/release/
 # Generated local releases and verification outputs; keep their source scripts.
 artifacts/packages/
 artifacts/chatbot-release/
-artifacts/chatbot-checks/
-artifacts/chatbot-consumer/
-artifacts/chatbot-visual/
+artifacts/chatbot-checks
+artifacts/chatbot-consumer
+artifacts/chatbot-visual
 artifacts/library-docs/
 artifacts/capability/consumer/app.js
 artifacts/capability/consumer/batches.json
-artifacts/local-setup/
+artifacts/local-setup
 examples/chatbot-comparison/integration-diff.json
+
+# Private operations records, recovery bundles and their local compatibility alias.
+/.private/
+/deploy
+/docs/deployment-*.local.md
+
+# Real environment settings and private keys; commit sanitized examples only.
+.env
+.env.*
+!.env.example
+!.env.*.example
+*.pem
+*.key
+*.p12
+*.pfx
+
+# Raw visual and consumer evidence stays local; keep source fixtures and scripts.
+/artifacts/visual
+/artifacts/capability/visual
+/artifacts/capability/consumer/installed-host.png
+/artifacts/capability/consumer/report.json
