@@ -1,6 +1,7 @@
 import { useSyncExternalStore } from "react";
 export type Locale = "zh-CN" | "en-US";
 export const english = {
+  "组件列表加载失败，正在重试。": "Component list unavailable. Retrying…",
   示例数据: "Sample data",
   "可配置的能力雷达图，支持场景目标、维度明细与评价依据。":
     "Configurable capability radar with scenario targets, dimension details and evidence.",

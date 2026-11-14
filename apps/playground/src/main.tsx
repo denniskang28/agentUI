@@ -73,6 +73,7 @@ function App() {
   const { locale, t, l } = useTranslation();
   const [page, setPage] = useState<Page>("playground");
   const [entries, setEntries] = useState<ComponentEntry[]>(builtins);
+  const [catalogError, setCatalogError] = useState(false);
   const [selected, setSelected] = useState("text");
   const [drafts, setDrafts] = useState<Record<string, Draft>>({});
   const [search, setSearch] = useState("");
@@ -143,11 +144,50 @@ function App() {
   }, []);
   const reload = useCallback(async () => {
     const result = await api<{ components: ComponentEntry[] }>("/components");
-    setEntries(result.components);
+    setEntries((previous) =>
+      JSON.stringify(previous) === JSON.stringify(result.components)
+        ? previous
+        : result.components,
+    );
+    setCatalogError(false);
   }, []);
   useEffect(() => {
-    void reload().catch((e) => setError(String(e)));
-  }, [reload]);
+    let disposed = false;
+    let retry: ReturnType<typeof setTimeout> | undefined;
+    let pending = false;
+    let delay = 1000;
+    const refresh = async () => {
+      if (pending || disposed) return;
+      clearTimeout(retry);
+      pending = true;
+      try {
+        await reload();
+        delay = 1000;
+      } catch {
+        if (!disposed) {
+          setCatalogError(true);
+          retry = setTimeout(() => void refresh(), delay);
+          delay = Math.min(delay * 2, 30000);
+        }
+      } finally {
+        pending = false;
+      }
+    };
+    const onVisible = () => {
+      if (document.visibilityState === "visible") void refresh();
+    };
+    void refresh();
+    window.addEventListener("focus", onVisible);
+    window.addEventListener("online", onVisible);
+    document.addEventListener("visibilitychange", onVisible);
+    return () => {
+      disposed = true;
+      clearTimeout(retry);
+      window.removeEventListener("focus", onVisible);
+      window.removeEventListener("online", onVisible);
+      document.removeEventListener("visibilitychange", onVisible);
+    };
+  }, [page, reload]);
   useEffect(() => {
     setConfig((prev) => ({ ...prev, locale }));
   }, [locale]);
@@ -608,6 +648,11 @@ function App() {
               </div>
             )}
             <div className="library-list">
+              {catalogError && !collapsed && (
+                <p className="muted" role="status">
+                  {t("组件列表加载失败，正在重试。")}
+                </p>
+              )}
               {groups.map((group) => {
                 const items = entries.filter(
                   (e) =>

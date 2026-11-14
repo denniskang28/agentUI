@@ -1,5 +1,9 @@
 # Implementation decisions
 
+## 2026-11-14 — Recover the discovered component catalog
+
+Playground 的内置初始列表仅作接口加载前的回退，不能在一次发现请求失败后永久冒充完整目录。发现失败使用独立、双语的列表状态和有上限的退避间隔持续恢复；导航与窗口/网络恢复触发同步。成功响应相同时复用已有列表引用，避免打断编辑和预览。安装/卸载仍使用现有 reload 合同；不执行或重新安装上传代码。
+
 ## 2026-11-14
 
 - Keep the existing Goal and M1–M4 scope when adding bilingual requirements; J36–J40 supplement J01–J35. Locale is platform configuration and never rewrites Agent data.
