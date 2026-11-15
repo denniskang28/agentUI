@@ -1,3 +1,4 @@
+import { appearanceCapabilities } from "../../../packages/protocol/src/appearance";
 import { previewOrigin } from "./deployment";
 import { randomUUID, createHash } from "node:crypto";
 import {
@@ -290,7 +291,10 @@ export class PluginRegistry {
     }
   }
   entries() {
-    return Array.from(this.records.values()).map((r) => r.entry);
+    return Array.from(this.records.values()).map((r) => ({
+      ...r.entry,
+      appearance: appearanceCapabilities(r.entry.component, true),
+    }));
   }
   catalogs() {
     return Array.from(this.records.values()).map(

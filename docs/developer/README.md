@@ -2,9 +2,9 @@
 
 首次体验全部本地示例：根目录执行 `pnpm install --frozen-lockfile`、`pnpm setup:demo`、`pnpm dev:all`。需要 Node 24+、pnpm 10.32.1、Python 3 和运行中的 Docker；初始化生成两个示例插件、Library、Host 和 Demo。Fresh checkout: install dependencies, run `pnpm setup:demo`, then `pnpm dev:all` from the repository root. Generated releases are not required in Git.
 
-把当前 Library 放进现有 Chatbot，从下列六篇开始。Playground 的 **API & Docs → Library 接入指南** 展示同一套 Markdown；切换中英文保留当前文章，文章中的链接可直接跳到下一篇。
+把当前 Library 放进现有 Chatbot，从下列七篇开始。Playground 的 **API & Docs → Library 接入指南** 展示同一套 Markdown；切换中英文保留当前文章，文章中的链接可直接跳到下一篇。
 
-To embed the library in an existing chatbot, follow these six articles. Playground **API & Docs → Library integration guides** renders these same files. Locale switching retains the article; guide links navigate within the reader.
+To embed the library in an existing chatbot, follow these seven articles. Playground **API & Docs → Library integration guides** renders these same files. Locale switching retains the article; guide links navigate within the reader.
 
 | 阅读顺序 / Guide | 简体中文 | English | 内容 / Coverage |
 | --- | --- | --- | --- |
@@ -14,6 +14,8 @@ To embed the library in an existing chatbot, follow these six articles. Playgrou
 | 4. 事件与生命周期 / Events | [中文](library-events.zh-CN.md) | [English](library-events.en-US.md) | 完整 Action、业务幂等、ready、ACK、恢复、reset、错误 |
 | 5. Demo 改造 / Migration | [中文](library-demo-migration.zh-CN.md) | [English](library-demo-migration.en-US.md) | baseline 如何工作、哪些文件改变、相同 Agent 输出如何转换 |
 | 6. 打包部署 / Deployment | [中文](library-deployment.zh-CN.md) | [English](library-deployment.en-US.md) | .tgz、Host、插件制品、独立运行、变量、CSP/Cookie、升级 |
+
+| 7. 主题与外观 / Appearance | [中文](library-appearance.zh-CN.md) | [English](library-appearance.en-US.md) | 主题继承、组件覆盖、插件能力与 Playground Library 导出 |
 
 ## Playground 开发参考 / Playground reference
 
@@ -49,3 +51,5 @@ pnpm exec tsx scripts/capture-library-docs.ts
 后两条需要运行中的 `pnpm dev`。docs:verify 使用已安装的公开包、真实 release manifest 和官方 Core，检查中英文代码的 strict 编译、执行服务端示例、批次与 Action Schema、具体数据状态和篇间链接。报告在 artifacts/library-docs/verification.json；截图在 artifacts/library-docs/visual/。
 
 The last two commands require running dev servers. docs:verify uses the installed public package, genuine release manifest and official Core to typecheck examples, execute server snippets, apply batches, validate Actions/data and check guide links. It writes artifacts/library-docs/verification.json; screenshots are in artifacts/library-docs/visual/.
+
+- [主题、外观与 Library 导出](library-appearance.zh-CN.md) / [Themes, appearance and Library exports](library-appearance.en-US.md)

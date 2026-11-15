@@ -1,4 +1,12 @@
 import {
+  parseLibrarySource,
+  scenarioInputs,
+} from "../../../packages/agent-ui/src/playground-input";
+import type { UiBatch } from "../../../packages/agent-ui/src/protocol";
+import { AppearanceEditor, ThemeEditor } from "./AppearanceEditor";
+import { libraryExport, type LibrarySnapshot } from "./libraryExport";
+import type { ComponentAppearance } from "../../../packages/protocol/src/appearance";
+import {
   previewOrigin,
   apiBase,
 } from "../../../packages/protocol/src/browser-deployment";
@@ -41,11 +49,19 @@ import { Benchmarks } from "./pages/Benchmarks";
 import "./tokens.css";
 import "./shared.css";
 import "./app.css";
+const appearanceNodeKey = (surfaceId: string, componentId: string) =>
+  JSON.stringify([surfaceId, componentId]);
 type Page = "playground" | "plugins" | "docs" | "benchmarks";
 type Draft = {
   values: Record<string, unknown>;
   template: string;
   json: string | null;
+  customJson?: string;
+  libraryJson?: string | null;
+  customLibraryJson?: string;
+  libraryJsonByTemplate?: Record<string, string | null>;
+  appearance?: Record<string, ComponentAppearance>;
+  appearanceNode?: string;
   jsonByTemplate?: Record<string, string | null>;
 };
 function Segment({
@@ -90,7 +106,8 @@ function App() {
   const [editMode, setEditMode] = useState("form");
   const [jsonTab, setJsonTab] = useState("messages");
   const [custom, setCustom] = useState(false);
-  const [customJson, setCustomJson] = useState("");
+  const [inputFormat, setInputFormat] = useState<"a2ui" | "library">("a2ui");
+  const [sessionJson, setSessionJson] = useState("");
   const [error, setError] = useState("");
   const [toast, setToast] = useState<TranslationKey | "">("");
   const [renderedSignature, setRenderedSignature] = useState("");
@@ -99,6 +116,11 @@ function App() {
   const [debug, setDebug] = useState(false);
   const [debugTab, setDebugTab] = useState("messages");
   const [surfaceId, setSurfaceId] = useState("all");
+  const [configurationTab, setConfigurationTab] = useState("content");
+  const [themeOpen, setThemeOpen] = useState(false);
+  const [renderedExport, setRenderedExport] = useState<LibrarySnapshot | null>(
+    null,
+  );
   const [copy, setCopy] = useState(false);
   const [copyTab, setCopyTab] = useState("api");
   const [copySource, setCopySource] = useState("draft");
@@ -115,7 +137,11 @@ function App() {
   const preview = usePreview(entries, { ...config, locale });
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const sourceEditor = useRef<HTMLTextAreaElement>(null);
-  const queue = useRef<Message[]>([]);
+  const queue = useRef<Message[][]>([]);
+  const queuePolicies = useRef<(RunConfig["componentPolicies"] | undefined)[]>(
+    [],
+  );
+  const requestGeneration = useRef(0);
   const index = useRef(0);
   const active = useRef(false);
   const latest = useRef({ interval, config, locale });
@@ -133,13 +159,78 @@ function App() {
     () => instantiate(current, draft.values, draft.template),
     [current, draft.values, draft.template],
   );
+  const format = session ? "a2ui" : inputFormat;
+  const templateJson =
+    format === "library" ? (draft.libraryJson ?? null) : draft.json;
+  const generatedLibrary = JSON.stringify(
+    scenarioInputs(current, generated.messages, generated.renderPolicy),
+    null,
+    2,
+  );
+  const templateSource =
+    templateJson ??
+    (format === "library"
+      ? generatedLibrary
+      : JSON.stringify(generated.messages, null, 2));
+  const customSource =
+    format === "library" ? draft.customLibraryJson : draft.customJson;
   const source = custom
-    ? customJson
-    : (draft.json ?? JSON.stringify(generated.messages, null, 2));
-  const signature = JSON.stringify([selected, draft.template, source]);
+    ? session
+      ? sessionJson
+      : (customSource ?? templateSource)
+    : templateSource;
+  const signature = JSON.stringify([selected, draft.template, format, source]);
   const dirty = !!renderedSignature && signature !== renderedSignature;
-  const changeDraft = (patch: Partial<Draft>) =>
-    setDrafts((prev) => ({ ...prev, [current.key]: { ...draft, ...patch } }));
+  const changeDraft = (patch: Partial<Draft>) => {
+    requestGeneration.current++;
+    setDrafts((prev) => ({
+      ...prev,
+      [current.key]: {
+        ...(prev[current.key] ?? {
+          values: structuredClone(current.defaults),
+          template: "full",
+          json: null,
+        }),
+        ...patch,
+      },
+    }));
+  };
+  const changeCustomJson = (value: string) => {
+    requestGeneration.current++;
+    if (session) setSessionJson(value);
+    else
+      changeDraft(
+        format === "library"
+          ? { customLibraryJson: value }
+          : { customJson: value },
+      );
+  };
+  const changeTemplateJson = (value: string | null) => {
+    requestGeneration.current++;
+    changeDraft(
+      format === "library" ? { libraryJson: value } : { json: value },
+    );
+  };
+  const parseSource = (value: string) =>
+    format === "library" ? parseLibrarySource(value) : parseMessages(value);
+  const compileSource = async (
+    value: string,
+  ): Promise<{
+    batches?: UiBatch[];
+    steps: {
+      messages: Message[];
+      componentPolicies?: RunConfig["componentPolicies"];
+    }[];
+  }> => {
+    if (format === "library") return api("/library/compile", { text: value });
+    const messages = parseMessages(value);
+    const result = await api<{ valid: boolean; errors: unknown[] }>(
+      "/messages/validate",
+      { messages },
+    );
+    if (!result.valid) throw new Error(JSON.stringify(result.errors, null, 2));
+    return { steps: messages.map((message) => ({ messages: [message] })) };
+  };
   const stop = useCallback(() => {
     active.current = false;
     setPlaying(false);
@@ -226,9 +317,11 @@ function App() {
       setPhase("已完成");
       return;
     }
-    const message = queue.current[index.current];
+    const messages = queue.current[index.current];
     try {
-      const result = await preview.apply([message]);
+      const result = await preview.apply(messages, "message", {
+        componentPolicies: queuePolicies.current[index.current],
+      });
       index.current++;
       setStep(index.current);
       if (result.errors?.length) {
@@ -267,34 +360,46 @@ function App() {
   const render = async () => {
     stop();
     setError("");
+    const generation = ++requestGeneration.current;
     try {
-      const messages = parseMessages(source);
-      const result = await api<{ valid: boolean; errors: unknown[] }>(
-        "/messages/validate",
-        { messages },
-      );
-      if (!result.valid)
-        throw new Error(JSON.stringify(result.errors, null, 2));
+      const compiled = await compileSource(source);
+      if (generation !== requestGeneration.current) return;
+      const messages = compiled.steps.flatMap((step) => step.messages);
       const renderPolicy = config.renderPolicy;
       setConfig((prev) => ({ ...prev, renderPolicy }));
       preview.reset(undefined, { renderPolicy });
-      queue.current = messages;
+      queue.current = compiled.steps.map((step) => step.messages);
+      queuePolicies.current = compiled.steps.map(
+        (step) => step.componentPolicies,
+      );
       index.current = 0;
       setStep(0);
       setRenderedSignature(signature);
+      setRenderedExport(
+        structuredClone({
+          messages,
+          config: { ...config, locale },
+          entry: current,
+          template: format === "a2ui" && !custom && draft.json === null,
+          batches: compiled.batches,
+          intervalMs: interval,
+        }),
+      );
       setPhase("运行中");
       await next();
-      if (messages.length > 1 && index.current < messages.length) {
+      if (queue.current.length > 1 && index.current < queue.current.length) {
         active.current = true;
         setPlaying(true);
         schedule.current();
       }
     } catch (e) {
+      if (generation !== requestGeneration.current) return;
       setError(String(e));
       setPhase("运行失败");
     }
   };
   const reset = () => {
+    requestGeneration.current++;
     stop();
     queue.current = [];
     if (session)
@@ -313,12 +418,23 @@ function App() {
       setToast("外部会话由 Agent 提供组件与消息。");
       return;
     }
+    requestGeneration.current++;
     stop();
     setSelected(key);
     const entry = entries.find((e) => e.key === key);
     if (entry)
       setConfig((prev) => ({
         ...prev,
+        componentAppearances: Object.entries(
+          drafts[key]?.appearance ?? {},
+        ).reduce<NonNullable<RunConfig["componentAppearances"]>>(
+          (result, [key, value]) => {
+            const [surface, node] = JSON.parse(key) as [string, string];
+            (result[surface] ??= {})[node] = value;
+            return result;
+          },
+          {},
+        ),
         renderPolicy: instantiate(
           entry,
           drafts[key]?.values ?? entry.defaults,
@@ -340,6 +456,9 @@ function App() {
       values: structuredClone(current.defaults),
       template: "full",
       json: null,
+      jsonByTemplate: {},
+      libraryJson: null,
+      libraryJsonByTemplate: {},
     });
     setError("");
   };
@@ -388,7 +507,7 @@ function App() {
         };
         setConfig(connection.config);
         setCustom(true);
-        setCustomJson(JSON.stringify(connection.messages, null, 2));
+        setSessionJson(JSON.stringify(connection.messages, null, 2));
         setLocale(connection.config.locale);
         if (connection.config.container) setHost(connection.config.container);
         preview.reset(connection.runId, connection.config);
@@ -412,7 +531,7 @@ function App() {
               if (cancelled || e.runId !== sessionRun.current) return;
               const result = await preview.apply(e.payload.messages);
               if (cancelled || e.runId !== sessionRun.current) return;
-              setCustomJson((previous) =>
+              setSessionJson((previous) =>
                 JSON.stringify(
                   [...parseMessagesSafe(previous), ...e.payload.messages],
                   null,
@@ -437,7 +556,7 @@ function App() {
           preview.reset(e.runId, e.payload.config);
           setConfig(e.payload.config);
           setLocale(e.payload.config.locale);
-          setCustomJson("[]");
+          setSessionJson("[]");
         });
         eventSource.addEventListener("session.destroyed", (event) => {
           const e = JSON.parse((event as MessageEvent).data);
@@ -503,18 +622,105 @@ function App() {
       sessionRun.current = result.runId;
       return;
     }
-    preview.reset(undefined, { runtimeMode: mode });
+    preview.reset(undefined, {
+      runtimeMode: mode,
+      componentPolicies: preview.appliedConfig.componentPolicies,
+    });
     if (messages.length) await preview.apply(messages);
     setToast("就绪");
   };
+  const [compileError, setCompileError] = useState<{
+    source: string;
+    message: string;
+  } | null>(null);
+  const [compiledDraft, setCompiledDraft] = useState<{
+    source: string;
+    messages: Message[];
+  } | null>(null);
+  useEffect(() => {
+    if (format !== "library" || (!copy && configurationTab !== "appearance"))
+      return;
+    let disposed = false;
+    void api<{ steps: { messages: Message[] }[] }>("/library/compile", {
+      text: source,
+    })
+      .then((result) => {
+        if (!disposed)
+          setCompiledDraft({
+            source,
+            messages: result.steps.flatMap((step) => step.messages),
+          });
+      })
+      .catch((error) => {
+        if (!disposed) {
+          setCompiledDraft(null);
+          setCompileError({ source, message: String(error) });
+        }
+      });
+    return () => {
+      disposed = true;
+    };
+  }, [source, format, copy, configurationTab]);
   const copyMessages =
-    copySource === "preview" ? preview.messages : parseMessagesSafe(source);
-  const copyValue =
-    copyTab === "json"
-      ? JSON.stringify(copyMessages, null, 2)
-      : copyTab === "config"
-        ? JSON.stringify({ ...config, locale }, null, 2)
-        : `# POST /api/v1/preview-sessions → open previewUrl → wait for preview.connected\ncurl -X POST ${location.origin}${apiBase}/preview-sessions/$SESSION_ID/messages \\\n  -H 'Content-Type: application/json' \\\n  -d '${JSON.stringify({ batchId: "batch-001", firstSequence: 1, messages: copyMessages }, null, 2).replace(/'/g, "'\\''")}'`;
+    copySource === "preview"
+      ? preview.messages
+      : format === "library"
+        ? compiledDraft?.source === source
+          ? compiledDraft.messages
+          : []
+        : parseMessagesSafe(source);
+  const draftBatches = (() => {
+    try {
+      return format === "library" ? parseLibrarySource(source) : undefined;
+    } catch {
+      return undefined;
+    }
+  })();
+  const copyConfig =
+    copySource === "preview" ? preview.appliedConfig : { ...config, locale };
+  const previewMatchesInputs =
+    !!renderedExport &&
+    preview.messages.length <= renderedExport.messages.length &&
+    JSON.stringify(preview.messages) ===
+      JSON.stringify(renderedExport.messages.slice(0, preview.messages.length));
+  const library = libraryExport({
+    ...(copySource === "preview" && renderedExport
+      ? renderedExport
+      : {
+          entry: current,
+          template: format === "a2ui" && !custom && draft.json === null,
+          batches: draftBatches,
+          intervalMs: interval,
+        }),
+    messages: copyMessages,
+    config: copyConfig,
+    ...(copySource === "preview" && renderedExport?.batches
+      ? previewMatchesInputs
+        ? { batches: renderedExport.batches.slice(0, step) }
+        : { batches: undefined, template: false }
+      : {}),
+  });
+  const generatedCopyValue =
+    copyTab === "library"
+      ? library.input
+      : copyTab === "server"
+        ? library.server
+        : copyTab === "react"
+          ? library.react
+          : copyTab === "json"
+            ? JSON.stringify(copyMessages, null, 2)
+            : copyTab === "config"
+              ? JSON.stringify(copyConfig, null, 2)
+              : `# POST /api/v1/preview-sessions → open previewUrl → wait for preview.connected\ncurl -X POST ${location.origin}${apiBase}/preview-sessions/$SESSION_ID/messages \\\n  -H 'Content-Type: application/json' \\\n  -d '${JSON.stringify({ batchId: "batch-001", firstSequence: 1, messages: copyMessages }, null, 2).replace(/'/g, "'\\''")}'`;
+  const exportReady =
+    copySource === "preview" ||
+    format !== "library" ||
+    compiledDraft?.source === source;
+  const copyValue = exportReady
+    ? generatedCopyValue
+    : compileError?.source === source
+      ? compileError.message
+      : t("正在校验便捷输入…");
   const groups = ["基础展示", "布局", "数据展示", "表单与交互", "已安装插件"];
   const shownSurfaces =
     surfaceId === "all"
@@ -538,12 +744,12 @@ function App() {
   const sourceDiagnostic = useMemo(() => {
     if (!error) return null;
     try {
-      parseMessages(source);
+      parseSource(source);
     } catch (diagnostic) {
       if (diagnostic instanceof MessageParseError) return diagnostic;
     }
     return null;
-  }, [error, source]);
+  }, [error, source, format]);
   const diagnosticKeys: Record<MessageParseError["code"], TranslationKey> = {
     JSON_SYNTAX: "JSON语法错误",
     JSONL_SYNTAX: "JSONL语法错误",
@@ -551,6 +757,46 @@ function App() {
     MESSAGE_COUNT: "消息数量超出范围",
     MESSAGE_OBJECT: "消息必须是对象",
   };
+  const playback = (
+    <div className="playback">
+      <button
+        className="btn btn-secondary"
+        onClick={play}
+        disabled={!queue.current.length || step >= queue.current.length}
+      >
+        <Icon name={playing ? "pause" : "play"} />
+        {t(playing ? "暂停" : "继续")}
+      </button>
+      <button
+        className="btn btn-secondary"
+        onClick={() => {
+          stop();
+          void next();
+        }}
+        disabled={!queue.current.length || step >= queue.current.length}
+      >
+        <Icon name="next" />
+        {t("下一步")}
+      </button>
+      <button className="btn btn-secondary" onClick={reset}>
+        <Icon name="reset" />
+        {t("重置")}
+      </button>
+      <label>
+        {t("间隔")}
+        <input
+          className="input"
+          type="number"
+          min={50}
+          max={30000}
+          value={interval}
+          aria-label={t("间隔")}
+          onChange={(e) => setIntervalMs(Math.max(50, Number(e.target.value)))}
+        />
+        ms
+      </label>
+    </div>
+  );
   return (
     <div className="application" data-theme={theme}>
       <header className="app-header">
@@ -746,12 +992,18 @@ function App() {
                   </div>
                   <p>
                     {custom
-                      ? t("粘贴 Agent 响应，支持单条消息、数组或 JSONL。")
+                      ? t(
+                          format === "library"
+                            ? "自定义便捷输入，支持单条输入、数组、批次或 JSONL。"
+                            : "粘贴 Agent 响应，支持单条消息、数组或 JSONL。",
+                        )
                       : l(current.description)}
                   </p>
                   <code>
                     {custom
-                      ? "A2UI · 1.0"
+                      ? format === "library"
+                        ? "Library · enterprise-agent-ui/1"
+                        : "A2UI · 1.0"
                       : `${current.pluginId ?? "a2ui"} · ${current.component}`}
                   </code>
                 </div>
@@ -764,12 +1016,38 @@ function App() {
                     ]}
                     value={custom ? "custom" : "template"}
                     onChange={(value) => {
-                      if (value === "custom" && !customJson)
-                        setCustomJson(source);
+                      if (
+                        value === "custom" &&
+                        customSource === undefined &&
+                        !session
+                      )
+                        changeCustomJson(templateSource);
+                      requestGeneration.current++;
+                      stop();
                       setCustom(value === "custom");
                     }}
                   />
                 </div>
+                {!session && (
+                  <div className="response-entry input-format">
+                    <span>{t("输入格式")}</span>
+                    <Segment
+                      label={t("输入格式")}
+                      value={format}
+                      options={[
+                        { value: "a2ui", label: "A2UI" },
+                        { value: "library", label: t("Library 便捷模板") },
+                      ]}
+                      onChange={(value) => {
+                        if (value === format) return;
+                        requestGeneration.current++;
+                        stop();
+                        setError("");
+                        setInputFormat(value as "a2ui" | "library");
+                      }}
+                    />
+                  </div>
+                )}
                 {!custom && (
                   <div className="template-section">
                     <div className="section-label">
@@ -787,9 +1065,17 @@ function App() {
                           role="radio"
                           aria-checked={draft.template === key}
                           onClick={() => {
+                            if (key === draft.template) return;
+                            requestGeneration.current++;
                             stop();
                             changeDraft({
                               template: key,
+                              libraryJson:
+                                draft.libraryJsonByTemplate?.[key] ?? null,
+                              libraryJsonByTemplate: {
+                                ...draft.libraryJsonByTemplate,
+                                [draft.template]: draft.libraryJson ?? null,
+                              },
                               json: draft.jsonByTemplate?.[key] ?? null,
                               jsonByTemplate: {
                                 ...draft.jsonByTemplate,
@@ -816,6 +1102,17 @@ function App() {
                     </div>
                   </div>
                 )}
+                <div className="response-entry">
+                  <Segment
+                    label={t("模板配置")}
+                    value={configurationTab}
+                    onChange={setConfigurationTab}
+                    options={[
+                      { value: "content", label: t("内容") },
+                      { value: "appearance", label: t("外观") },
+                    ]}
+                  />
+                </div>
                 <div className="edit-toolbar">
                   {!custom && (
                     <Segment
@@ -826,14 +1123,41 @@ function App() {
                       ]}
                       value={editMode}
                       onChange={(mode) => {
-                        if (mode === "form" && draft.json !== null) {
+                        if (mode === "form" && templateJson !== null) {
                           let values: Record<string, unknown> | null = null;
                           try {
-                            values = recoverTemplateValues(
-                              current,
-                              parseMessages(draft.json),
-                              draft.template,
-                            );
+                            if (format === "a2ui")
+                              values = recoverTemplateValues(
+                                current,
+                                parseMessages(templateJson),
+                                draft.template,
+                              );
+                            else {
+                              const inputs = parseLibrarySource(
+                                templateJson,
+                              ).flatMap((batch) => batch.inputs);
+                              const create = inputs[0];
+                              if (
+                                create?.type === "template.create" &&
+                                create.template === current.key &&
+                                JSON.stringify(inputs) ===
+                                  JSON.stringify(
+                                    scenarioInputs(
+                                      current,
+                                      instantiate(
+                                        current,
+                                        { ...current.defaults, ...create.data },
+                                        draft.template,
+                                      ).messages,
+                                      generated.renderPolicy,
+                                    ),
+                                  )
+                              )
+                                values = {
+                                  ...current.defaults,
+                                  ...create.data,
+                                };
+                            }
                           } catch {
                             /* Preserve an invalid source draft in JSON mode. */
                           }
@@ -870,7 +1194,127 @@ function App() {
                   )}
                 </div>
                 <div className="configuration-scroll">
-                  {!custom && editMode === "form" ? (
+                  {configurationTab === "appearance" ? (
+                    (() => {
+                      const nodes = (
+                        format === "library"
+                          ? compiledDraft?.source === source
+                            ? compiledDraft.messages
+                            : []
+                          : parseMessagesSafe(source)
+                      ).flatMap((message) => {
+                        const body = (message.createSurface ??
+                          message.updateComponents) as
+                          | {
+                              surfaceId?: string;
+                              components?: {
+                                id: string;
+                                component: string;
+                              }[];
+                            }
+                          | undefined;
+                        return (body?.components ?? []).map((node) => ({
+                          ...node,
+                          surfaceId: body?.surfaceId ?? "main",
+                        }));
+                      });
+                      const unique = [
+                        ...new Map(
+                          nodes.map((node) => [
+                            appearanceNodeKey(node.surfaceId, node.id),
+                            node,
+                          ]),
+                        ).values(),
+                      ];
+                      const node =
+                        unique.find(
+                          (node) =>
+                            appearanceNodeKey(node.surfaceId, node.id) ===
+                            draft.appearanceNode,
+                        ) ?? unique[0];
+                      return (
+                        <>
+                          {node && (
+                            <>
+                              <label className="field-section">
+                                {t("配置节点")}
+                                <select
+                                  className="input"
+                                  value={appearanceNodeKey(
+                                    node.surfaceId,
+                                    node.id,
+                                  )}
+                                  onChange={(event) =>
+                                    changeDraft({
+                                      appearanceNode: event.target.value,
+                                    })
+                                  }
+                                >
+                                  {unique.map((item) => (
+                                    <option
+                                      key={appearanceNodeKey(
+                                        item.surfaceId,
+                                        item.id,
+                                      )}
+                                      value={appearanceNodeKey(
+                                        item.surfaceId,
+                                        item.id,
+                                      )}
+                                    >
+                                      {item.surfaceId} / {item.id} ·{" "}
+                                      {item.component}
+                                    </option>
+                                  ))}
+                                </select>
+                              </label>
+                              <AppearanceEditor
+                                component={node.component}
+                                capabilities={
+                                  entries.find(
+                                    (entry) =>
+                                      entry.component === node.component,
+                                  )?.appearance
+                                }
+                                plugin={
+                                  !!entries.find(
+                                    (entry) =>
+                                      entry.component === node.component,
+                                  )?.pluginId
+                                }
+                                value={
+                                  config.componentAppearances?.[
+                                    node.surfaceId
+                                  ]?.[node.id] ?? {}
+                                }
+                                onChange={(value) => {
+                                  const appearance = {
+                                    ...draft.appearance,
+                                    [appearanceNodeKey(
+                                      node.surfaceId,
+                                      node.id,
+                                    )]: value,
+                                  };
+                                  changeDraft({ appearance });
+                                  setConfig((previous) => ({
+                                    ...previous,
+                                    componentAppearances: {
+                                      ...previous.componentAppearances,
+                                      [node.surfaceId]: {
+                                        ...previous.componentAppearances?.[
+                                          node.surfaceId
+                                        ],
+                                        [node.id]: value,
+                                      },
+                                    },
+                                  }));
+                                }}
+                              />
+                            </>
+                          )}
+                        </>
+                      );
+                    })()
+                  ) : !custom && editMode === "form" ? (
                     <>
                       {generated.messages.length > 1 && (
                         <div className="field-section">
@@ -897,9 +1341,15 @@ function App() {
                                 <span>{i + 1}</span>
                                 <div>
                                   <b>
-                                    {Object.keys(message).find(
-                                      (k) => k !== "version",
-                                    )}
+                                    {format === "library"
+                                      ? scenarioInputs(
+                                          current,
+                                          generated.messages,
+                                          generated.renderPolicy,
+                                        )[i]?.type
+                                      : Object.keys(message).find(
+                                          (k) => k !== "version",
+                                        )}
                                   </b>
                                   <code>
                                     {i === 0
@@ -919,57 +1369,7 @@ function App() {
                               </li>
                             ))}
                           </ol>
-                          <div className="playback">
-                            <button
-                              className="btn btn-secondary"
-                              onClick={play}
-                              disabled={
-                                !queue.current.length ||
-                                step >= queue.current.length
-                              }
-                            >
-                              <Icon name={playing ? "pause" : "play"} />
-                              {t(playing ? "暂停" : "继续")}
-                            </button>
-                            <button
-                              className="btn btn-secondary"
-                              onClick={() => {
-                                stop();
-                                void next();
-                              }}
-                              disabled={
-                                !queue.current.length ||
-                                step >= queue.current.length
-                              }
-                            >
-                              <Icon name="next" />
-                              {t("下一步")}
-                            </button>
-                            <button
-                              className="btn btn-secondary"
-                              onClick={reset}
-                            >
-                              <Icon name="reset" />
-                              {t("重置")}
-                            </button>
-                            <label>
-                              {t("间隔")}
-                              <input
-                                className="input"
-                                type="number"
-                                min={50}
-                                max={30000}
-                                value={interval}
-                                aria-label={t("间隔")}
-                                onChange={(e) =>
-                                  setIntervalMs(
-                                    Math.max(50, Number(e.target.value)),
-                                  )
-                                }
-                              />
-                              ms
-                            </label>
-                          </div>
+                          {playback}
                         </div>
                       )}
                       <div className="field-section">
@@ -988,7 +1388,9 @@ function App() {
                                     ...draft.values,
                                     [field.key]: value,
                                   },
-                                  json: null,
+                                  ...(format === "library"
+                                    ? { libraryJson: null }
+                                    : { json: null }),
                                 })
                               }
                             />
@@ -1010,7 +1412,9 @@ function App() {
                             onChange={(rows) =>
                               changeDraft({
                                 values: { ...draft.values, [key]: rows },
-                                json: null,
+                                ...(format === "library"
+                                  ? { libraryJson: null }
+                                  : { json: null }),
                               })
                             }
                           />
@@ -1179,6 +1583,11 @@ function App() {
                     </div>
                   ) : (
                     <div className="json-section">
+                      {(queue.current.length > 1 ||
+                        (format === "library" &&
+                          (draftBatches?.length ?? 0) > 1)) && (
+                        <> {playback} </>
+                      )}
                       <div className="json-tools">
                         <button
                           className="btn btn-ghost"
@@ -1189,8 +1598,8 @@ function App() {
                                 null,
                                 2,
                               );
-                              if (custom) setCustomJson(value);
-                              else changeDraft({ json: value });
+                              if (custom) changeCustomJson(value);
+                              else changeTemplateJson(value);
                               setError("");
                             } catch (e) {
                               setError(String(e));
@@ -1208,30 +1617,22 @@ function App() {
                             accept=".json,.jsonl"
                             onChange={(e) => {
                               const file = e.target.files?.[0];
-                              if (file)
+                              if (file) {
+                                setCustom(true);
                                 void file.text().then((text) => {
-                                  setCustom(true);
-                                  setCustomJson(text);
+                                  changeCustomJson(text);
                                 });
+                              }
                             }}
                           />
                         </label>
                         <button
                           className="btn btn-ghost"
                           onClick={() =>
-                            void Promise.resolve()
-                              .then(() =>
-                                api("/messages/validate", {
-                                  messages: parseMessages(source),
-                                }),
-                              )
-                              .then((result) => {
-                                setError(
-                                  result.valid
-                                    ? ""
-                                    : JSON.stringify(result.errors, null, 2),
-                                );
-                                if (result.valid) setToast("校验通过");
+                            void compileSource(source)
+                              .then(() => {
+                                setError("");
+                                setToast("校验通过");
                               })
                               .catch((e) => setError(String(e)))
                           }
@@ -1256,7 +1657,9 @@ function App() {
                         </div>
                         <textarea
                           ref={sourceEditor}
-                          aria-label="A2UI JSON"
+                          aria-label={
+                            format === "library" ? "Library JSON" : "A2UI JSON"
+                          }
                           aria-invalid={!!sourceDiagnostic}
                           aria-errormessage={
                             sourceDiagnostic ? "source-diagnostic" : undefined
@@ -1266,15 +1669,15 @@ function App() {
                           wrap="off"
                           value={source}
                           onChange={(e) => {
-                            if (custom) setCustomJson(e.target.value);
-                            else changeDraft({ json: e.target.value });
+                            if (custom) changeCustomJson(e.target.value);
+                            else changeTemplateJson(e.target.value);
                           }}
                         />
                       </div>
-                      {!custom && draft.json !== null && (
+                      {!custom && templateJson !== null && (
                         <button
                           className="btn btn-ghost"
-                          onClick={() => changeDraft({ json: null })}
+                          onClick={() => changeTemplateJson(null)}
                         >
                           {t("恢复模板")}
                         </button>
@@ -1367,6 +1770,33 @@ function App() {
                 onMouseDown={(event) => drag("middle", event)}
               />
               <section className="preview" aria-label={t("预览面板")}>
+                {themeOpen && (
+                  <div
+                    className="theme-popover"
+                    role="dialog"
+                    aria-label={t("预览主题配置")}
+                  >
+                    <div className="theme-popover-header">
+                      <strong>{t("预览主题配置")}</strong>
+                      <button
+                        className="btn btn-ghost"
+                        aria-label={t("关闭")}
+                        onClick={() => setThemeOpen(false)}
+                      >
+                        ×
+                      </button>
+                    </div>
+                    <ThemeEditor
+                      value={config.themeTokens ?? {}}
+                      onChange={(value) =>
+                        setConfig((previous) => ({
+                          ...previous,
+                          themeTokens: value,
+                        }))
+                      }
+                    />
+                  </div>
+                )}
                 <div className="preview-toolbar">
                   <Segment
                     label={t("预览面板")}
@@ -1400,6 +1830,13 @@ function App() {
                     }
                   >
                     <Icon name={config.theme === "light" ? "sun" : "moon"} />
+                  </button>
+                  <button
+                    className="btn btn-ghost"
+                    aria-expanded={themeOpen}
+                    onClick={() => setThemeOpen(!themeOpen)}
+                  >
+                    {t("预览主题配置")}
                   </button>
                   {(current.pluginId || custom) && (
                     <Segment
@@ -1467,7 +1904,9 @@ function App() {
                       total: session
                         ? parseMessagesSafe(source).length
                         : queue.current.length ||
-                          parseMessagesSafe(source).length,
+                          (format === "library"
+                            ? (draftBatches?.length ?? 0)
+                            : parseMessagesSafe(source).length),
                     })}
                   </code>
                   <code>Preview Host · {config.runtimeMode}</code>
@@ -1694,6 +2133,9 @@ function App() {
                   { value: "api", label: "API / cURL" },
                   { value: "json", label: "A2UI JSON" },
                   { value: "config", label: t("运行配置") },
+                  { value: "library", label: "Library Inputs" },
+                  { value: "server", label: "Library Node" },
+                  { value: "react", label: "Library React" },
                 ]}
               />
               <select
@@ -1705,8 +2147,39 @@ function App() {
                 <option value="preview">{t("当前预览")}</option>
               </select>
             </div>
+            <p className="muted">
+              {t("Library 接入")} ·{" "}
+              <button
+                className="btn btn-ghost"
+                onClick={() => {
+                  setCopy(false);
+                  setPage("docs");
+                }}
+              >
+                {t("文档")}
+              </button>
+            </p>
             <pre>{copyValue}</pre>
             <footer>
+              <button
+                className="btn btn-secondary"
+                disabled={!exportReady}
+                onClick={() =>
+                  download(
+                    copyTab === "server"
+                      ? "server.ts"
+                      : copyTab === "react"
+                        ? "AgentUiExample.tsx"
+                        : copyTab === "library"
+                          ? "ui-input.json"
+                          : "config.json",
+                    copyValue,
+                    true,
+                  )
+                }
+              >
+                {t("下载代码")}
+              </button>
               <button
                 className="btn btn-secondary"
                 onClick={() => setCopy(false)}
@@ -1715,6 +2188,7 @@ function App() {
               </button>
               <button
                 className="btn btn-primary"
+                disabled={!exportReady}
                 onClick={() =>
                   void navigator.clipboard
                     .writeText(copyValue)

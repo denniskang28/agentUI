@@ -21,7 +21,7 @@ function Commit({children,node,environment}){
 }
 export function mount(node,data,dispatch,environment={locale:'zh-CN'}){
  let env=environment;const root=createRoot(node,{onUncaughtError:error=>env.onError?.(String(error))});
- const render=(data,nextEnv)=>{if(nextEnv)env={...env,...nextEnv};root.render(React.createElement(HostProvider,{dispatch,locale:env.locale},React.createElement(Commit,{node,environment:env},React.createElement(plugin.Component,{data}))))};
+ const render=(data,nextEnv)=>{if(nextEnv)env={...env,...nextEnv};root.render(React.createElement(HostProvider,{dispatch,locale:env.locale,theme:env.theme,themeTokens:env.themeTokens},React.createElement(Commit,{node,environment:env},React.createElement(plugin.Component,{data}))))};
  render(data);return{update:render,unmount:()=>root.unmount()};
 }`;
 const allow = new Set([

@@ -28,7 +28,8 @@ for (const mode of ["sandbox", "native"])
     await page
       .getByRole("button", { name: "平台运行配置", exact: true })
       .click();
-    await page.getByLabel("响应延迟", { exact: true }).fill("200");
+    // Keep the submitting state observable across the Sandbox message bridge.
+    await page.getByLabel("响应延迟", { exact: true }).fill("1000");
     await page
       .getByRole("button", { name: "渲染", exact: true })
       .first()

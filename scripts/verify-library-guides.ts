@@ -18,6 +18,7 @@ const root = process.cwd();
 const consumer = path.join(root, "examples/chatbot-comparison/with-agent-ui");
 const slugs = [
   "library-overview",
+  "library-appearance",
   "library-integration",
   "library-inputs",
   "library-events",
@@ -143,7 +144,7 @@ console.log(JSON.stringify({batches,actions,normalized,fragments}));
     executedServerExamples: servers.length,
     jsonBlocks: json.length,
     ...JSON.parse(verified.stdout),
-    package: "@enterprise/agent-ui@0.1.0",
+    package: "@enterprise/agent-ui@0.2.0",
     validation:
       "installed public exports + genuine official Core + release plugin schemas",
   };

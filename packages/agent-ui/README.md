@@ -2,8 +2,8 @@
 
 Built-in capability radar / 内置能力画像：[`CapabilityProfile` configuration, templates and Actions](../../docs/developer/capability-profile.md). The public protocol entry exports `capabilityProfileSchema` and `CapabilityProfileData`; discover the template through `builtins` (`key: capability-profile`). Update the package and separate Host together.
 
-Local distribution 0.1.0. One package exposes three independent public entry points:
-本地分发版本 0.1.0，一个包提供三个公开入口：
+Local distribution 0.2.0. One package exposes three independent public entry points:
+本地分发版本 0.2.0，一个包提供三个公开入口：
 
 | Import                          | Purpose / 用途                                                                           |
 | ------------------------------- | ---------------------------------------------------------------------------------------- |
@@ -16,7 +16,7 @@ Install the supplied tarball with Node 24. Server-only consumers do not need Rea
 Node 24 安装随附 `.tgz`。仅服务端使用不需要 React；React 调用方提供 React 19。Host 的样式、Core/Renderer、Plugin SDK 和批准使用的制品随独立静态产物部署；业务主页面不加载上传 JS。
 
 ```sh
-npm install ./vendor/enterprise-agent-ui-0.1.0.tgz
+npm install ./vendor/enterprise-agent-ui-0.2.0.tgz
 ```
 
 ## Server / 后端
@@ -115,7 +115,7 @@ Action 回调接收完整信封，包括 actionId、runId、官方 name/surfaceI
 
 ## Deployment and supported scope / 部署与范围
 
-Client/Host must both use 0.1.0, transport `enterprise-agent-ui/1`, Core/React Renderer 0.15.0, Plugin SDK 1.0 and pinned manifest template versions. Deploy Host on a separate credential-free origin with exact parent-origin allowlist and CSP; keep business cookies/tokens off that site. Native executes only there; Sandbox uses a nested opaque-origin iframe. Do not deploy the Host below your authenticated chatbot's origin.
+Client/Host must both use 0.2.0, transport `enterprise-agent-ui/1`, Core/React Renderer 0.15.0, Plugin SDK 1.0 and pinned manifest template versions. Deploy Host on a separate credential-free origin with exact parent-origin allowlist and CSP; keep business cookies/tokens off that site. Native executes only there; Sandbox uses a nested opaque-origin iframe. Do not deploy the Host below your authenticated chatbot's origin.
 
 包与 Host 版本配套部署，清单锁定模板。Host 使用无业务凭据的独立 Origin、精确父站点白名单及 CSP，业务 cookie Domain 不覆盖 Host。Native 只在 Host 运行，Sandbox 增加 opaque iframe 隔离。
 
@@ -129,9 +129,9 @@ See the prepared standalone demo's README, COMPARISON.md and DEPLOYMENT.md for w
 
 ## Library 完整使用指南 / Complete library guides
 
-从现有 Chatbot 接入 Library，阅读下面六篇；Playground 的 **API & Docs → Library 接入指南** 同步展示同一份中英文文档。
+从现有 Chatbot 接入 Library，阅读下面七篇；Playground 的 **API & Docs → Library 接入指南** 同步展示同一份中英文文档。
 
-For existing chatbot integration, follow these six guides, also available in Playground **API & Docs → Library integration guides**.
+For existing chatbot integration, follow these seven guides, also available in Playground **API & Docs → Library integration guides**.
 
 | 文档 / Guide | 简体中文 | English |
 | --- | --- | --- |
@@ -143,3 +143,5 @@ For existing chatbot integration, follow these six guides, also available in Pla
 | 打包部署 / Deployment | [中文](../../docs/developer/library-deployment.zh-CN.md) | [English](../../docs/developer/library-deployment.en-US.md) |
 
 [全部文档 / All documentation](../../docs/developer/README.md)
+
+Theme/appearance and Playground exports / 主题、外观与导出：[中文](../../docs/developer/library-appearance.zh-CN.md) · [English](../../docs/developer/library-appearance.en-US.md). Requires matching package/Host 0.2.0. Public protocol exports themeTokensSchema, componentAppearanceSchema and appearanceCapabilities.

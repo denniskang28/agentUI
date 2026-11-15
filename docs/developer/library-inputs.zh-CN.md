@@ -1,5 +1,15 @@
 # 便捷模板与完整 A2UI
 
+## 在 Playground 选择输入格式
+
+顶部仍用“组件模板 / 自定义响应”区分内容来源，下方“输入格式：A2UI / Library 便捷模板”区分输入契约。组件模板中的表单、业务参数和场景可以生成两种格式；Library 场景生成真实 template.create / template.patch，随后经 Adapter 编译并由官方 Runtime 渲染。自定义响应可自由填写任意已发现模板、多个 Surface 和创建／更新／删除，不受左侧当前组件限制。两种格式的模板 JSON 和自定义 JSON 各自保留草稿，主动清空不会被默认示例覆盖。
+
+A2UI 输入粘贴或导入官方消息；Library 输入接受单个 UiInput、输入数组、单个 UiBatch、批次数组，或每行一个同类对象的 JSONL。直接输入 UiInput 时，Playground 自动生成连续批次信封；显式批次必须使用同一 runId、连续 firstSequence 及不冲突的 batchId。输入格式显式选择，不自动猜测；运行配置仍在独立配置区。Library 导出的 ui-input.json 含配套 config、intervalMs 和 batches，编辑器中粘贴其 batches 字段，配套配置单独应用。
+
+“校验”和“渲染”均通过 Playground 的 POST /api/v1/library/compile，在服务端临时 Adapter 中验证整段输入后销毁 Adapter；它不是生产业务会话接口，也不执行上传脚本。最多 1000 个输入，受 2 MB 请求／编译输出限制。渲染按输入批次播放，支持暂停、继续和下一步；批次可能展开成多条官方消息。调试区显示实际已发送的官方消息与 Surface 状态。外部 Agent 的既有预览会话继续使用 A2UI 消息格式。
+
+复制接入代码时，Library 草稿保留输入与批次身份，Node/React 示例使用输入中的实际 runId。当前预览仅导出已经执行的步骤；若 Mock Action 等产生额外官方更新，预览导出保留实际原始消息，避免遗漏业务结果。预览中的 Native / Sandbox 仍表示运行隔离方式，与输入格式独立。
+
 ## 共同的批次信封
 
 两个入口共用 `UiBatch`：`protocol` 固定为 `enterprise-agent-ui/1`，runId 对应已有 Adapter，batchId 标识一个不可变批次，firstSequence 从 1 开始连续。`inputs` 内可以混合不同命令；每个 input 占一个序号，不按其内部 messages 数量计数。

@@ -1,3 +1,4 @@
+import { batchSchema } from "../../../packages/agent-ui/src/protocol";
 import { publicApiUrl, previewOrigin } from "./deployment";
 import {
   AgentToRendererMessageSchema,
@@ -162,6 +163,23 @@ const componentProperties = {
   templates: array(string),
   bundleUrl: { type: "string", format: "uri" },
   stylesheetUrl: { type: "string", format: "uri" },
+  appearance: array({
+    enum: [
+      "fontFamily",
+      "typography",
+      "fontSize",
+      "fontWeight",
+      "lineHeight",
+      "color",
+      "backgroundColor",
+      "borderColor",
+      "borderWidth",
+      "borderRadius",
+      "padding",
+      "gap",
+      "textAlign",
+    ],
+  }),
   actions: array(string),
   wireSchema: schemaDocument,
   inputSchema: schemaDocument,
@@ -287,6 +305,14 @@ export const openapi = {
           optionalBody: true,
           errors: [400, 404, 413, 422],
         },
+      ),
+    },
+    "/library/compile": {
+      post: operation(
+        "compileLibraryInputs",
+        "Compile Library inputs through a temporary real Adapter; does not render or retain a session",
+        "LibraryCompilation",
+        { body: "LibraryCompileRequest", errors: [400, 413, 422] },
       ),
     },
     "/messages/validate": {
@@ -601,6 +627,22 @@ export const openapi = {
       PreviewConfiguration: fromZod(previewRequestSchema),
       TemplateRequest: fromZod(templateRequestSchema),
       ValidationRequest: fromZod(validationRequestSchema),
+      LibraryCompileRequest: object({ text: { ...string, minLength: 1 } }),
+      LibraryCompilation: object({
+        batches: array(fromZod(batchSchema)),
+        steps: array(
+          object({
+            messages: array(ref("A2uiMessage")),
+            componentPolicies: {
+              type: "object",
+              additionalProperties: {
+                type: "object",
+                additionalProperties: record,
+              },
+            },
+          }),
+        ),
+      }),
       SessionRequest: fromZod(sessionRequestSchema),
       MessageBatch: fromZod(messageBatchSchema),
       ResetRequest: fromZod(resetRequestSchema),

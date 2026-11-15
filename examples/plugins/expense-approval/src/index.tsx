@@ -3,6 +3,7 @@ import {
   definePlugin,
   useHostAction,
   useHostLocale,
+  useHostTheme,
 } from "@enterprise/agent-ui-plugin-sdk";
 type Data = {
   reportId: string;
@@ -72,6 +73,7 @@ const words = {
   },
 };
 function ExpenseApproval({ data }: { data: Data }) {
+  const hostTheme = useHostTheme();
   const dispatch = useHostAction(),
     locale = useHostLocale(),
     w = words[locale];
@@ -123,7 +125,8 @@ function ExpenseApproval({ data }: { data: Data }) {
   };
   return (
     <div
-      style={{ display: "flex", flexDirection: "column", gap: 12, minWidth: 0 }}
+      data-host-theme={hostTheme.mode}
+      style={{ fontFamily:"var(--font-body)", display: "flex", flexDirection: "column", gap: 12, minWidth: 0 }}
     >
       <div
         style={{

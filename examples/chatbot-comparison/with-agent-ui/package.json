@@ -12,7 +12,7 @@
     "deploy": "node deploy/run.mjs"
   },
   "dependencies": {
-    "@enterprise/agent-ui": "file:vendor/enterprise-agent-ui-0.1.0.tgz",
+    "@enterprise/agent-ui": "file:vendor/enterprise-agent-ui-0.2.0.tgz",
     "@fastify/static": "10.1.11",
     "fastify": "5.12.8",
     "react": "19.3.1",

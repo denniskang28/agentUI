@@ -1,3 +1,4 @@
+import { themeTokensSchema, componentAppearancesSchema } from "./appearance";
 import {
   MessageProcessor,
   basicCatalog,
@@ -32,6 +33,8 @@ export const runConfigSchema = z
     readyTimeoutMs: z.number().int().min(100).max(120000).optional(),
     componentPolicies: z.record(z.record(renderRuleSchema)).optional(),
     theme: z.enum(["light", "dark"]),
+    themeTokens: themeTokensSchema.optional(),
+    componentAppearances: componentAppearancesSchema.optional(),
     locale: z.enum(["zh-CN", "en-US"]),
     actionHandler: z.enum(["mock", "external"]),
     latency: z.number().int().min(0).max(30000),
@@ -46,6 +49,11 @@ export interface RunConfig {
   readyTimeoutMs?: number;
   componentPolicies?: Record<string, Record<string, RenderRule>>;
   theme: "light" | "dark";
+  themeTokens?: import("./appearance").ThemeTokens;
+  componentAppearances?: Record<
+    string,
+    Record<string, import("./appearance").ComponentAppearance>
+  >;
   locale: "zh-CN" | "en-US";
   actionHandler: "mock" | "external";
   latency: number;

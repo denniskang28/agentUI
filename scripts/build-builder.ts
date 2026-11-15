@@ -1,9 +1,12 @@
 import { readFile, writeFile } from "node:fs/promises";
 import { spawn } from "node:child_process";
-// The image always embeds the exact checked-in SDK; never an independently edited copy.
+// Rebase the type-only import for the mirrored build context. The image embeds the checked-in SDK; never an independently edited copy.
 await writeFile(
   "services/plugin-builder/container/sdk.tsx",
-  await readFile("packages/plugin-sdk/src/index.tsx"),
+  (await readFile("packages/plugin-sdk/src/index.tsx", "utf8")).replace(
+    "../../protocol/src/appearance",
+    "../../../packages/protocol/src/appearance",
+  ),
 );
 const child = spawn(
   "docker",

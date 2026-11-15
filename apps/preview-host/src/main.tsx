@@ -1,3 +1,4 @@
+import { RuntimeAppearance } from "../../../packages/runtime/src/appearance";
 import { mainOrigin } from "../../../packages/protocol/src/browser-deployment";
 import { useSyncExternalStore } from "react";
 import { createRoot } from "react-dom/client";
@@ -146,7 +147,12 @@ function App() {
       }}
     >
       <RuntimeEnvironment.Provider value={config}>
-        <div data-theme={config.theme} style={{ padding: 0 }}>
+        <RuntimeAppearance />
+        <div
+          data-runtime-theme
+          data-theme={config.theme}
+          style={{ padding: 0 }}
+        >
           {surfaces.map((s) => (
             <section data-surface={s.id} key={runId + s.id}>
               <RenderBoundary onError={reportRuntimeError}>
@@ -223,6 +229,11 @@ window.addEventListener("message", (event) => {
           setLocale(config.locale, false);
           notify();
         } else if (m.runId === runId && m.type === "messages" && processor) {
+          if (m.componentPolicies !== undefined)
+            config = runConfigSchema.parse({
+              ...config,
+              componentPolicies: m.componentPolicies,
+            });
           const start = performance.now();
           measurementId = undefined;
           if (isMeasurementRequest(m.measure)) {
@@ -272,7 +283,7 @@ window.addEventListener("message", (event) => {
   post("connected");
 });
 new ResizeObserver(() =>
-  post("resize", { height: document.body.scrollHeight }),
-).observe(document.body);
+  post("resize", { height: document.getElementById("root")!.scrollHeight }),
+).observe(document.getElementById("root")!);
 parent.postMessage({ type: "preview.ready" }, mainOrigin);
 createRoot(document.getElementById("root")!).render(<App />);

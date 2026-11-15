@@ -1,3 +1,5 @@
+import appearanceZh from "../../../../docs/developer/library-appearance.zh-CN.md?raw";
+import appearanceEn from "../../../../docs/developer/library-appearance.en-US.md?raw";
 import {
   apiBase,
   previewOrigin,
@@ -25,6 +27,7 @@ const guides: Record<string, Record<"zh-CN" | "en-US", string>> = {
   quickstart: { "zh-CN": quickstartZh, "en-US": quickstartEn },
   api: { "zh-CN": apiZh, "en-US": apiEn },
   plugins: { "zh-CN": pluginsZh, "en-US": pluginsEn },
+  "library-appearance": {"zh-CN":appearanceZh,"en-US":appearanceEn},
   "library-overview": { "zh-CN": overviewZh, "en-US": overviewEn },
   "library-integration": { "zh-CN": integrationZh, "en-US": integrationEn },
   "library-inputs": { "zh-CN": inputsZh, "en-US": inputsEn },
@@ -45,6 +48,7 @@ const sections = [
   ["library-events", "Action 与运行生命周期"],
   ["library-demo-migration", "现有 Chatbot 的改造对照"],
   ["library-deployment", "打包、部署与运维"],
+  ["library-appearance", "主题与外观配置"],
   ["quickstart", "快速开始"],
   ["components", "组件参考"],
   ["api", "API 参考"],
@@ -72,7 +76,7 @@ export function Documentation({
         <strong>API & DOCS</strong>
         {sections.map(([value, label], index) => (
           <div className="docs-nav-item" key={value}>
-            {(index === 0 || index === 6) && (
+            {(index === 0 || index === 7) && (
               <strong>
                 {index === 0 ? l("Library 接入指南") : l("Playground 开发参考")}
               </strong>

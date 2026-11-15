@@ -15,6 +15,7 @@ import type {
   RuntimeStatistics,
 } from "../../../packages/protocol/src/measurement";
 export interface ApplyOptions {
+  componentPolicies?: RunConfig["componentPolicies"];
   measure?: MeasurementRequest;
   recordHistory?: boolean;
   collectStats?: boolean;
@@ -86,6 +87,7 @@ export function usePreview(
     >(),
   );
   const timers = useRef(new Set<ReturnType<typeof setTimeout>>());
+  const [appliedConfig, setAppliedConfig] = useState<RunConfig>(config);
   const [connected, setConnected] = useState(false),
     [runId, setRunId] = useState(""),
     [surfaces, setSurfaces] = useState<SurfaceSnapshot[]>([]),
@@ -128,6 +130,11 @@ export function usePreview(
           started: performance.now(),
           measured: !!options.measure,
         });
+        if (options.componentPolicies)
+          setAppliedConfig((prev) => ({
+            ...prev,
+            componentPolicies: options.componentPolicies,
+          }));
         count.current += batch.length;
         if (options.recordHistory !== false)
           setMessages((prev) => [...prev, ...batch]);
@@ -138,6 +145,7 @@ export function usePreview(
           ]);
         send({
           type: "messages",
+          componentPolicies: options.componentPolicies,
           messages: batch,
           requestId,
           ...(options.measure ? { measure: options.measure } : {}),
@@ -148,6 +156,7 @@ export function usePreview(
   );
   const reset = useCallback(
     (id = browserId(), override?: Partial<RunConfig>) => {
+      setAppliedConfig({ ...latest.current.config, ...override });
       currentRun.current = id;
       setRunId(id);
       count.current = 0;
@@ -406,13 +415,32 @@ export function usePreview(
     };
   }, [apply, reset, appendErrors]);
   useEffect(() => {
+    setAppliedConfig((previous) => ({
+      ...previous,
+      locale: config.locale,
+      theme: config.theme,
+      themeTokens: config.themeTokens,
+      componentAppearances: config.componentAppearances,
+    }));
     send({
       type: "configuration",
-      config: { locale: config.locale, theme: config.theme },
+      config: {
+        locale: config.locale,
+        theme: config.theme,
+        themeTokens: config.themeTokens,
+        componentAppearances: config.componentAppearances,
+      },
     });
-  }, [config.locale, config.theme, send]);
+  }, [
+    config.locale,
+    config.theme,
+    config.themeTokens,
+    config.componentAppearances,
+    send,
+  ]);
   return {
     iframe,
+    appliedConfig,
     connected,
     runId,
     surfaces,

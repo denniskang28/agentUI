@@ -17,9 +17,11 @@ export async function api<T = any>(
   }
   return response.status === 204 ? (undefined as T) : response.json();
 }
-export function download(name: string, value: unknown) {
+export function download(name: string, value: unknown, raw = false) {
   const url = URL.createObjectURL(
-    new Blob([JSON.stringify(value, null, 2)], { type: "application/json" }),
+    new Blob([raw ? String(value) : JSON.stringify(value, null, 2)], {
+      type: raw ? "text/plain;charset=utf-8" : "application/json",
+    }),
   );
   const a = document.createElement("a");
   a.href = url;

@@ -1,3 +1,4 @@
+import { RuntimeAppearance } from "../../../packages/runtime/src/appearance";
 import { browserId } from "../../../packages/protocol/src/browser-id";
 import { useSyncExternalStore } from "react";
 import { createRoot } from "react-dom/client";
@@ -79,7 +80,8 @@ function App() {
   return (
     <PluginAssetOrigin.Provider value={location.origin}>
       <RuntimeEnvironment.Provider value={config}>
-        <div data-theme={config.theme}>
+        <RuntimeAppearance />
+        <div data-runtime-theme data-theme={config.theme}>
           {Array.from(processor?.getSurfaces().values() ?? [])
             .filter((surface) => !selected || selected.has(surface.id))
             .map((surface) => (
@@ -253,6 +255,8 @@ window.addEventListener("message", (event) => {
             .object({
               locale: runConfigSchema.shape.locale.optional(),
               theme: runConfigSchema.shape.theme.optional(),
+              themeTokens: runConfigSchema.shape.themeTokens,
+              componentAppearances: runConfigSchema.shape.componentAppearances,
             })
             .strict()
             .parse(message.config);
@@ -291,7 +295,7 @@ window.addEventListener("message", (event) => {
   port.start();
 });
 new ResizeObserver(() =>
-  post("resize", { height: document.documentElement.scrollHeight }),
-).observe(document.body);
+  post("resize", { height: document.getElementById("root")!.scrollHeight }),
+).observe(document.getElementById("root")!);
 addEventListener("pagehide", cleanup, { once: true });
 for (const origin of parents) ready(origin);

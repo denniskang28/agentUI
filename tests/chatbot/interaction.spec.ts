@@ -54,7 +54,7 @@ for (const runtime of ["sandbox", "native"] as const) {
       plugin.getByText("Approved", { exact: true }).first(),
     ).toBeVisible();
     const session = await page.evaluate(() =>
-      localStorage.getItem("conversation"),
+      localStorage.getItem("conversation:with-agent-ui"),
     );
     const old = (await (
       await request.get(`http://localhost:5181/api/session?id=${session}`)

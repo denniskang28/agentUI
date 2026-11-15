@@ -1,3 +1,4 @@
+import { appearanceCapabilities, type AppearanceProperty } from "../../protocol/src/appearance";
 import {
   createMessage,
   patchMessage,
@@ -32,6 +33,7 @@ export interface ComponentEntry {
   bundleUrl?: string;
   actions?: string[];
   stylesheetUrl?: string;
+  appearance?: AppearanceProperty[];
 }
 const field = (
   key: string,
@@ -264,6 +266,7 @@ export const builtins: ComponentEntry[] = [
     actions: ["capability.dimensionSelect", "capability.scenarioChange"],
   },
 ];
+for (const entry of builtins) entry.appearance = appearanceCapabilities(entry.component);
 export const templateMeta: Record<string, [string, string]> = {
   full: ["完整数据展示", "一次发送全部数据"],
   progressive: ["渐进加载", "分批发送，逐步出现"],

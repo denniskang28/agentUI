@@ -1,3 +1,4 @@
+export * from "../../protocol/src/appearance";
 import { z } from "zod";
 import {
   runConfigSchema,
@@ -9,7 +10,7 @@ export { capabilityProfileSchema } from "../../protocol/src/capability";
 export type { CapabilityProfileData } from "../../protocol/src/capability";
 
 export const EMBED_PROTOCOL = "enterprise-agent-ui/1" as const;
-export const HOST_VERSION = "0.1.0" as const;
+export const HOST_VERSION = "0.2.0" as const;
 export type { Json, Message, ComponentEntry };
 export type { RunConfig, RenderRule } from "../../protocol/src/index";
 export const jsonSchema: z.ZodType<Json> = z.lazy(() =>

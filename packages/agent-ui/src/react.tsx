@@ -202,7 +202,12 @@ export class AgentUiClient {
     this.queue = task.catch(() => undefined);
     return task;
   }
-  configure(config: Pick<Partial<RunConfig>, "locale" | "theme">) {
+  configure(
+    config: Pick<
+      Partial<RunConfig>,
+      "locale" | "theme" | "themeTokens" | "componentAppearances"
+    >,
+  ) {
     this.port?.postMessage({ type: "configure", runId: this.runId, config });
   }
   select(surfaceIds?: string[]) {
@@ -349,8 +354,19 @@ export function AgentUiHost({
     };
   }, [client, hostUrl]);
   useEffect(() => {
-    client.configure({ locale: config?.locale, theme: config?.theme });
-  }, [client, config?.locale, config?.theme]);
+    client.configure({
+      locale: config?.locale,
+      theme: config?.theme,
+      themeTokens: config?.themeTokens,
+      componentAppearances: config?.componentAppearances,
+    });
+  }, [
+    client,
+    config?.locale,
+    config?.theme,
+    config?.themeTokens,
+    config?.componentAppearances,
+  ]);
   useEffect(() => {
     client.select(surfaceIds);
   }, [client, surfaceIds]);

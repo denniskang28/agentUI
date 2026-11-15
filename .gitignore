@@ -44,3 +44,5 @@ examples/chatbot-comparison/integration-diff.json
 /artifacts/capability/visual
 /artifacts/capability/consumer/installed-host.png
 /artifacts/capability/consumer/report.json
+
+/artifacts/library-experience/

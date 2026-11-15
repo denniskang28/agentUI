@@ -2,7 +2,7 @@
 
 ## Two build commands
 
-pnpm library:build produces public ESM entry points, declarations and artifacts/packages/enterprise-agent-ui-0.1.0.tgz. It does not create a complete plugin Host release.
+pnpm library:build produces public ESM entry points, declarations and artifacts/packages/enterprise-agent-ui-0.2.0.tgz. It does not create a complete plugin Host release.
 
 pnpm chatbot:prepare builds the package, packages demo sources, syncs controlled runtime dependencies, builds Embedded Host, installs/builds two genuine demo plugins through Docker Builder, then exports/copies package, manifest, Host and artifacts into with-agent-ui. Package-only builds do not compile plugins; a complete plugin release requires Docker.
 
@@ -21,7 +21,7 @@ Preparation uses Node 24, pnpm 10.32.1, Python 3 and Docker. Builds fail closed 
 ```text
 examples/chatbot-comparison/with-agent-ui/
   package.json + package-lock.json
-  vendor/enterprise-agent-ui-0.1.0.tgz
+  vendor/enterprise-agent-ui-0.2.0.tgz
   release/
     host/                  HTML, Host bundles, runtime.css, controlled dependencies
     artifacts/{buildId}/   plugin.js, validator.js, optional plugin.css
@@ -105,7 +105,7 @@ Credential isolation does not hide data deliberately passed to a plugin. Supply 
 
 | Piece | Current paired version |
 | --- | --- |
-| npm package / Embedded Host | 0.1.0 / 0.1.0 |
+| npm package / Embedded Host | 0.2.0 / 0.2.0 |
 | Embed transport | enterprise-agent-ui/1 |
 | Official wire | 1.0 |
 | Official Core / React Renderer | 0.15.0 / 0.15.0 |

@@ -5,7 +5,7 @@
 第一次建议直接运行 [Demo 的准备流程](library-deployment.zh-CN.md)。在当前仓库完成构建后，把 `.tgz` 和整套 `release/` 交给现有 Chatbot 项目。不要只复制插件 TSX。以下命令在消费者项目根目录执行：
 
 ```sh
-npm install ./vendor/enterprise-agent-ui-0.1.0.tgz
+npm install ./vendor/enterprise-agent-ui-0.2.0.tgz
 ```
 
 前端需要 React 19；参考 Demo 使用 Node 24、ESM、TypeScript strict。包未发布到公共 npm registry，不能假定 `npm install @enterprise/agent-ui` 能获取当前交付版本。前后端拆仓时在各自项目安装本地包；后端只导入 `/server` 与 `/protocol` 即可。

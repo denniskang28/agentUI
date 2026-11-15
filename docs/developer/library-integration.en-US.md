@@ -5,7 +5,7 @@
 Start with the [demo preparation flow](library-deployment.en-US.md). Deliver the built `.tgz` and complete `release/` to your chatbot project, rather than copying plugin TSX. In the consumer project:
 
 ```sh
-npm install ./vendor/enterprise-agent-ui-0.1.0.tgz
+npm install ./vendor/enterprise-agent-ui-0.2.0.tgz
 ```
 
 Frontend consumers supply React 19. The reference demo uses Node 24, ESM and strict TypeScript. This delivery is local, not a public registry publication; do not assume a bare registry install retrieves it. Separate frontend/backend projects each install the package; a server needs only `/server` and `/protocol`.

@@ -1,5 +1,15 @@
 # Convenience templates and full A2UI
 
+## Choose an input format in Playground
+
+Keep Component templates / Custom response as the content source, and select A2UI / Library templates separately under Input format. The component form and scenarios generate either official messages or genuine template.create / template.patch inputs. Library inputs pass through the Adapter before the official Runtime renders them. Custom responses can use any discovered template, multiple Surfaces and create/patch/delete operations, independently of the selected gallery component. Template JSON and custom JSON have separate drafts for each format; deliberately empty drafts are retained.
+
+A2UI accepts official messages. Library accepts one UiInput, an input array, one UiBatch, a batch array, or JSONL with one object per line. Plain UiInput records receive generated sequential envelopes. Explicit batches must share a runId and use valid firstSequence and immutable batchId values. Select the format explicitly; runtime configuration stays separate. An exported ui-input.json contains config, intervalMs and batches: paste its batches field into the input editor and apply the accompanying configuration separately.
+
+Validate and Render both call Playground POST /api/v1/library/compile, which validates the entire sequence using a temporary server-side Adapter and disposes it. This is a development compile endpoint, not a production business session API; it never executes uploaded scripts. Limits are 1000 inputs and 2 MB request/compiled output. Playback pauses, resumes and steps through input batches, each of which may produce several official messages. The inspector shows the actual official messages and Surface state. Existing external Agent preview sessions keep the A2UI message contract.
+
+Library draft exports retain the inputs and batch identities; generated Node/React examples use the actual input runId. Preview exports include only executed steps. When Mock Actions add official updates, preview export preserves the actual raw messages so business results are retained. Native / Sandbox remains an independent execution isolation choice.
+
 ## Shared batch envelope
 
 Both inputs use UiBatch: `protocol:"enterprise-agent-ui/1"`, the Adapter's runId, an immutable batchId, continuous firstSequence beginning at 1, and an inputs array. Inputs may mix command types. Each input occupies one sequence number regardless of generated message count.

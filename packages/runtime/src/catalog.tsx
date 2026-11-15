@@ -1,3 +1,5 @@
+import type { ThemeTokens } from "../../protocol/src/appearance";
+import { themeCss, AppearanceNode } from "./appearance";
 import { browserId } from "../../protocol/src/browser-id";
 import { PluginAssetOrigin } from "./asset-origin";
 import {
@@ -80,10 +82,18 @@ function withPolicy(
       rawData === undefined
         ? props
         : { ...props, props: { ...props.props, data } };
+    const view = (
+      <AppearanceNode
+        surfaceId={props.context.dataContext.surface?.id ?? ""}
+        componentId={props.context.componentModel.id}
+      >
+        <View {...resolved} />
+      </AppearanceNode>
+    );
     return (
       <ComponentPolicy context={props.context} data={data} validate={validate}>
         {measuredPlugin ? (
-          <View {...resolved} />
+          view
         ) : (
           <CommitProbe
             target={{
@@ -91,7 +101,7 @@ function withPolicy(
               componentId: props.context.componentModel.id,
             }}
           >
-            <View {...resolved} />
+            {view}
           </CommitProbe>
         )}
       </ComponentPolicy>
@@ -266,13 +276,43 @@ function Chart({
   dispatch: (name: string, context: Record<string, unknown>) => void;
 }) {
   const ref = useRef<HTMLDivElement>(null);
+  const environment = useRuntimeEnvironment();
+  const latest = useRef({ data, dispatch });
+  latest.current = { data, dispatch };
   useEffect(() => {
     if (!ref.current) return;
     const chart = echarts.init(ref.current);
+    chart.on("click", (event) =>
+      latest.current.dispatch(
+        latest.current.data.clickAction ?? "chart.select",
+        { dataIndex: event.dataIndex, name: event.name, value: event.value },
+      ),
+    );
+    const observer = new ResizeObserver(() => chart.resize());
+    observer.observe(ref.current);
+    return () => {
+      observer.disconnect();
+      chart.dispose();
+    };
+  }, []);
+  useEffect(() => {
+    if (!ref.current) return;
+    const chart = echarts.getInstanceByDom(ref.current);
+    if (!chart) return;
+    const textStyle = getComputedStyle(ref.current.parentElement!);
     const items = data.items ?? [];
     const type = data.chartType ?? "bar";
     chart.setOption({
-      color: ["#148a7d", "#82bdb3", "#b9d8d0"],
+      color: [
+        environment.themeTokens?.brand ?? "#148a7d",
+        "#82bdb3",
+        "#b9d8d0",
+      ],
+      textStyle: {
+        fontFamily: textStyle.fontFamily,
+        fontSize: parseFloat(textStyle.fontSize),
+        color: textStyle.color,
+      },
       tooltip: {},
       grid: { left: 32, right: 12, top: 24, bottom: 28 },
       ...(type === "pie"
@@ -295,20 +335,12 @@ function Chart({
         },
       ],
     });
-    chart.on("click", (event) =>
-      dispatch(data.clickAction ?? "chart.select", {
-        dataIndex: event.dataIndex,
-        name: event.name,
-        value: event.value,
-      }),
-    );
-    const observer = new ResizeObserver(() => chart.resize());
-    observer.observe(ref.current);
-    return () => {
-      observer.disconnect();
-      chart.dispose();
-    };
-  }, [data]);
+  }, [
+    data,
+    environment.theme,
+    environment.themeTokens,
+    environment.componentAppearances,
+  ]);
   return (
     <div>
       <h3>{data.title}</h3>
@@ -568,6 +600,7 @@ export async function makeCatalogs(
                 data={props.data}
                 mode={environment.runtimeMode}
                 theme={environment.theme}
+                themeTokens={environment.themeTokens}
                 locale={locale}
                 dispatch={(name, payload) =>
                   void context.dispatchAction({
@@ -613,6 +646,8 @@ export async function makeCatalogs(
 }
 interface PluginEnvironment {
   locale: string;
+  theme?: string;
+  themeTokens?: ThemeTokens;
   requestId?: string;
   onError?: (error: string) => void;
   onProbe?: (detail: {
@@ -641,6 +676,7 @@ function PluginMount({
   data,
   mode,
   theme,
+  themeTokens,
   locale,
   dispatch,
   onError,
@@ -651,6 +687,7 @@ function PluginMount({
   data: unknown;
   mode: "native" | "sandbox";
   theme: string;
+  themeTokens?: ThemeTokens;
   locale: string;
   dispatch: (name: string, context?: Record<string, unknown>) => void;
   onError: (error: string) => void;
@@ -670,6 +707,7 @@ function PluginMount({
     onError,
     locale,
     theme,
+    themeTokens,
     requestId,
     probe,
     surfaceId,
@@ -681,6 +719,7 @@ function PluginMount({
     onError,
     locale,
     theme,
+    themeTokens,
     requestId,
     probe,
     surfaceId,
@@ -757,6 +796,8 @@ function PluginMount({
             dispatchAllowed,
             {
               locale: latest.current.locale,
+              theme: latest.current.theme,
+              themeTokens: latest.current.themeTokens,
               onError: fail,
               requestId: latest.current.requestId,
               onProbe,
@@ -775,7 +816,7 @@ function PluginMount({
       const pluginStyles = entry.stylesheetUrl
         ? `<link rel="stylesheet" href="${entry.stylesheetUrl.replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;")}">`
         : "";
-      frame.srcdoc = `<!doctype html><html data-theme="${theme}"><head><meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline' ${assetOrigin}; style-src 'unsafe-inline' ${assetOrigin}; connect-src 'none'; img-src data:; font-src 'none'; form-action 'none'; base-uri 'none'"><link rel="stylesheet" href="${assetOrigin}/runtime.css">${pluginStyles}</head><body style="margin:0"><div id="plugin"></div><script type="module">const loading=import(${safeUrl}).then(module=>({mount:module.mount})).catch(error=>({error:String(error)}));let port,instance,contentCommitted=false,inputAt;addEventListener('click',()=>{inputAt=performance.timeOrigin+performance.now()},true);function reportSize(){if(document.body.scrollHeight>0)contentCommitted=true;if(contentCommitted)port?.postMessage({nonce:${JSON.stringify(nonce)},type:'resize',height:document.body.scrollHeight})}addEventListener('message',e=>{if(e.source!==parent||e.data?.nonce!==${JSON.stringify(nonce)}||!e.ports[0]||port)return;port=e.ports[0];port.onmessage=async e=>{try{const m=e.data;if(m.nonce!==${JSON.stringify(nonce)})return;if(m.type==='update'){const loaded=await loading;if(!loaded.mount){port.postMessage({nonce:${JSON.stringify(nonce)},type:'error',message:'PLUGIN_LOAD_ERROR: '+loaded.error});return}document.documentElement.dataset.theme=m.theme;if(instance)instance.update(m.data,{locale:m.locale,requestId:m.requestId});else instance=loaded.mount(document.getElementById('plugin'),m.data,(name,context)=>{port.postMessage({nonce:${JSON.stringify(nonce)},type:'action',name,context,inputAt});inputAt=undefined},{locale:m.locale,requestId:m.requestId,onProbe:detail=>port.postMessage({nonce:${JSON.stringify(nonce)},type:'probe',...detail}),onCommit:()=>{contentCommitted=true;reportSize()},onError:message=>port.postMessage({nonce:${JSON.stringify(nonce)},type:'error',message})});}if(m.type==='dispose'){instance?.unmount();port.close()}}catch(error){port.postMessage({nonce:${JSON.stringify(nonce)},type:'error',message:String(error)})}};port.postMessage({nonce:${JSON.stringify(nonce)},type:'ready'})});parent.postMessage({type:'sandbox.ready',nonce:${JSON.stringify(nonce)}},'${assetOrigin}');addEventListener('error',e=>port?.postMessage({nonce:${JSON.stringify(nonce)},type:'error',message:e.message}));new ResizeObserver(reportSize).observe(document.body);</script></body></html>`;
+      frame.srcdoc = `<!doctype html><html data-theme="${theme}"><head><meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline' ${assetOrigin}; style-src 'unsafe-inline' ${assetOrigin}; connect-src 'none'; img-src data:; font-src 'none'; form-action 'none'; base-uri 'none'"><link rel="stylesheet" href="${assetOrigin}/runtime.css">${pluginStyles}</head><body style="margin:0"><div id="plugin"></div><script type="module">const loading=import(${safeUrl}).then(module=>({mount:module.mount})).catch(error=>({error:String(error)}));let port,instance,contentCommitted=false,inputAt;const themeStyle=document.createElement("style");document.head.append(themeStyle);addEventListener('click',()=>{inputAt=performance.timeOrigin+performance.now()},true);function reportSize(){if(document.body.scrollHeight>0)contentCommitted=true;if(contentCommitted)port?.postMessage({nonce:${JSON.stringify(nonce)},type:'resize',height:document.body.scrollHeight})}addEventListener('message',e=>{if(e.source!==parent||e.data?.nonce!==${JSON.stringify(nonce)}||!e.ports[0]||port)return;port=e.ports[0];port.onmessage=async e=>{try{const m=e.data;if(m.nonce!==${JSON.stringify(nonce)})return;if(m.type==='update'){const loaded=await loading;if(!loaded.mount){port.postMessage({nonce:${JSON.stringify(nonce)},type:'error',message:'PLUGIN_LOAD_ERROR: '+loaded.error});return}document.documentElement.dataset.theme=m.theme;themeStyle.textContent=m.themeCss;if(instance)instance.update(m.data,{locale:m.locale,theme:m.theme,themeTokens:m.themeTokens,requestId:m.requestId});else instance=loaded.mount(document.getElementById('plugin'),m.data,(name,context)=>{port.postMessage({nonce:${JSON.stringify(nonce)},type:'action',name,context,inputAt});inputAt=undefined},{locale:m.locale,theme:m.theme,themeTokens:m.themeTokens,requestId:m.requestId,onProbe:detail=>port.postMessage({nonce:${JSON.stringify(nonce)},type:'probe',...detail}),onCommit:()=>{contentCommitted=true;reportSize()},onError:message=>port.postMessage({nonce:${JSON.stringify(nonce)},type:'error',message})});}if(m.type==='dispose'){instance?.unmount();port.close()}}catch(error){port.postMessage({nonce:${JSON.stringify(nonce)},type:'error',message:String(error)})}};port.postMessage({nonce:${JSON.stringify(nonce)},type:'ready'})});parent.postMessage({type:'sandbox.ready',nonce:${JSON.stringify(nonce)}},'${assetOrigin}');addEventListener('error',e=>port?.postMessage({nonce:${JSON.stringify(nonce)},type:'error',message:e.message}));new ResizeObserver(reportSize).observe(document.body);</script></body></html>`;
       const onMessage = (event: MessageEvent) => {
         if (
           event.source !== frame?.contentWindow ||
@@ -797,6 +838,8 @@ function PluginMount({
               data: latest.current.data,
               locale: latest.current.locale,
               theme: latest.current.theme,
+              themeTokens: latest.current.themeTokens,
+              themeCss: themeCss(latest.current.themeTokens, "html[data-theme]"),
               requestId: latest.current.requestId,
             });
           else if (m.type === "action" && typeof m.name === "string")
@@ -828,7 +871,7 @@ function PluginMount({
     };
   }, [entry.bundleUrl, mode]);
   useEffect(() => {
-    mounted.current?.update(data, { locale, requestId });
+    mounted.current?.update(data, { locale, theme, themeTokens, requestId });
     port.current?.postMessage({
       nonce: nonceRef.current,
       type: "update",
@@ -836,8 +879,10 @@ function PluginMount({
       data,
       locale,
       theme,
+      themeTokens,
+      themeCss: themeCss(themeTokens, "html[data-theme]"),
     });
-  }, [data, locale, theme, requestId]);
+  }, [data, locale, theme, themeTokens, requestId]);
   useEffect(() => {
     if (mountError) {
       mounted.current?.unmount();

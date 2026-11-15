@@ -94,3 +94,26 @@ Playground 的内置初始列表仅作接口加载前的回退，不能在一次
 ## 2026-11-14 — Public repository boundary
 
 Keep deployment instances and raw operational/visual evidence in the ignored local `.private/` area. Preserve source fixtures, capture scripts, general deployment examples and the original reference ZIP. Use reserved example addresses in deployment tests. Rewrite local history to remove internal deployment records, generated evidence and personal email metadata; retain the recovery bundle and commit mapping only in the private area. Existing local aliases preserve deployment and evidence commands.
+
+## 2026-11-15 — Library experience configuration
+
+Theme tokens and per-Surface/component appearance are strictly validated project RunConfig fields, not extra Basic Catalog properties. Shared Runtime boundaries keep the same React children mounted. Unconfigured values preserve existing CSS. Unknown plugins expose container capabilities only; global theme tokens cross the Sandbox boundary explicitly. Theme values accept hexadecimal colors to avoid self-reference. Library and static Host move together to 0.2.0; actual public-consumer verification subsequently passed as recorded below.
+
+## 2026-11-15 — Library experience verified design
+
+The configuration contract above is implemented. Public-consumer verification now passes with the real 0.2.0 tarball and matching compiled Host. Draft exports combine draft data/config; preview exports use actual sent messages, the captured template/version and applied configuration. Subsequent streamed steps retain raw wire messages to avoid guessing convenience-patch semantics. Node output is an offline preprocessing script; a live backend owns one Adapter per run, authorizes full Actions and assigns fresh IDs/sequences to results. React applies returned normalized batches, reconnects/replays and cleans up its Client. Generated files use only package exports.
+
+Appearance is applied inside the policy boundary around the actual View; an earlier outer wrapper did not reach the real DOM and was corrected. ECharts now retains its instance on data/theme changes. Host resize observes intrinsic `#root` content instead of the viewport-sized document, allowing growth and shrinkage after appearance changes. Screenshot capture must additionally wait for computed styles and resize/paint completion; an immediate capture could retain a partly painted older size despite correct eventual DOM.
+
+The theme panel has an internal close control and a viewport-bound scroll region. Unset color controls explicitly show inheritance; a custom picker appears only after selecting a custom value. Theme font-size/radius controls share the schema's narrower limits. Complex nodes use Surface/component IDs encoded as a pair, preserving drafts without path collisions. No arbitrary CSS editor, remote font loader or plugin execution in the main application was introduced.
+
+## 2026-11-16 — Playground response draft ownership
+
+Local custom-response JSON belongs to the selected component draft, independently of its generated or edited template JSON. Seed it from that component's current template only when undefined; an intentionally empty draft is valid editor state. External Agent JSON remains session-owned. Merge patches into the latest draft so an asynchronous file read cannot replace unrelated later edits. Select import mode immediately, while applying the eventual content to the component that started the import. Selecting an already active scenario is a no-op; restoring template examples clears every scenario JSON override.
+
+
+## 2026-11-16 — Two sources and two input formats
+
+Preserve the existing Component templates / Custom response distinction. Add A2UI / Library templates as an independent format selector shared by both sources. Generate convenience inputs from known scenario operations; preserve custom inputs verbatim as validated batches. Explicit batch envelopes keep their own run ID, order and deduplication rules. A temporary server-side AgentUiAdapter compiles the entire sequence through genuine Core and is always disposed. Playback sends each compiled batch and its validated component policies atomically to the isolated Preview Host; compiled policies survive mode replay. There is no uploaded JavaScript in the editor and no alternate business renderer.
+
+Format-specific template and custom drafts remain independent, including empty and invalid source text. Form edits invalidate only the active format's manual override. The JSON editor supports batch pause/step controls. Library exports keep original inputs and actual run IDs, with only sent batches for a preview snapshot; if later Mock updates differ from the original input history, export actual raw messages instead of silently dropping Action results. Appearance node discovery for Library JSON comes from actual compilation. Invalid Library drafts block copy/download until compilation succeeds. Existing external Agent sessions remain raw A2UI.

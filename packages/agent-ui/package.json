@@ -1,6 +1,6 @@
 {
   "name": "@enterprise/agent-ui",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "type": "module",
   "description": "Embedded A2UI transport, template adapter and isolated React host client",
   "files": [

@@ -88,3 +88,22 @@ Reference is the six-dimension insurance card approved in this chat: teal score 
 artifacts/capability/visual contains 12 actual screenshots at 1440×900 / 1280×800 / 375×812, both locales and themes, plus configured-chart-only-1440.png showing custom colors and hidden breakdown. All use the same fictional input. Business labels remain verbatim in English mode; platform labels translate. Browser checks find no component horizontal overflow and verify independent display switches. Mobile uses existing Preview tab/scroll regions.
 
 Inspected full-size Chinese desktop light and English mobile dark against the approved card for colors, spacing, labels and layout. artifacts/capability/consumer/installed-host.png also shows the genuine installed Library + static Host with custom colors and centered chart. No similarity percentage or fabricated English reference is claimed.
+
+## 2026-11-15 — Library experience visual evidence
+
+`artifacts/library-experience/visual/` contains 60 fixed viewport screenshots: content, appearance, preview-theme panel, Library code export and the bilingual appearance guide, at 1440×900 / 1280×800 / 375×812, both locales and light/dark. `report.json` records real viewport/document/dialog/footer geometry. Four review sheets index the matrix. Six unchanged original-reference Text states use the same Chinese business text, dimensions and themes; `review/` contains unmasked difference images, side-by-side comparisons and raw channel differences. These differences are review aids, not a fidelity percentage. No regions are excluded. No English reference is invented.
+
+Reviewed the matrix sheets and full-size enlarged Text, narrow theme panel/export/guide, plus original-reference comparisons. Added content/appearance tabs, node selection, theme toolbar/panel, three Library export tabs and the seventh bilingual guide are intentional scope additions. Existing grid, tokens, card outlines and local scrolling remain. Actual SDK/component versions, installed plugin count, one genuine Text message instead of prototype mock counts, language controls and the earlier MVP changes are documented allowed differences. The unchanged reference is waited to its rendered Text state rather than compared while its mock loader is visible.
+
+Visual review found and fixed a narrow-screen panel whose original toggle could be covered, misleading default color swatches, and Host height sizing after text growth. A second apparent text clipping was traced to capturing before computed-style/resize/paint completion; capture now waits for the actual updated DOM and frame geometry. Reset/inheritance and state retention are checked separately by browser tests. The final matrix has no root-document horizontal overflow and no dialog/footer outside the viewport. Tall configuration panels and long code remain locally scrollable; this does not claim every field is simultaneously visible.
+
+Four actual uploaded-plugin captures under `artifacts/library-experience/plugins/` cover both demos in Native/Sandbox after font/brand/mode/container changes. The independent consumer's template-action/raw/streaming screenshots live under `artifacts/library-experience/consumer/`. These have no corresponding original ZIP state and are reviewed as new functional evidence, not pixel matches.
+
+Reproduce with `pnpm reference`, `pnpm dev`, prepared real demo ZIPs, `pnpm exec tsx scripts/capture-library-experience.ts` and `python scripts/review-library-experience.py` (Pillow required for evidence only). Original ZIP SHA256 remains `7b1e5d5f71577e61a8b947dd05903c75da318761a45f48d047af3eb2d78a6b5a`; neither ZIP nor `.reference` was edited. Generated operational evidence stays ignored locally.
+
+
+## 2026-11-16 — 输入来源与输入格式
+
+保留原参考的“组件模板 / 自定义响应”入口和三栏框架，按用户新要求在其下增加“A2UI / Library 便捷模板”格式选择。此项是明确授权的新增入口，不改写原 ZIP 或 .reference。模板模式展示场景、内容／外观和对应格式 JSON；自定义模式保留完整编辑入口。
+
+实际检查中文与英文 × 1440×900、1280×900、375×812 × 模板／自定义共 12 张固定视口图，位于 `artifacts/library-experience/input-formats/`；格式按钮边界、编辑器可见性及根页面横向溢出检查通过。人工查看桌面中文和窄屏英文图：两层入口可区分，JSON 在自己的编辑区滚动，窄屏底部按钮换行且可见。另在应用浏览器完成 Library template.create → 真实 Text 渲染，保存 `live-library-render.png`。没有将截图数量或差异当作还原率／性能指标。

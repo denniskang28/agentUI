@@ -22,11 +22,24 @@ test("both mobile applications keep approval controls and horizontally scrolled 
       port === 5180
         ? page
         : host.frameLocator('iframe[title="Risk Heatmap Sandbox"]');
-    await risk
-      .getByRole(port === 5180 ? "button" : "gridcell", {
-        name: `Singapore ${port === 5180 ? "运营" : "操作"} 29`,
-      })
-      .click();
+    const cell = risk.getByRole(port === 5180 ? "button" : "gridcell", {
+      name: `Singapore ${port === 5180 ? "运营" : "操作"} 29`,
+    });
+    if (port === 5181) {
+      await page
+        .locator('iframe[title="Agent UI"]')
+        .evaluate((node) => node.scrollIntoView({ block: "end" }));
+      await risk.getByRole("grid").evaluate((node) => {
+        node.scrollLeft = node.scrollWidth;
+      });
+      await page.evaluate(
+        () =>
+          new Promise<void>((resolve) =>
+            requestAnimationFrame(() => requestAnimationFrame(() => resolve())),
+          ),
+      );
+    }
+    await cell.click();
     const detail =
       port === 5180
         ? page.locator(".detail")

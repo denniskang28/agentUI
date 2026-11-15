@@ -44,7 +44,7 @@ test("SSE reconnect recovers missed Agent messages without creating duplicate Su
       .getByRole("textbox", { name: "审批意见" }),
   ).toBeVisible();
   const sessionId = await page.evaluate(() =>
-    localStorage.getItem("conversation"),
+    localStorage.getItem("conversation:with-agent-ui"),
   );
   const session = (await (
     await request.get(`http://localhost:5181/api/session?id=${sessionId}`)

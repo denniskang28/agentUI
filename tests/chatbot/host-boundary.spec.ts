@@ -6,7 +6,10 @@ test("the real static Host rejects incompatible manifests and unapproved asset o
 }) => {
   const manifest = (await (
     await request.get("http://127.0.0.1:4183/manifest.json")
-  ).json()) as { entries: { pluginId?: string; bundleUrl?: string }[] };
+  ).json()) as {
+    hostVersion: string;
+    entries: { pluginId?: string; bundleUrl?: string }[];
+  };
   await page.goto("http://localhost:5181/host-probe");
   await page.evaluate(() => {
     const frame = document.createElement("iframe");
@@ -46,7 +49,7 @@ test("the real static Host rejects incompatible manifests and unapproved asset o
       "http://127.0.0.1:4183",
       [channel.port2],
     );
-    const send = (value: unknown) =>
+    const send = (value: unknown, hostVersion = manifest.hostVersion) =>
       new Promise<{ type: string; runId: string; message?: string }>(
         (resolve, reject) => {
           const timeout = setTimeout(
@@ -62,7 +65,7 @@ test("the real static Host rejects incompatible manifests and unapproved asset o
           channel.port1.postMessage({
             type: "init",
             protocol: "enterprise-agent-ui/1",
-            hostVersion: "0.1.0",
+            hostVersion,
             runId: "probe_run",
             manifest: value,
           });
@@ -74,9 +77,10 @@ test("the real static Host rejects incompatible manifests and unapproved asset o
       invalid.entries.find((entry) => entry.pluginId)!.bundleUrl =
         "http://localhost:5181/unapproved.js";
       const badAsset = await send(invalid);
+      const incompatibleHost = await send(manifest, "0.1.0");
       const connected = await send(manifest);
       channel.port1.postMessage({ type: "dispose", runId: "probe_run" });
-      return [badVersion, badAsset, connected];
+      return [badVersion, badAsset, connected, incompatibleHost];
     } finally {
       channel.port1.close();
     }
@@ -85,6 +89,8 @@ test("the real static Host rejects incompatible manifests and unapproved asset o
   expect(messages[1]).toMatchObject({ type: "error", runId: "probe_run" });
   expect(messages[1].message).toContain("ASSET_ORIGIN");
   expect(messages[2]).toMatchObject({ type: "connected", runId: "probe_run" });
+  expect(messages[3].type).toBe("error");
+  expect(messages[3].message).toContain("HOST_VERSION");
 });
 
 test("CSP blocks embedding under an origin outside the exact parent allowlist", async ({

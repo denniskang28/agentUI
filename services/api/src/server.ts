@@ -1,3 +1,5 @@
+import { AgentUiAdapter } from "../../../packages/agent-ui/src/server";
+import { parseLibrarySource } from "../../../packages/agent-ui/src/playground-input";
 import { mainOrigin, previewOrigin, publicApiUrl } from "./deployment";
 import Fastify from "fastify";
 import cors from "@fastify/cors";
@@ -227,6 +229,54 @@ export async function createServer() {
       ...result,
       scenario: { renderPolicy: result.renderPolicy, readyWhen: "/ready" },
     };
+  });
+  app.post("/api/v1/library/compile", (req) => {
+    const { text } = z
+      .object({ text: z.string().min(1) })
+      .strict()
+      .parse(req.body);
+    const batches = parseLibrarySource(text);
+    if (batches.reduce((count, batch) => count + batch.inputs.length, 0) > 1000)
+      throw new ApiError(
+        413,
+        "LIBRARY_INPUT_LIMIT",
+        "Sequence exceeds 1000 inputs",
+      );
+    const adapter = new AgentUiAdapter(batches[0].runId, entries());
+    try {
+      let outputBytes = Buffer.byteLength(JSON.stringify(batches)) + 64;
+      let currentPolicies =
+        {} as import("../../../packages/protocol/src/index").RunConfig["componentPolicies"];
+      const steps = batches.map((batch, index) => {
+        try {
+          const result = adapter.apply(batch);
+          if (!result.replay) currentPolicies = result.componentPolicies;
+          const step = {
+            messages: result.replay ? [] : result.messages,
+            componentPolicies: currentPolicies,
+          };
+          outputBytes += Buffer.byteLength(JSON.stringify(step));
+          if (outputBytes > 2_000_000)
+            throw new ApiError(
+              413,
+              "COMPILED_OUTPUT_LIMIT",
+              "Compiled sequence exceeds 2 MB",
+            );
+          return step;
+        } catch (error) {
+          if (error instanceof ApiError) throw error;
+          const e = error as Error & { code?: string; details?: unknown };
+          throw new ApiError(
+            422,
+            e.code ?? "INVALID_LIBRARY_INPUT",
+            `Batch ${index + 1}: ${e.message}${e.details ? " " + JSON.stringify(e.details) : ""}`,
+          );
+        }
+      });
+      return { batches, steps };
+    } finally {
+      adapter.dispose();
+    }
   });
   app.post("/api/v1/messages/validate", (req) => {
     const body = validationRequestSchema.parse(req.body);

@@ -29,6 +29,7 @@
     "chatbot:test": "playwright test --config playwright.chatbot.config.ts",
     "chatbot:consumer": "tsx scripts/verify-chatbot-consumers.ts",
     "chatbot:visual": "tsx scripts/capture-chatbot-matrix.ts",
+    "library:experience:verify": "tsx scripts/verify-library-experience.ts",
     "docs:verify": "tsx scripts/verify-library-guides.ts",
     "capability:consumer": "tsx artifacts/capability/verify-consumer.ts",
     "chatbot:demo": "tsx scripts/run-chatbot-demos.ts"
