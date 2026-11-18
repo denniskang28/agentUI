@@ -51,3 +51,5 @@ For existing chatbot integration, follow these six guides, also available in Pla
 | 打包部署 / Deployment | [中文](../../../docs/developer/library-deployment.zh-CN.md) | [English](../../../docs/developer/library-deployment.en-US.md) |
 
 [全部文档 / All documentation](../../../docs/developer/README.md)
+
+MCP Apps is an independent second channel. After `pnpm chatbot:prepare` from the repository root and a fresh `npm ci`, set server-side `MCP_SERVERS_JSON` to controlled endpoints and click **MCP App** (or send `/mcp`). The backend executes once and attaches the existing result; React uses the same installed Host library. A2UI cards remain in the same conversation. The local demo endpoint requires `pnpm mcp:demo` in another terminal. See [中文接入](../../../docs/developer/mcp-apps-host.md) / [English integration](../../../docs/developer/mcp-apps-host.en-US.md).

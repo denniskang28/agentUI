@@ -240,6 +240,9 @@ export function App() {
               </label>
             </div>
           )}
+          <button disabled={!session} onClick={() => void chat("/mcp")}>
+            MCP App
+          </button>
           <small className="identity">{t("permission")}</small>
           <details className="developer">
             <summary>{t("debug")}</summary>
@@ -284,7 +287,9 @@ export function App() {
               <UiPanel
                 key={`${session.runId}:${runtimeMode}`}
                 session={session}
-                events={current.filter((event) => event.type === "ui")}
+                events={current.filter(
+                  (event) => event.type === "ui" || event.type === "mcp",
+                )}
                 locale={locale}
                 theme={theme}
                 runtimeMode={runtimeMode}

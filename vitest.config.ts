@@ -1,7 +1,7 @@
 import { defineConfig } from "vitest/config";
 export default defineConfig({
   test: {
-    include: ["tests/unit/**/*.test.ts", "tests/integration/**/*.test.ts"],
+    include: ["tests/unit/**/*.test.ts", "tests/integration/**/*.test.ts", "packages/mcp-apps-host/test/**/*.test.ts"],
     testTimeout: 15000,
   },
 });

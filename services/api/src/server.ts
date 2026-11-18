@@ -1,3 +1,4 @@
+import { installMcpRoutes, configuredMcpServers } from './mcp/routes';
 import { AgentUiAdapter } from "../../../packages/agent-ui/src/server";
 import { parseLibrarySource } from "../../../packages/agent-ui/src/playground-input";
 import { mainOrigin, previewOrigin, publicApiUrl } from "./deployment";
@@ -49,6 +50,7 @@ export async function createServer() {
   await app.register(multipart, {
     limits: { fileSize: 5_000_000, files: 1, fields: 12 },
   });
+  await installMcpRoutes(app, configuredMcpServers());
   const registry = new PluginRegistry();
   await registry.load();
   const catalogs = () => registry.catalogs();

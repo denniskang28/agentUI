@@ -107,3 +107,13 @@ Reproduce with `pnpm reference`, `pnpm dev`, prepared real demo ZIPs, `pnpm exec
 保留原参考的“组件模板 / 自定义响应”入口和三栏框架，按用户新要求在其下增加“A2UI / Library 便捷模板”格式选择。此项是明确授权的新增入口，不改写原 ZIP 或 .reference。模板模式展示场景、内容／外观和对应格式 JSON；自定义模式保留完整编辑入口。
 
 实际检查中文与英文 × 1440×900、1280×900、375×812 × 模板／自定义共 12 张固定视口图，位于 `artifacts/library-experience/input-formats/`；格式按钮边界、编辑器可见性及根页面横向溢出检查通过。人工查看桌面中文和窄屏英文图：两层入口可区分，JSON 在自己的编辑区滚动，窄屏底部按钮换行且可见。另在应用浏览器完成 Library template.create → 真实 Text 渲染，保存 `live-library-render.png`。没有将截图数量或差异当作还原率／性能指标。
+
+## 2026-11-18 — MCP Apps Host
+
+Added MCP Apps as a fifth navigation entry with the existing tokens, buttons and responsive workbench layout. It is a new page without an original ZIP counterpart. The existing four pages and Native/Sandbox plugin behavior are covered by the full browser regression; no original reference file was changed. At 375 px, navigation padding was reduced and overflow kept local so all five labels fit. This is an intentional change required by the added entry.
+
+`.private/evidence/mcp-apps/matrix/` holds the actual zh-CN/en-US × light/dark × 1440×900/1280×800/375×812 matrix, additional narrow App states and invalid-JSON states. The script records actual document/panel geometry and rejects root horizontal overflow. Third-party App business labels intentionally stay English in Chinese mode. Manual review covered desktop dark, mobile Chinese light, mobile English dark with App scrolled into view, and error states. Fixed fictional expense data is used; timestamps and IDs are real and not masked.
+
+Visual review fixed unreadable native white form controls in dark mode and a clipped fifth navigation label. Earlier snapshots taken before iframe repaint completed after resize were discarded; the capture now waits for actual DOM and paint, rather than treating incomplete compositor output as a layout defect. The App is vertically scrollable in a narrow workbench; all controls need not fit simultaneously. No similarity/compatibility/performance percentage is inferred from screenshots.
+
+Official quickstart and the independently authored expense App have actual DOM/click evidence. A separate security capture verifies real resource/connect policy and opaque isolation. Clean consumer screenshots include simultaneous A2UI and MCP App, plus development StrictMode/reset. These are functional evidence, not fabricated matches to an English reference. Original ZIP SHA-256 remains unchanged.

@@ -1,0 +1,50 @@
+{
+  "name": "@enterprise/mcp-apps-host",
+  "version": "0.1.0",
+  "type": "module",
+  "files": [
+    "dist/react*",
+    "dist/protocol*",
+    "dist/server*",
+    "dist/gateway.d.ts",
+    "dist/http.d.ts",
+    "dist/panel.d.ts",
+    "dist/sandbox-policy.d.ts",
+    "dist/mcp-sandbox*",
+    "README.md"
+  ],
+  "exports": {
+    "./react": {
+      "types": "./dist/react.d.ts",
+      "import": "./dist/react.js"
+    },
+    "./protocol": {
+      "types": "./dist/protocol.d.ts",
+      "import": "./dist/protocol.js"
+    },
+    "./server": {
+      "types": "./dist/server.d.ts",
+      "import": "./dist/server.js"
+    }
+  },
+  "peerDependencies": {
+    "react": "^19.0.0",
+    "fastify": "^5.0.0"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    },
+    "fastify": {
+      "optional": true
+    }
+  },
+  "dependencies": {
+    "@modelcontextprotocol/client": "2.4.0",
+    "@modelcontextprotocol/ext-apps": "2.0.4",
+    "@modelcontextprotocol/node": "2.1.2",
+    "@modelcontextprotocol/server": "2.4.0",
+    "undici": "7.30.2",
+    "zod": "4.6.7"
+  }
+}

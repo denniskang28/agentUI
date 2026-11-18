@@ -1,0 +1,18 @@
+{
+  "repository": "https://github.com/modelcontextprotocol/ext-apps",
+  "commit": "ea3e9d0e624a20bc1c51310292f09d9b8ed17161",
+  "files": [
+    {
+      "path": "src/mcp-app.ts",
+      "gitBlob": "5780bb706a444b39bc58f18b9db23fd81c90f057"
+    },
+    {
+      "path": "mcp-app.html",
+      "gitBlob": "bf276aa572515fb092e7acc6d626e40c6d3749b0"
+    },
+    {
+      "path": "server.ts",
+      "gitBlob": "7f9e1201f3d2a9fe6e57a22e8d6d986bcabdbbdc"
+    }
+  ]
+}

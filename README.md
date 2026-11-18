@@ -77,3 +77,7 @@ For existing chatbot integration, follow these six guides, also available in Pla
 ## Repository privacy / 仓库隐私
 
 Commit source code and sanitized configuration examples. Keep actual deployment settings, environment files, raw logs, browser traces and recovery archives in the ignored local `.private/` directory. See [the repository privacy guide](docs/repository-privacy.md). Local development and demo preparation do not require private operations files.
+
+## MCP Apps Host
+
+运行 `pnpm mcp:dev`，在 Playground 的 **MCP Apps** 页面连接官方 quickstart 或独立审批示例。独立包 `@enterprise/mcp-apps-host`、Chatbot 双通道和 Java HTTP 接入见 [中文指南](docs/developer/mcp-apps-host.md) / [English guide](docs/developer/mcp-apps-host.en-US.md)。以独立 opaque iframe 运行第三方 App，原 A2UI 通道保持独立。当前只支持受控 Streamable HTTP Server 和 inline 显示；完整范围与验收见 [MCP Apps 验收](docs/mcp-apps-acceptance.md)。

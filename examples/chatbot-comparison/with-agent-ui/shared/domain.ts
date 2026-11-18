@@ -58,7 +58,7 @@ export interface BusinessAction {
 export interface StreamEvent {
   id: number;
   runId: string;
-  type: "text" | "ui" | "trace" | "reset" | "error";
+  type: "text" | "ui" | "mcp" | "trace" | "reset" | "error";
   payload: unknown;
 }
 export interface SessionInfo {

@@ -1,3 +1,9 @@
+import {
+  installMcpRoutes,
+  type McpGateway,
+  type ServerConfig,
+} from "@enterprise/mcp-apps-host/server";
+import type { ConnectionInfo } from "@enterprise/mcp-apps-host/protocol";
 import Fastify from "fastify";
 import fastifyStatic from "@fastify/static";
 import { createServer as createViteServer } from "vite";
@@ -11,7 +17,13 @@ import type { DomainEvent, StreamEvent } from "../shared/domain";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const app = Fastify({ bodyLimit: 2_000_000 });
+const mcpServers = JSON.parse(
+  process.env.MCP_SERVERS_JSON ?? "[]",
+) as ServerConfig[];
+const mcp: McpGateway = await installMcpRoutes(app, mcpServers, "/api/mcp");
 type Session = {
+  mcpConnection?: ConnectionInfo;
+  mcpContext?: unknown;
   id: string;
   user: string;
   runId: string;
@@ -138,6 +150,49 @@ app.post("/api/sessions/:id/chat", async (request, reply) => {
       ? "正在查询风险 / Querying risk"
       : "正在查询 / Querying",
   });
+  if (/^\/mcp(?:\s|$)/i.test(body.text)) {
+    if (!mcpServers.length) throw Error("MCP_NOT_CONFIGURED");
+    const c = session.mcpConnection ?? (await mcp.connect(mcpServers[0].id));
+    session.mcpConnection = c;
+    const tool = c.tools.find(
+      (t) =>
+        (
+          t._meta?.ui as
+            { resourceUri?: string; visibility?: string[] } | undefined
+        )?.resourceUri &&
+        (
+          (t._meta?.ui as { visibility?: string[] })?.visibility ?? ["model"]
+        ).includes("model"),
+    );
+    if (!tool) throw Error("MCP_UI_TOOL_NOT_FOUND");
+    const args = {};
+    const result = await mcp.callForHost(c.id, c.ownerToken, {
+      name: tool.name,
+      arguments: args,
+    });
+    if (session.runId !== run)
+      return reply.code(409).send({ error: "STALE_RUN" });
+    const snapshot = await mcp.attach(
+      c.id,
+      c.ownerToken,
+      {
+        runId: run,
+        requestId: crypto.randomUUID(),
+        tool: tool.name,
+        arguments: args,
+      },
+      result,
+    );
+    if (session.runId !== run) {
+      mcp.destroy(c.id, c.ownerToken, snapshot.id);
+      return reply.code(409).send({ error: "STALE_RUN" });
+    }
+    event(session, "mcp", {
+      connection: { id: c.id, ownerToken: c.ownerToken },
+      appId: snapshot.id,
+    });
+    return reply.code(202).send({ status: "accepted" });
+  }
   void session.orchestrator
     .message(
       body.text,
@@ -179,6 +234,14 @@ app.post("/api/sessions/:id/actions", async (request, reply) => {
 app.post("/api/sessions/:id/reset", (request) => {
   const session = owner((request.params as { id: string }).id);
   const body = z.object({ mode: modeSchema }).strict().parse(request.body);
+  if (session.mcpConnection) {
+    void mcp.disconnect(
+      session.mcpConnection.id,
+      session.mcpConnection.ownerToken,
+    );
+    session.mcpConnection = undefined;
+  }
+  session.mcpContext = undefined;
   session.presenter.dispose();
   session.runId = crypto.randomUUID();
   session.mode = body.mode;
@@ -186,6 +249,55 @@ app.post("/api/sessions/:id/reset", (request) => {
   session.orchestrator = new Orchestrator();
   event(session, "reset", { runId: session.runId, mode: session.mode });
   return { id: session.id, runId: session.runId, mode: session.mode };
+});
+app.post("/api/sessions/:id/mcp-feedback", async (request) => {
+  const session = owner((request.params as { id: string }).id);
+  const body = z
+    .object({
+      runId: z.string(),
+      type: z.enum(["message", "context"]),
+      payload: z.unknown(),
+    })
+    .strict()
+    .parse(request.body);
+  if (body.runId !== session.runId) throw Error("STALE_RUN");
+  if (body.type === "context") {
+    session.mcpContext = body.payload;
+    event(session, "trace", {
+      direction: "MCP App → orchestrator context",
+      payload: body.payload,
+    });
+  } else {
+    const message = z
+      .object({
+        content: z.array(
+          z
+            .object({ type: z.string(), text: z.string().optional() })
+            .passthrough(),
+        ),
+      })
+      .passthrough()
+      .parse(body.payload);
+    const text = message.content
+      .filter((c) => c.type === "text")
+      .map((c) => c.text ?? "")
+      .join("\n")
+      .slice(0, 2000);
+    event(session, "text", { role: "user", text });
+    const run = session.runId;
+    await session.orchestrator.message(
+      text,
+      (output) => emit(session, run, output),
+      (message) => {
+        if (session.runId === run)
+          event(session, "trace", {
+            direction: "MCP App → orchestrator",
+            message,
+          });
+      },
+    );
+  }
+  return { accepted: true };
 });
 app.post("/api/sessions/:id/fail-next", (request) => {
   owner((request.params as { id: string }).id).orchestrator.service.failNext =

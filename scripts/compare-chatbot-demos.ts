@@ -33,6 +33,7 @@ const permitted = new Map([
   ["README.md", "Variant-specific run instructions / 各版本启动说明"],
   ["DEPLOYMENT.md", "Standalone framework deployment / 独立框架部署"],
 ]);
+for(const file of ['server/index.ts','shared/domain.ts','web/App.tsx'])permitted.set(file,'MCP Apps conversation channel and trusted orchestration; existing A2UI business agents unchanged / MCP Apps 会话通道');
 const identical: string[] = [],
   changed: { file: string; reason: string }[] = [],
   unexpected: string[] = [];

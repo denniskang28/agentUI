@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "tsx scripts/sync-runtime-assets.ts && tsx scripts/dev.ts",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run",
+    "test": "pnpm mcp:build && vitest run",
     "test:e2e": "playwright test",
     "build": "tsx scripts/sync-runtime-assets.ts && vite build --config apps/playground/vite.config.ts && vite build --config apps/preview-host/vite.config.ts",
     "lint": "eslint .",
@@ -23,7 +23,7 @@
     "library:build": "tsx scripts/build-agent-ui.ts",
     "setup:demo": "tsx scripts/setup-demo.ts",
     "dev:all": "tsx scripts/run-local-demo.ts",
-    "chatbot:prepare": "pnpm library:build && pnpm demos:package && tsx scripts/sync-runtime-assets.ts && vite build --config apps/embedded-host/vite.config.ts && tsx scripts/export-chatbot-artifacts.ts && tsx scripts/prepare-chatbot-demos.ts",
+    "chatbot:prepare": "pnpm mcp:build && pnpm library:build && pnpm demos:package && tsx scripts/sync-runtime-assets.ts && vite build --config apps/embedded-host/vite.config.ts && tsx scripts/export-chatbot-artifacts.ts && tsx scripts/prepare-chatbot-demos.ts",
     "chatbot:host": "tsx scripts/serve-embedded-host.ts",
     "chatbot:compare": "tsx scripts/compare-chatbot-demos.ts",
     "chatbot:test": "playwright test --config playwright.chatbot.config.ts",
@@ -32,7 +32,12 @@
     "library:experience:verify": "tsx scripts/verify-library-experience.ts",
     "docs:verify": "tsx scripts/verify-library-guides.ts",
     "capability:consumer": "tsx artifacts/capability/verify-consumer.ts",
-    "chatbot:demo": "tsx scripts/run-chatbot-demos.ts"
+    "chatbot:demo": "tsx scripts/run-chatbot-demos.ts",
+    "mcp:build": "tsx scripts/build-mcp-host.ts",
+    "mcp:demo": "pnpm mcp:build && tsx scripts/mcp-demo.ts",
+    "mcp:dev": "pnpm mcp:build && tsx scripts/mcp-dev.ts",
+    "mcp:java": "tsx scripts/verify-mcp-java.ts",
+    "mcp:visual": "tsx scripts/capture-mcp-matrix.ts"
   },
   "pnpm": {
     "onlyBuiltDependencies": [

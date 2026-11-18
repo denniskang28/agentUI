@@ -53,3 +53,5 @@ pnpm exec tsx scripts/capture-library-docs.ts
 The last two commands require running dev servers. docs:verify uses the installed public package, genuine release manifest and official Core to typecheck examples, execute server snippets, apply batches, validate Actions/data and check guide links. It writes artifacts/library-docs/verification.json; screenshots are in artifacts/library-docs/visual/.
 
 - [主题、外观与 Library 导出](library-appearance.zh-CN.md) / [Themes, appearance and Library exports](library-appearance.en-US.md)
+
+MCP Apps Host 双通道 / dual-channel Host: [中文](mcp-apps-host.md) · [English](mcp-apps-host.en-US.md) · [Java HTTP example](../../examples/mcp/java/README.md).

@@ -4,7 +4,7 @@ import path from "node:path";
 import { spawn, type ChildProcess } from "node:child_process";
 import { createHash } from "node:crypto";
 import { get } from "node:http";
-import { chromium } from "@playwright/test";
+import { chromium, expect } from "@playwright/test";
 
 const source = path.resolve("examples/chatbot-comparison");
 const scratch = await realpath(
@@ -140,7 +140,8 @@ try {
     NODE_ENV: "production",
     DEMO_PORT: "5281",
     AGENT_UI_HOST_PORT: "4283",
-    AGENT_UI_PARENT_ORIGINS: "http://localhost:5280,http://localhost:5281",
+    AGENT_UI_PARENT_ORIGINS:
+      "http://localhost:5280,http://localhost:5281,http://localhost:5282",
   });
   start("npm", ["start"], path.join(scratch, "baseline"), {
     NODE_ENV: "production",
@@ -176,6 +177,38 @@ try {
       await ui.getByText("已批准", { exact: true }).first().waitFor();
       await page.reload();
       await ui.getByText("已批准", { exact: true }).first().waitFor();
+      if (variant === "with-agent-ui" && process.env.MCP_SERVERS_JSON) {
+        const before = await fetch("http://127.0.0.1:3002/health").then((r) =>
+          r.json(),
+        );
+        await page
+          .getByRole("button", { name: "MCP App", exact: true })
+          .click();
+        const app = page
+          .frameLocator('iframe[title="MCP App"]')
+          .frameLocator('iframe[title="MCP App View"]');
+        await expect(app.locator("#approval-status")).toContainText("pending");
+        await app.getByRole("button", { name: "Approve", exact: true }).click();
+        await expect(app.locator("#approval-status")).toContainText("approved");
+        await app.getByRole("button", { name: "Send summary" }).click();
+        await expect(
+          page.getByText("Approval reviewed", { exact: true }),
+        ).toBeVisible();
+        await page
+          .getByRole("button", { name: "English", exact: true })
+          .click();
+        await expect(app.locator("#host-context")).toContainText("en-US");
+        const after = await fetch("http://127.0.0.1:3002/health").then((r) =>
+          r.json(),
+        );
+        expect(after.calls - before.calls).toBe(1);
+        await expect(page.locator('iframe[title="Agent UI"]')).toBeVisible();
+        steps.push({
+          name: "MCP-A2UI-coexistence-and-execute-once",
+          passed: true,
+          log: path.join(evidence, `${variant}.png`),
+        });
+      }
       await page.screenshot({
         path: path.join(evidence, `${variant}.png`),
         fullPage: true,
@@ -190,6 +223,54 @@ try {
   } finally {
     await browser.close();
   }
+  if (process.env.MCP_SERVERS_JSON) {
+    start("npm", ["run", "dev"], integrated, {
+      NODE_ENV: "development",
+      DEMO_PORT: "5282",
+      VITE_AGENT_UI_HOST_URL: "http://127.0.0.1:4283",
+    });
+    await health("http://localhost:5282/api/health");
+    const browser = await chromium.launch({ channel: "chromium" });
+    try {
+      const page = await browser.newPage();
+      await page.goto("http://localhost:5282");
+      const before = await fetch("http://127.0.0.1:3002/health").then((r) =>
+        r.json(),
+      );
+      await page.getByRole("button", { name: "MCP App", exact: true }).click();
+      const app = page
+        .frameLocator('iframe[title="MCP App"]')
+        .frameLocator('iframe[title="MCP App View"]');
+      await expect(app.locator("#approval-status")).toContainText("pending");
+      await expect(app.locator("#delivery-order")).toHaveText("input,result");
+      await page.reload();
+      await expect(app.locator("#approval-status")).toContainText("pending");
+      const after = await fetch("http://127.0.0.1:3002/health").then((r) =>
+        r.json(),
+      );
+      expect(after.calls - before.calls).toBe(1);
+      await page.getByRole("button", { name: "新建会话", exact: true }).click();
+      await expect(page.locator('iframe[title="MCP App"]')).toHaveCount(0);
+      steps.push({
+        name: "development-StrictMode-remount-reload-reset-execute-once",
+        passed: true,
+        log: path.join(evidence, "strict-mode.png"),
+      });
+      await page.screenshot({ path: path.join(evidence, "strict-mode.png") });
+    } finally {
+      await browser.close();
+    }
+  }
+  await run(
+    "pnpm",
+    ["exec", "playwright", "test", "--config", "playwright.chatbot.config.ts"],
+    path.resolve("."),
+    {
+      DEMO_TEST_BASELINE_ORIGIN: "http://localhost:5280",
+      DEMO_TEST_INTEGRATED_ORIGIN: "http://localhost:5281",
+      DEMO_TEST_HOST_ORIGIN: "http://127.0.0.1:4283",
+    },
+  );
   passed = true;
 } catch (failure) {
   error = String(failure);
@@ -204,7 +285,7 @@ try {
         /* Already exited. */
       }
   if (children.length) {
-    const ports = [4283, 5280, 5281];
+    const ports = [4283, 5280, 5281, 5282];
     const deadline = Date.now() + 5000;
     let live = true;
     while (live && Date.now() < deadline) {

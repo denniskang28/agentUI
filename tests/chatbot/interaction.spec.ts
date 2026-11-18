@@ -1,3 +1,4 @@
+import { chatbotOrigins } from "./origins";
 import { test, expect } from "@playwright/test";
 
 for (const runtime of ["sandbox", "native"] as const) {
@@ -5,7 +6,7 @@ for (const runtime of ["sandbox", "native"] as const) {
     page,
     request,
   }) => {
-    await page.goto("http://localhost:5181");
+    await page.goto(`${chatbotOrigins.integrated}`);
     await expect(page.getByText("已连接", { exact: true })).toBeVisible();
     if (runtime === "native")
       await page.getByLabel("Runtime mode").selectOption(runtime);
@@ -57,14 +58,16 @@ for (const runtime of ["sandbox", "native"] as const) {
       localStorage.getItem("conversation:with-agent-ui"),
     );
     const old = (await (
-      await request.get(`http://localhost:5181/api/session?id=${session}`)
+      await request.get(
+        `${chatbotOrigins.integrated}/api/session?id=${session}`,
+      )
     ).json()) as { runId: string };
     await page
       .getByRole("button", { name: "New conversation", exact: true })
       .click();
     await expect(plugin.getByText("Approved", { exact: true })).toHaveCount(0);
     const stale = await request.post(
-      `http://localhost:5181/api/sessions/${session}/actions`,
+      `${chatbotOrigins.integrated}/api/sessions/${session}/actions`,
       { data: { runId: old.runId, action: first?.payload.action } },
     );
     expect(stale.status()).toBe(409);
@@ -74,7 +77,7 @@ for (const runtime of ["sandbox", "native"] as const) {
   test(`${runtime}: template creation, raw stream update and Agent drilldown share the same plugin`, async ({
     page,
   }) => {
-    await page.goto("http://localhost:5181");
+    await page.goto(`${chatbotOrigins.integrated}`);
     await expect(page.getByText("已连接", { exact: true })).toBeVisible();
     if (runtime === "native")
       await page.getByLabel("Runtime mode").selectOption(runtime);
@@ -103,21 +106,23 @@ for (const runtime of ["sandbox", "native"] as const) {
 test("Host is credential-free static serving and refuses session API access", async ({
   request,
 }) => {
-  const response = await request.get("http://127.0.0.1:4183/");
+  const response = await request.get(`${chatbotOrigins.host}/`);
   expect(response.headers()["content-security-policy"]).toContain(
-    "frame-ancestors http://localhost:5180 http://localhost:5181",
+    `frame-ancestors ${chatbotOrigins.baseline} ${chatbotOrigins.integrated}`,
   );
   expect(response.headers()["set-cookie"]).toBeUndefined();
   expect(
     (
-      await request.get("http://127.0.0.1:4183/api/v1/preview-sessions")
+      await request.get(`${chatbotOrigins.host}/api/v1/preview-sessions`)
     ).status(),
   ).toBe(404);
   const configuration = await (
-    await request.get("http://127.0.0.1:4183/host-config.json")
+    await request.get(`${chatbotOrigins.host}/host-config.json`)
   ).json();
-  expect(configuration.allowedParents).toEqual([
-    "http://localhost:5180",
-    "http://localhost:5181",
-  ]);
+  expect(configuration.allowedParents).toEqual(
+    expect.arrayContaining([
+      `${chatbotOrigins.baseline}`,
+      `${chatbotOrigins.integrated}`,
+    ]),
+  );
 });

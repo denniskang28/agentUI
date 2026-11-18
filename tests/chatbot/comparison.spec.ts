@@ -1,9 +1,10 @@
+import { chatbotOrigins } from "./origins";
 import { test, expect } from "@playwright/test";
 
 test("traditional chatbot performs actual approval and restores the conversation", async ({
   page,
 }) => {
-  await page.goto("http://localhost:5180");
+  await page.goto(`${chatbotOrigins.baseline}`);
   await page.getByRole("button", { name: /查看报销单/ }).click();
   await expect(page.getByText("等待完整数据", { exact: true })).toBeVisible();
   await page.getByRole("textbox", { name: "审批意见" }).fill("符合差旅标准");
@@ -21,7 +22,7 @@ for (const mode of ["template", "raw"] as const)
     test(`${mode}/${runtime}: real uploaded approval plugin receives backend result`, async ({
       page,
     }) => {
-      await page.goto("http://localhost:5181");
+      await page.goto(`${chatbotOrigins.integrated}`);
       await expect(page.getByText("已连接", { exact: true })).toBeVisible();
       if (mode === "raw") await page.getByLabel("UI mode").selectOption(mode);
       if (runtime === "native")
@@ -56,7 +57,7 @@ for (const mode of ["template", "raw"] as const)
 test("raw components and two Surfaces can be added, changed and deleted through real Actions", async ({
   page,
 }) => {
-  await page.goto("http://localhost:5181");
+  await page.goto(`${chatbotOrigins.integrated}`);
   await page.getByRole("button", { name: /演示界面组合/ }).click();
   const host = page.frameLocator('iframe[title="Agent UI"]');
   await expect(host.locator("[data-surface]")).toHaveCount(2);

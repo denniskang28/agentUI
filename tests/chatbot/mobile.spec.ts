@@ -1,3 +1,4 @@
+import { chatbotUrl } from "./origins";
 import { test, expect } from "@playwright/test";
 
 test("both mobile applications keep approval controls and horizontally scrolled risk cells usable", async ({
@@ -5,7 +6,7 @@ test("both mobile applications keep approval controls and horizontally scrolled 
 }) => {
   await page.setViewportSize({ width: 375, height: 812 });
   for (const port of [5180, 5181]) {
-    await page.goto(`http://localhost:${port}`);
+    await page.goto(chatbotUrl(port));
     await page.getByRole("button", { name: /查看报销单/ }).click();
     const host = page.frameLocator('iframe[title="Agent UI"]');
     const expense =

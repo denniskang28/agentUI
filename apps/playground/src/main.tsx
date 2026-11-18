@@ -1,3 +1,4 @@
+import { McpAppsPanel } from "../../../packages/mcp-apps-host/src/react";
 import {
   parseLibrarySource,
   scenarioInputs,
@@ -51,7 +52,7 @@ import "./shared.css";
 import "./app.css";
 const appearanceNodeKey = (surfaceId: string, componentId: string) =>
   JSON.stringify([surfaceId, componentId]);
-type Page = "playground" | "plugins" | "docs" | "benchmarks";
+type Page = "playground" | "plugins" | "docs" | "benchmarks" | "mcp";
 type Draft = {
   values: Record<string, unknown>;
   template: string;
@@ -807,17 +808,25 @@ function App() {
           <b>Agent UI Playground</b>
         </div>
         <nav aria-label={t("主导航")}>
-          {(["playground", "plugins", "docs", "benchmarks"] as Page[]).map(
-            (p, i) => (
-              <button
-                aria-current={page === p ? "page" : undefined}
-                key={p}
-                onClick={() => setPage(p)}
-              >
-                {["Playground", "Plugins", "API & Docs", "Benchmarks"][i]}
-              </button>
-            ),
-          )}
+          {(
+            ["playground", "plugins", "docs", "benchmarks", "mcp"] as Page[]
+          ).map((p, i) => (
+            <button
+              aria-current={page === p ? "page" : undefined}
+              key={p}
+              onClick={() => setPage(p)}
+            >
+              {
+                [
+                  "Playground",
+                  "Plugins",
+                  "API & Docs",
+                  "Benchmarks",
+                  "MCP Apps",
+                ][i]
+              }
+            </button>
+          ))}
         </nav>
         <div className="header-tools">
           <span className="tag tag-outline environment">
@@ -2072,6 +2081,17 @@ function App() {
             )}
           </div>
         </div>
+      </div>
+      <div
+        hidden={page !== "mcp"}
+        style={{ flex: 1, minHeight: 0, overflow: "auto" }}
+      >
+        <McpAppsPanel
+          baseUrl={`${apiBase}/mcp`}
+          sandboxUrl={`${previewOrigin}/mcp-sandbox.html`}
+          locale={locale}
+          theme={theme}
+        />
       </div>
       {page === "plugins" && (
         <Plugins

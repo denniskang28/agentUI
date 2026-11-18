@@ -98,3 +98,7 @@ Refresh replays SSE history, including structure/data/ready. Server restart clea
 Stop with Ctrl+C. Clear conversation localStorage or restart the backend to discard demo state. Generated vendor/release/dist are reproducible from preparation/build commands.
 
 完整部署指南 / Full guide: [中文](../../../docs/developer/library-deployment.zh-CN.md) · [English](../../../docs/developer/library-deployment.en-US.md).
+
+MCP Apps 使用同一独立 Preview 发布包中的专用 `/mcp-sandbox.html`，由导出的静态服务器设置独立响应头；不能使用普通 SPA fallback 替代。后端环境 `MCP_SERVERS_JSON` 配置受控 Server；外部 UI 域名还需 Preview `MCP_RESOURCE_ORIGINS`，与资源声明和 Gateway 策略同时匹配。`AGENT_UI_PARENT_ORIGINS` 必须包含真实 Chatbot Origin。发布时重新生成联合 release 和两个 vendor 包，再 `npm ci && npm run build`。生产认证/连接用户归属由业务系统提供。
+
+MCP Apps uses the dedicated sandbox route and headers in the same separate Preview release. Configure trusted MCP_SERVERS_JSON in the business backend, MCP_RESOURCE_ORIGINS in Preview when needed, and exact Chatbot origins in AGENT_UI_PARENT_ORIGINS. Rebuild the combined release and both vendor tarballs before npm ci/build. A generic SPA fallback without sandbox headers is insufficient. Business authentication and user ownership remain deployment responsibilities. [Complete deployment contract](../../../docs/developer/mcp-apps-host.en-US.md).

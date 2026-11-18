@@ -33,6 +33,8 @@ await writeFile(
   JSON.stringify(createHostManifest([...builtins, ...entries]), null, 2) + "\n",
 );
 await cp("dist/embedded-host", `${output}/host`, { recursive: true });
+for (const file of ["mcp-sandbox.html", "mcp-sandbox.js"])
+  await cp(`packages/mcp-apps-host/dist/${file}`, `${output}/host/${file}`);
 await cp("apps/preview-host/public/runtime.css", `${output}/host/runtime.css`);
 await build({
   entryPoints: ["scripts/serve-embedded-host.ts"],

@@ -1,9 +1,10 @@
+import { chatbotOrigins, chatbotUrl } from "./origins";
 import { test, expect } from "@playwright/test";
 
 test("an existing parent reconnects to a reloaded Host and replays acknowledged history", async ({
   page,
 }) => {
-  await page.goto("http://localhost:5181");
+  await page.goto(`${chatbotOrigins.integrated}`);
   await page.getByRole("button", { name: /查看报销单/ }).click();
   const plugin = page
     .frameLocator('iframe[title="Agent UI"]')
@@ -15,7 +16,7 @@ test("an existing parent reconnects to a reloaded Host and replays acknowledged 
   ).toBeVisible();
   const embedded = page
     .frames()
-    .find((frame) => frame.url().startsWith("http://127.0.0.1:4183/"));
+    .find((frame) => frame.url().startsWith(`${chatbotOrigins.host}/`));
   expect(embedded).toBeTruthy();
   await embedded!.evaluate(() => location.reload());
   await expect(
@@ -25,7 +26,7 @@ test("an existing parent reconnects to a reloaded Host and replays acknowledged 
   expect(
     page
       .frames()
-      .filter((frame) => frame.url().startsWith("http://127.0.0.1:4183/")),
+      .filter((frame) => frame.url().startsWith(`${chatbotOrigins.host}/`)),
   ).toHaveLength(1);
 });
 
@@ -34,7 +35,7 @@ test("SSE reconnect recovers missed Agent messages without creating duplicate Su
   context,
   request,
 }) => {
-  await page.goto("http://localhost:5181");
+  await page.goto(`${chatbotOrigins.integrated}`);
   await expect(page.getByText("已连接", { exact: true })).toBeVisible();
   await page.getByRole("button", { name: /查看报销单/ }).click();
   const host = page.frameLocator('iframe[title="Agent UI"]');
@@ -47,13 +48,15 @@ test("SSE reconnect recovers missed Agent messages without creating duplicate Su
     localStorage.getItem("conversation:with-agent-ui"),
   );
   const session = (await (
-    await request.get(`http://localhost:5181/api/session?id=${sessionId}`)
+    await request.get(
+      `${chatbotOrigins.integrated}/api/session?id=${sessionId}`,
+    )
   ).json()) as { runId: string };
   await context.setOffline(true);
   try {
     await expect(page.getByText("连接中", { exact: true })).toBeVisible();
     const response = await request.post(
-      `http://localhost:5181/api/sessions/${sessionId}/chat`,
+      `${chatbotOrigins.integrated}/api/sessions/${sessionId}/chat`,
       { data: { runId: session.runId, text: "risk" } },
     );
     expect(response.status()).toBe(202);
@@ -75,7 +78,7 @@ for (const decision of ["驳回", "退回修改"] as const) {
     page,
   }) => {
     for (const port of [5180, 5181]) {
-      await page.goto(`http://localhost:${port}`);
+      await page.goto(chatbotUrl(port));
       await page.getByRole("button", { name: /查看报销单/ }).click();
       const plugin =
         port === 5180

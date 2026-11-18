@@ -1,3 +1,5 @@
+import { McpAppView, httpTransport } from "@enterprise/mcp-apps-host/react";
+import { request, apiUrl } from "./api";
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
   AgentUiClient,
@@ -69,7 +71,8 @@ export function UiPanel({
     let active = true;
     const apply = async () => {
       for (const event of events) {
-        if (!active || event.id <= lastApplied.current) continue;
+        if (event.type !== "ui" || !active || event.id <= lastApplied.current)
+          continue;
         const receipt = await client.apply(event.payload as NormalizedBatch);
         if (!active) return;
         lastApplied.current = event.id;
@@ -88,21 +91,81 @@ export function UiPanel({
   // same memoized client, so do not permanently dispose it in effect cleanup.
   if (!manifest) return null;
   return (
-    <AgentUiProvider client={client}>
-      <AgentUiHost
-        hostUrl={hostUrl}
-        manifest={manifest}
-        config={{
-          locale,
-          theme: theme === "dark" ? "dark" : "light",
-          runtimeMode,
-          container: "chat",
-        }}
-        onConnected={() => {
-          lastApplied.current = 0;
-          setConnection((value) => value + 1);
-        }}
+    <>
+      <AgentUiProvider client={client}>
+        <AgentUiHost
+          hostUrl={hostUrl}
+          manifest={manifest}
+          config={{
+            locale,
+            theme: theme === "dark" ? "dark" : "light",
+            runtimeMode,
+            container: "chat",
+          }}
+          onConnected={() => {
+            lastApplied.current = 0;
+            setConnection((value) => value + 1);
+          }}
+        />
+      </AgentUiProvider>
+      {events
+        .filter((e) => e.type === "mcp")
+        .map((e) => (
+          <McpCard
+            key={e.id}
+            payload={
+              e.payload as {
+                connection: { id: string; ownerToken: string };
+                appId: string;
+              }
+            }
+            session={session}
+            locale={locale}
+            theme={theme}
+            hostUrl={hostUrl}
+            onError={onError}
+          />
+        ))}
+    </>
+  );
+}
+
+function McpCard({
+  payload,
+  session,
+  locale,
+  theme,
+  hostUrl,
+  onError,
+}: {
+  payload: { connection: { id: string; ownerToken: string }; appId: string };
+  session: SessionInfo;
+  locale: Locale;
+  theme: string;
+  hostUrl: string;
+  onError: (error: string) => void;
+}) {
+  const transport = useMemo(
+    () => httpTransport(apiUrl("/api/mcp"), payload.connection, payload.appId),
+    [payload],
+  );
+  const feedback = (type: "message" | "context", value: unknown) =>
+    request<void>(`/api/sessions/${session.id}/mcp-feedback`, {
+      runId: session.runId,
+      type,
+      payload: value,
+    });
+  return (
+    <article aria-label="MCP App card">
+      <McpAppView
+        transport={transport}
+        sandboxUrl={`${hostUrl}/mcp-sandbox.html`}
+        locale={locale}
+        theme={theme === "dark" ? "dark" : "light"}
+        onError={(e) => onError(e.message)}
+        onMessage={(value) => feedback("message", value)}
+        onContextUpdate={(value) => feedback("context", value)}
       />
-    </AgentUiProvider>
+    </article>
   );
 }

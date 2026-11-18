@@ -1,3 +1,4 @@
+import { sandboxHeaders } from "../packages/mcp-apps-host/src/sandbox-policy";
 import { createServer } from "node:http";
 import { readFile, stat } from "node:fs/promises";
 import path from "node:path";
@@ -8,6 +9,7 @@ export function serveEmbeddedHost(options: {
   root: string;
   port: number;
   allowedParents: string[];
+  allowedExternalOrigins?: string[];
 }) {
   const parents = options.allowedParents.map((value) => {
     const url = new URL(value);
@@ -33,8 +35,26 @@ export function serveEmbeddedHost(options: {
         response.writeHead(405).end();
         return;
       }
-      const pathname = new URL(request.url ?? "/", "http://host.invalid")
-        .pathname;
+      const url = new URL(request.url ?? "/", "http://host.invalid");
+      const pathname = url.pathname;
+      if (pathname === "/mcp-sandbox.html") {
+        try {
+          for (const [key, value] of Object.entries(
+            sandboxHeaders(
+              url,
+              parents,
+              options.allowedExternalOrigins ??
+                (process.env.MCP_RESOURCE_ORIGINS ?? "")
+                  .split(",")
+                  .filter(Boolean),
+            ),
+          ))
+            response.setHeader(key, value);
+        } catch {
+          response.writeHead(403).end("Sandbox policy rejected");
+          return;
+        }
+      }
       if (pathname === "/health") {
         response.setHeader("Content-Type", "application/json");
         response.end('{"status":"ok"}');
