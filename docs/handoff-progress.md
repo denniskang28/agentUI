@@ -92,3 +92,21 @@ Visual evidence: 26 fixed-viewport states under artifacts/library-docs/visual, i
 ## 2026-11-14 — Runnable fresh checkout
 
 补齐两套对照 Demo、构建/启动/验证源码与双语指南。新增 `pnpm setup:demo` 与 `pnpm dev:all`，默认准备两个真实示例插件；生成发布产物不纳入本次提交。已从独立待提交快照重新安装和准备，验证实际 Playground 插件交互、仓库外两套 Demo、66 项单元/集成测试及文档示例。准确命令、环境和测试边界见 [fresh-checkout-acceptance.md](fresh-checkout-acceptance.md)。
+
+## 2026-11-16 — 阿里云演示更新
+
+已按授权更新公网 Playground、独立 Host、两套 Chatbot Demo 和两个示例插件，包含最新 Library 0.2.0、外观与输入格式功能。修复部署验收发现的旧 Preview HTML 缓存混用，主应用 iframe URL 按 bundle 路径区分版本；Nginx 对 Playground/Preview 返回 no-cache。87 项单元/集成测试及 lint/typecheck/build 通过，线上 Library 外观渲染、Sandbox 审批与风险下钻、Baseline 查询通过。4 个服务 active/enabled，204 个源码文件及公网静态文件校验一致。完整部署、备份与验证边界见 [deployment-aliyun.md](deployment-aliyun.md)，本地视觉证据位于 artifacts/aliyun-20261116。
+
+## 2026-11-16 — Architecture presentation examples
+
+新增英文 8 页版本位于 `docs/architecture/architecture-and-examples`，保留原始 3 页和设计参考。第 3 页统一使用 Orchestrator，说明消息转发和 Action 路由属于同一个 AAP 集成职责；新增 Library 模板/原始 A2UI、报销审批、风险下钻、Playground 编辑与 Inspector 介绍。使用线上英文界面截图，并实际点击验证 Demo 审批更新和风险详情返回。PPT 原生文本与架构图可编辑，代码摘录使用已实现的公开导出。未修改产品实现或新增性能结论；AAP 生产集成仍为计划范围。版面、8 页数量和 PPTX 重新导入检查见该目录 evidence。
+
+## 2026-11-16 — Complete Agent JSON in presentation
+
+按反馈将 Library Integration 扩为 3 页，整套英文稿更新为 `_v2` 10 页：完整模板批次、带数据绑定和 Button Action 的完整 A2UI 批次、Adapter/React Client/业务结果更新流程。区分 Agent 组件数据与后端运行/顺序字段，使用实际 plugin/Catalog 身份及公开 API。四份可复制 JSON 通过已安装包的公开 server/protocol 导出与官方 Core 实际处理，验证模板审批状态和原始 Surface 文本更新，证据在 `docs/architecture/architecture-and-examples/evidence-v2/integration-json-validation.json`。仅变更文档与演示稿。
+
+## 2026-11-18 — Preview 缓存修复提交检查
+
+提交主应用 Preview iframe 按 bundle 路径区分版本的修复及上述历史进度记录。按 `docs/repository-privacy.md`，含真实环境信息的未跟踪部署资料和架构附件继续本地保留，不纳入本次提交。MCP Apps 当前仅完成方案讨论，未实现。
+
+本次重新执行 `pnpm typecheck`、`pnpm test`（18 文件 / 87 项）及 `pnpm build` 均通过；构建保留现有大 chunk 提示。`pnpm lint` 未通过：未跟踪的 `docs/architecture` 生成脚本有 49 项错误；执行 `pnpm exec eslint . --ignore-pattern 'docs/architecture/**'` 通过。本次未重新执行浏览器 E2E 或公网部署验收；前述 2026-11-16 记录属于历史验收。

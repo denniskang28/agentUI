@@ -1994,7 +1994,7 @@ function App() {
                         )}
                         <iframe
                           ref={preview.iframe}
-                          src={previewOrigin}
+                          src={`${previewOrigin}/?app=${encodeURIComponent(new URL(import.meta.url).pathname)}`}
                           title="Preview Host"
                           sandbox="allow-scripts allow-same-origin"
                           referrerPolicy="no-referrer"
