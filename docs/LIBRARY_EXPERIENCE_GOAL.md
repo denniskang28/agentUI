@@ -4,7 +4,7 @@
 
 ## 1. 目标与基线
 
-让开发者在 Playground 选择组件、调整内容及外观、验证交互后，能够导出当前配置及基于 `@enterprise/agent-ui` 公开入口的接入代码，在仓库外的真实 React/Node 消费项目重现效果。
+让开发者在 Playground 选择组件、调整内容及外观、验证交互后，能够导出当前配置及基于 `@aap/agent-ui` 公开入口的接入代码，在仓库外的真实 React/Node 消费项目重现效果。
 
 原 MVP M1–M4 与 J01–J40 的完成记录保留；本次使用独立的增量验收项。沿用 `GOAL_EXECUTION_SPEC.md`、Handoff、Agent API 设计、UI Review、I18N_REQUIREMENTS 的工程、安全和视觉规则，不重新执行无关功能开发。
 

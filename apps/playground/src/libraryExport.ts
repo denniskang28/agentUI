@@ -61,8 +61,8 @@ export function libraryExport(snapshot: LibrarySnapshot) {
   });
   const document = { config, intervalMs: snapshot.intervalMs, batches };
   const server = `import { readFile, writeFile } from "node:fs/promises";
-import { AgentUiAdapter } from "@enterprise/agent-ui/server";
-import { hostManifestSchema, batchSchema, hostConfigSchema } from "@enterprise/agent-ui/protocol";
+import { AgentUiAdapter } from "@aap/agent-ui/server";
+import { hostManifestSchema, batchSchema, hostConfigSchema } from "@aap/agent-ui/protocol";
 
 // Copy the matching static Host release and approved plugin assets separately.
 const manifest = hostManifestSchema.parse(JSON.parse(await readFile("./release/manifest.json", "utf8")));
@@ -78,8 +78,8 @@ try {
 } finally { adapter.dispose(); }
 `;
   const react = `import { useEffect, useState } from "react";
-import { AgentUiClient, AgentUiHost, AgentUiProvider } from "@enterprise/agent-ui/react";
-import { hostManifestSchema, hostConfigSchema, normalizedBatchSchema, type ActionEvent, type NormalizedBatch } from "@enterprise/agent-ui/protocol";
+import { AgentUiClient, AgentUiHost, AgentUiProvider } from "@aap/agent-ui/react";
+import { hostManifestSchema, hostConfigSchema, normalizedBatchSchema, type ActionEvent, type NormalizedBatch } from "@aap/agent-ui/protocol";
 import release from "./release/manifest.json";
 import prepared from "./normalized.json";
 

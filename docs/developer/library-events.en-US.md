@@ -33,7 +33,7 @@ Template and raw paths receive the same complete envelope. message contains offi
 ## Backend processing
 
 ```ts
-import { actionEventSchema } from "@enterprise/agent-ui/protocol";
+import { actionEventSchema } from "@aap/agent-ui/protocol";
 function readAction(body: unknown, currentRunId: string) {
   const event = actionEventSchema.parse(body);
   if (event.runId !== currentRunId) throw new Error("STALE_RUN");

@@ -2,7 +2,7 @@
 
 ## What you are integrating
 
-`@enterprise/agent-ui` is a locally distributed library for embedding declarative UI in an existing application. It provides a server adapter, React embedding and a public protocol. Playground is the development/build/debug environment; a deployed chatbot does not need its `/api/v1/preview-sessions` API.
+`@aap/agent-ui` is a locally distributed library for embedding declarative UI in an existing application. It provides a server adapter, React embedding and a public protocol. Playground is the development/build/debug environment; a deployed chatbot does not need its `/api/v1/preview-sessions` API.
 
 These guides describe implementation 0.2.0, rather than proposed APIs in older design documents. Consumers use the public `/server`, `/react` and `/protocol` exports, never repository source or private SDK paths.
 

@@ -10,7 +10,7 @@
 | L04 | 通过 | 共用 RuntimeAppearance，Preview 与独立 embedded Host 的真实字号/DOM 验证；两个 demo ZIP 经过真实 Docker 构建并在 Native/Sandbox 中接收 mode/font/brand；独立 embedded Host 另外直接检查两模式上传插件的主题与输入，留存截图。 |
 | L05 | 通过 | TextField 值和 DOM identity 保留；审批意见/热力图选中状态在主题变更后保留；原有语言、焦点、暂停流、计时器/卸载、Action 和迟到结果测试继续有效；图表保留同一个实例。 |
 | L06 | 通过 | 浏览器对照草稿新内容与已渲染旧内容，下载文件与显示代码逐字一致；18 项导出/校验测试覆盖全部内置模板、步骤顺序、多个 Surface、真实 Adapter/Core 最终数据。 |
-| L07 | 通过 | `verify-library-experience.ts` 在仓库外临时项目安装实际 `@enterprise/agent-ui@0.2.0` tarball；五个生成 Node 文件执行、五个生成 React 文件 strict tsc，并运行独立 origin 的静态 Host；没有仓库源码 alias。 |
+| L07 | 通过 | `verify-library-experience.ts` 在仓库外临时项目安装实际 `@aap/agent-ui@0.2.0` tarball；五个生成 Node 文件执行、五个生成 React 文件 strict tsc，并运行独立 origin 的静态 Host；没有仓库源码 alias。 |
 | L08 | 通过 | 仓库外 template/raw/streaming 三场景渲染；真实 Button → 完整 ActionEvent → 独立后端解析/业务检查 → 保持中的 Adapter.template.patch → React Client → Host 显示 Action confirmed。消费者 report.json passed=true。 |
 | L09 | 通过 | 未知插件只展示容器字段，两个示例插件的内部业务配色保持自身合同；现有未知 TSX/ZIP、旧 SDK Hook 使用方式、timer/卸载及样式制品测试通过。文档明确不保证插件硬编码内部样式。 |
 | L10 | 通过 | 严格 Schema 拒绝 URL/CSS 注入、未知属性、越界数值及主题自引用；Host 边界测试包含旧客户端版号和非法资产 origin；Core/API/Builder/CSP/opaque frame/Action 安全回归。 |

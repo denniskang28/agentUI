@@ -13,7 +13,7 @@ Library 与独立 Host 必须同步使用 0.2.0。主题和外观属于本项目
 主题通过 `RunConfig.themeTokens`，组件覆盖通过 `RunConfig.componentAppearances[surfaceId][componentId]` 传递。组件覆盖优先，主题其次，组件默认值最后。字体只接受 system/sans/serif/mono；组件颜色接受语义名称或 #RRGGBB，主题颜色接受 #RRGGBB。值和额外字段由公共 Schema 严格校验，不接受任意 CSS、选择器或远程字体。
 
 ```ts
-import { hostConfigSchema } from "@enterprise/agent-ui/protocol";
+import { hostConfigSchema } from "@aap/agent-ui/protocol";
 
 const config = hostConfigSchema.parse({
   runtimeMode: "sandbox", renderPolicy: "progressive", readyWhen: "/ready",

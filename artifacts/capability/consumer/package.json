@@ -2,7 +2,7 @@
   "private": true,
   "type": "module",
   "dependencies": {
-    "@enterprise/agent-ui": "file:../../packages/enterprise-agent-ui-0.1.0.tgz",
+    "@aap/agent-ui": "file:../../packages/aap-agent-ui-0.2.0.tgz",
     "react": "19.3.1",
     "react-dom": "19.3.1"
   }

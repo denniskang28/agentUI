@@ -2,11 +2,11 @@ import {
   AgentUiAdapter,
   builtins,
   EMBED_PROTOCOL,
-} from "@enterprise/agent-ui/server";
+} from "@aap/agent-ui/server";
 import {
   capabilityProfileSchema,
   type CapabilityProfileData,
-} from "@enterprise/agent-ui/protocol";
+} from "@aap/agent-ui/protocol";
 
 const entry = builtins.find((item) => item.key === "capability-profile")!;
 const data: CapabilityProfileData = capabilityProfileSchema.parse({

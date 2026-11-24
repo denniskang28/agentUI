@@ -5,8 +5,8 @@ import {
   builtins,
   createHostManifest,
   EMBED_PROTOCOL,
-} from "@enterprise/agent-ui/server";
-import { capabilityProfileSchema } from "@enterprise/agent-ui/protocol";
+} from "@aap/agent-ui/server";
+import { capabilityProfileSchema } from "@aap/agent-ui/protocol";
 const entry = builtins.find((e) => e.key === "capability-profile");
 assert.ok(entry);
 const data = capabilityProfileSchema.parse({

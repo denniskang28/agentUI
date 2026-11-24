@@ -13,7 +13,7 @@ Preview theme configuration controls fonts, base size, brand/status colors, back
 Themes use `RunConfig.themeTokens`; node overrides use `RunConfig.componentAppearances[surfaceId][componentId]`. Explicit node values override the theme, followed by component defaults. Fonts accept system/sans/serif/mono. Component colors accept semantic names or #RRGGBB; theme colors accept #RRGGBB. Public schemas strictly validate values and reject extra fields, arbitrary CSS, selectors and remote fonts.
 
 ```ts
-import { hostConfigSchema } from "@enterprise/agent-ui/protocol";
+import { hostConfigSchema } from "@aap/agent-ui/protocol";
 
 const config = hostConfigSchema.parse({
   runtimeMode: "sandbox", renderPolicy: "progressive", readyWhen: "/ready",

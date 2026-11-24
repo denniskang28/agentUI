@@ -57,7 +57,7 @@ test("library guides preserve article selection across languages and navigate be
     }),
   ).toBeVisible();
   await expect(page.locator(".docs-article")).toContainText(
-    "@enterprise/agent-ui/react",
+    "@aap/agent-ui/react",
   );
   await page.getByRole("button", { name: "选择语言" }).click();
   await expect(

@@ -34,7 +34,7 @@ const servers: string[] = [];
 try {
   await access(path.join(consumer, "release/manifest.json"));
   await access(
-    path.join(consumer, "node_modules/@enterprise/agent-ui/package.json"),
+    path.join(consumer, "node_modules/@aap/agent-ui/package.json"),
   );
   await symlink(
     path.join(consumer, "node_modules"),
@@ -102,8 +102,8 @@ try {
   const runner = `
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
-import { AgentUiAdapter } from '@enterprise/agent-ui/server';
-import { actionEventSchema, hostManifestSchema, inputSchema, normalizedBatchSchema } from '@enterprise/agent-ui/protocol';
+import { AgentUiAdapter } from '@aap/agent-ui/server';
+import { actionEventSchema, hostManifestSchema, inputSchema, normalizedBatchSchema } from '@aap/agent-ui/protocol';
 const manifest=hostManifestSchema.parse(JSON.parse(await readFile('./release/manifest.json','utf8')));
 const samples=JSON.parse(await readFile(new URL('./samples.json',import.meta.url),'utf8'));
 let batches=0, actions=0, normalized=0, fragments=0;
@@ -144,7 +144,7 @@ console.log(JSON.stringify({batches,actions,normalized,fragments}));
     executedServerExamples: servers.length,
     jsonBlocks: json.length,
     ...JSON.parse(verified.stdout),
-    package: "@enterprise/agent-ui@0.2.0",
+    package: "@aap/agent-ui@0.2.0",
     validation:
       "installed public exports + genuine official Core + release plugin schemas",
   };

@@ -8,7 +8,7 @@ Preparation builds and copies these artifacts:
 
 | Path                                 | Purpose                                                                                  |
 | ------------------------------------ | ---------------------------------------------------------------------------------------- |
-| vendor/enterprise-agent-ui-0.1.0.tgz | 前后端公开 Library / Public frontend/server package                                      |
+| vendor/aap-agent-ui-0.2.0.tgz | 前后端公开 Library / Public frontend/server package                                      |
 | release/host/                        | 官方 Core/React Renderer 与隔离插件 Host 的静态站点 / Static isolated Host               |
 | release/artifacts/{buildId}/         | Docker 实际编译的 plugin.js、预编译 validator.js 和可选 CSS / Genuine compiled artifacts |
 | release/manifest.json                | Host/SDK/模板/组件版本及制品位置 / Versioned manifest                                    |

@@ -2,7 +2,7 @@
 
 ## 先确定你要接入什么
 
-`@enterprise/agent-ui` 是把声明式 UI 放入现有业务应用的本地分发 Library。它提供服务端适配器、React 嵌入入口和公共协议。Playground 是开发、构建和调试工具；你的 Chatbot 运行时不需要连接 Playground 的 `/api/v1/preview-sessions`。
+`@aap/agent-ui` 是把声明式 UI 放入现有业务应用的本地分发 Library。它提供服务端适配器、React 嵌入入口和公共协议。Playground 是开发、构建和调试工具；你的 Chatbot 运行时不需要连接 Playground 的 `/api/v1/preview-sessions`。
 
 本文按当前 0.2.0 代码说明，不把早期设计稿中的拟议 API 当成可调用接口。安装产物使用公开的 `/server`、`/react`、`/protocol` 三个 exports，不能从仓库 `src` 或官方 SDK 私有路径导入。
 

@@ -5,10 +5,10 @@
 第一次建议直接运行 [Demo 的准备流程](library-deployment.zh-CN.md)。在当前仓库完成构建后，把 `.tgz` 和整套 `release/` 交给现有 Chatbot 项目。不要只复制插件 TSX。以下命令在消费者项目根目录执行：
 
 ```sh
-npm install ./vendor/enterprise-agent-ui-0.2.0.tgz
+npm install ./vendor/aap-agent-ui-0.2.0.tgz
 ```
 
-前端需要 React 19；参考 Demo 使用 Node 24、ESM、TypeScript strict。包未发布到公共 npm registry，不能假定 `npm install @enterprise/agent-ui` 能获取当前交付版本。前后端拆仓时在各自项目安装本地包；后端只导入 `/server` 与 `/protocol` 即可。
+前端需要 React 19；参考 Demo 使用 Node 24、ESM、TypeScript strict。包未发布到公共 npm registry，不能假定 `npm install @aap/agent-ui` 能获取当前交付版本。前后端拆仓时在各自项目安装本地包；后端只导入 `/server` 与 `/protocol` 即可。
 
 ## 第二步：后端增加一个 UI Presenter
 
@@ -18,8 +18,8 @@ npm install ./vendor/enterprise-agent-ui-0.2.0.tgz
 
 ```ts
 import { readFile } from "node:fs/promises";
-import { AgentUiAdapter, EMBED_PROTOCOL } from "@enterprise/agent-ui/server";
-import { hostManifestSchema, type UiInput } from "@enterprise/agent-ui/protocol";
+import { AgentUiAdapter, EMBED_PROTOCOL } from "@aap/agent-ui/server";
+import { hostManifestSchema, type UiInput } from "@aap/agent-ui/protocol";
 
 const manifest = hostManifestSchema.parse(
   JSON.parse(await readFile("./release/manifest.json", "utf8")),
@@ -118,7 +118,7 @@ Adapter 每个 run 保留一个实例，不能每条消息都 new。当前模板
 后端与前端必须使用同一发布版本的 manifest。浏览器从独立 Host 无凭据获取并校验：
 
 ```ts
-import { hostManifestSchema } from "@enterprise/agent-ui/protocol";
+import { hostManifestSchema } from "@aap/agent-ui/protocol";
 const hostUrl = "http://127.0.0.1:4183";
 const response = await fetch(`${hostUrl}/manifest.json`, { credentials: "omit" });
 if (!response.ok) throw new Error(`MANIFEST_HTTP_${response.status}`);
@@ -133,8 +133,8 @@ Host、manifest 和制品的部署见 [部署指南](library-deployment.zh-CN.md
 
 ```tsx
 import { useEffect, useMemo, useRef, useState } from "react";
-import { AgentUiClient, AgentUiHost, AgentUiProvider } from "@enterprise/agent-ui/react";
-import { normalizedBatchSchema, type ActionEvent, type HostManifest } from "@enterprise/agent-ui/protocol";
+import { AgentUiClient, AgentUiHost, AgentUiProvider } from "@aap/agent-ui/react";
+import { normalizedBatchSchema, type ActionEvent, type HostManifest } from "@aap/agent-ui/protocol";
 
 type UiRecord = { id: number; payload: unknown };
 type Props = {
@@ -192,7 +192,7 @@ export function ChatRichUi(props: Props) {
 `onAction(event)` 的入参就是完整 `ActionEvent`。以下是接入 Demo 自有业务 endpoint 的回调写法；不是 Library 内建 HTTP API：
 
 ```ts
-import type { ActionEvent } from "@enterprise/agent-ui/protocol";
+import type { ActionEvent } from "@aap/agent-ui/protocol";
 async function onAction(event: ActionEvent) {
   const sessionId = "your-current-session-id";
   const response = await fetch(`/api/sessions/${encodeURIComponent(sessionId)}/actions`, {

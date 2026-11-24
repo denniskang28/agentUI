@@ -3,8 +3,8 @@ import {
   AgentUiAdapter,
   EMBED_PROTOCOL,
   type HostManifest,
-} from "@enterprise/agent-ui/server";
-import { actionEventSchema } from "@enterprise/agent-ui/protocol";
+} from "@aap/agent-ui/server";
+import { actionEventSchema } from "@aap/agent-ui/protocol";
 import type { BusinessAction, DomainEvent } from "../../shared/domain";
 
 export const variant: string = "with-agent-ui";

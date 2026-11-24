@@ -188,8 +188,8 @@ try {
     path.join(scratch, "backend.ts"),
     `import {createServer} from "node:http";
 import {readFile} from "node:fs/promises";
-import {AgentUiAdapter} from "@enterprise/agent-ui/server";
-import {hostManifestSchema,batchSchema,actionEventSchema} from "@enterprise/agent-ui/protocol";
+import {AgentUiAdapter} from "@aap/agent-ui/server";
+import {hostManifestSchema,batchSchema,actionEventSchema} from "@aap/agent-ui/protocol";
 const manifest=hostManifestSchema.parse(JSON.parse(await readFile("release/manifest.json","utf8")));
 const initial=JSON.parse(await readFile("template-input.json","utf8")) as {batches:unknown[]};
 const adapter=new AgentUiAdapter("run_001",manifest.entries);
@@ -207,7 +207,7 @@ createServer(async(req,res)=>{try {
   await writeFile(
     path.join(scratch, "main.tsx"),
     `import {createRoot} from "react-dom/client";
-import {normalizedBatchSchema,type ActionEvent} from "@enterprise/agent-ui/protocol";
+import {normalizedBatchSchema,type ActionEvent} from "@aap/agent-ui/protocol";
 import {AgentUiExample as Template} from "./template";
 import {AgentUiExample as Raw} from "./raw";
 import {AgentUiExample as Streaming} from "./streaming";
@@ -326,7 +326,7 @@ createRoot(document.getElementById("root")!).render(<Example hostUrl="http://127
   await writeFile(
     path.join(evidence, "report.json"),
     JSON.stringify(
-      { passed, scratch, package: "@enterprise/agent-ui@0.2.0", steps },
+      { passed, scratch, package: "@aap/agent-ui@0.2.0", steps },
       null,
       2,
     ),

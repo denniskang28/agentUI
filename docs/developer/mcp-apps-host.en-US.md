@@ -1,6 +1,6 @@
 # MCP Apps Host integration
 
-Version: `@enterprise/mcp-apps-host@0.1.0`, React 19, Node 24+, strict TypeScript. A2UI remains a separate channel using `@enterprise/agent-ui`. MCP HTML is never converted into A2UI or passed to its MessageProcessor. The MCP package pins ext-apps 2.0.4, Client/Server 2.4.0, Node Transport 2.1.2 and Zod 4; existing A2UI 0.15.0 and Zod 3 remain unchanged.
+Version: `@enterprise/mcp-apps-host@0.1.0`, React 19, Node 24+, strict TypeScript. A2UI remains a separate channel using `@aap/agent-ui`. MCP HTML is never converted into A2UI or passed to its MessageProcessor. The MCP package pins ext-apps 2.0.4, Client/Server 2.4.0, Node Transport 2.1.2 and Zod 4; existing A2UI 0.15.0 and Zod 3 remain unchanged.
 
 ## Quickstart and public package
 

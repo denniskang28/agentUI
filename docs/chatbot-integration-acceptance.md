@@ -7,7 +7,7 @@
 | Item                                   | Location                                                                       |
 | -------------------------------------- | ------------------------------------------------------------------------------ |
 | Public ESM/declarations/package README | packages/agent-ui，公开 protocol/server/react 三个子路径                       |
-| Installable distribution               | artifacts/packages/enterprise-agent-ui-0.1.0.tgz                               |
+| Installable distribution               | 0.1.0 acceptance build. Current release uses `artifacts/packages/aap-agent-ui-0.2.0.tgz`. |
 | Independent static Host and manifest   | artifacts/chatbot-release/host、manifest.json、serve-host.mjs                  |
 | Two actual Docker-built plugins        | artifacts/chatbot-release/artifacts/{buildId}/                                 |
 | Traditional complete chatbot           | examples/chatbot-comparison/baseline                                           |

@@ -7,7 +7,7 @@ import {
   AgentUiHost,
   type HostManifest,
   type NormalizedBatch,
-} from "@enterprise/agent-ui/react";
+} from "@aap/agent-ui/react";
 import type { Locale, SessionInfo, StreamEvent } from "../shared/domain";
 
 export const variant: string = "with-agent-ui";

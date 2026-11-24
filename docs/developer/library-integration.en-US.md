@@ -5,7 +5,7 @@
 Start with the [demo preparation flow](library-deployment.en-US.md). Deliver the built `.tgz` and complete `release/` to your chatbot project, rather than copying plugin TSX. In the consumer project:
 
 ```sh
-npm install ./vendor/enterprise-agent-ui-0.2.0.tgz
+npm install ./vendor/aap-agent-ui-0.2.0.tgz
 ```
 
 Frontend consumers supply React 19. The reference demo uses Node 24, ESM and strict TypeScript. This delivery is local, not a public registry publication; do not assume a bare registry install retrieves it. Separate frontend/backend projects each install the package; a server needs only `/server` and `/protocol`.
@@ -18,8 +18,8 @@ This executable Node/TypeScript example needs a prepared `release/manifest.json`
 
 ```ts
 import { readFile } from "node:fs/promises";
-import { AgentUiAdapter, EMBED_PROTOCOL } from "@enterprise/agent-ui/server";
-import { hostManifestSchema, type UiInput } from "@enterprise/agent-ui/protocol";
+import { AgentUiAdapter, EMBED_PROTOCOL } from "@aap/agent-ui/server";
+import { hostManifestSchema, type UiInput } from "@aap/agent-ui/protocol";
 
 const manifest = hostManifestSchema.parse(
   JSON.parse(await readFile("./release/manifest.json", "utf8")),
@@ -118,7 +118,7 @@ Outer `id` is the business SSE cursor. `firstSequence/lastSequence` count librar
 Server and frontend must use the same release manifest. Fetch and validate it without credentials:
 
 ```ts
-import { hostManifestSchema } from "@enterprise/agent-ui/protocol";
+import { hostManifestSchema } from "@aap/agent-ui/protocol";
 const hostUrl = "http://127.0.0.1:4183";
 const response = await fetch(`${hostUrl}/manifest.json`, { credentials: "omit" });
 if (!response.ok) throw new Error(`MANIFEST_HTTP_${response.status}`);
@@ -133,8 +133,8 @@ This component embeds the Host and replays retained current-run batches. Its own
 
 ```tsx
 import { useEffect, useMemo, useRef, useState } from "react";
-import { AgentUiClient, AgentUiHost, AgentUiProvider } from "@enterprise/agent-ui/react";
-import { normalizedBatchSchema, type ActionEvent, type HostManifest } from "@enterprise/agent-ui/protocol";
+import { AgentUiClient, AgentUiHost, AgentUiProvider } from "@aap/agent-ui/react";
+import { normalizedBatchSchema, type ActionEvent, type HostManifest } from "@aap/agent-ui/protocol";
 
 type UiRecord = { id: number; payload: unknown };
 type Props = {
@@ -192,7 +192,7 @@ Do not permanently dispose and then reuse a Client in StrictMode-replayed cleanu
 `onAction(event)` receives a complete ActionEvent. This callback uses the demo's own business endpoint, not an HTTP API supplied by the library:
 
 ```ts
-import type { ActionEvent } from "@enterprise/agent-ui/protocol";
+import type { ActionEvent } from "@aap/agent-ui/protocol";
 async function onAction(event: ActionEvent) {
   const sessionId = "your-current-session-id";
   const response = await fetch(`/api/sessions/${encodeURIComponent(sessionId)}/actions`, {

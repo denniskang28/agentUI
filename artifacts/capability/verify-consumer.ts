@@ -12,9 +12,9 @@ await access("artifacts/chatbot-release/manifest.json").catch(() => {
 });
 // Recreate generated consumer inputs from the actual tarball, never repo imports.
 const lock = JSON.parse(await readFile(`${root}/package-lock.json`, "utf8"));
-lock.packages["node_modules/@enterprise/agent-ui"].integrity =
+lock.packages["node_modules/@aap/agent-ui"].integrity =
   `sha512-${createHash("sha512")
-    .update(await readFile("artifacts/packages/enterprise-agent-ui-0.1.0.tgz"))
+    .update(await readFile("artifacts/packages/aap-agent-ui-0.2.0.tgz"))
     .digest("base64")}`;
 await writeFile(
   `${root}/package-lock.json`,
@@ -91,7 +91,7 @@ try {
     JSON.stringify(
       {
         passed: true,
-        installedPackage: "@enterprise/agent-ui@0.1.0",
+        installedPackage: "@aap/agent-ui@0.2.0",
         sourceImports: false,
         staticHost: "dist/embedded-host",
         realActions: [

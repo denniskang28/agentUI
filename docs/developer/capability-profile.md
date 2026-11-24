@@ -34,8 +34,8 @@ Each dimension is normalized using its bounds for plotting, while details retain
 Use the bundled defaults, replacing dimensions, scores and scenarios for your domain. Set `sampleData: false` and provide actual evidence for real assessments.
 
 ```ts
-import { AgentUiAdapter, builtins, EMBED_PROTOCOL } from "@enterprise/agent-ui/server";
-import { capabilityProfileSchema, type CapabilityProfileData } from "@enterprise/agent-ui/protocol";
+import { AgentUiAdapter, builtins, EMBED_PROTOCOL } from "@aap/agent-ui/server";
+import { capabilityProfileSchema, type CapabilityProfileData } from "@aap/agent-ui/protocol";
 
 const entry = builtins.find((item) => item.key === "capability-profile")!;
 const data: CapabilityProfileData = capabilityProfileSchema.parse({

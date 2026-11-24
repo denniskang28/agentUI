@@ -28,7 +28,7 @@ Primary references inspected: [official client integration guide](https://a2ui.o
 
 ## 2026-11-14 — standalone Chatbot integration
 
-`@enterprise/agent-ui@0.1.0` bundles public protocol/server/react exports and declarations. Official v1_0 Core and React 0.15.0 remain the owners of validation, Surfaces, binding and Actions. No private SDK import or invented SDK API is introduced. The separate embedded Host reuses the original Runtime Catalog/PluginMount, with an explicit asset-origin Context rather than a second renderer.
+The 0.1.0 integration build introduced public protocol/server/react exports and declarations. Official v1_0 Core and React 0.15.0 remain the owners of validation, Surfaces, binding and Actions. No private SDK import or invented SDK API is introduced. The separate embedded Host reuses the original Runtime Catalog/PluginMount, with an explicit asset-origin Context rather than a second renderer.
 
 A real template partial-data scenario exposed a binder edge: views could retain the initial empty object after granular `/view/field` patches. PolicyView subscribes to the official DataModel, resolves the original `data` binding through public dataContext and clones each notification snapshot before passing it to the view/policy. This keeps plugin instances and local input stable without replacing Core state. Both new dual-entry tests and the original 52 browser tests exercise the change.
 
@@ -40,9 +40,9 @@ The package/Host use transport enterprise-agent-ui/1, Host version 0.1.0 and Plu
 
 ## 2026-11-14 — Public library guide compatibility verification
 
-The six bilingual library guides describe current 0.1.0 public exports, enterprise-agent-ui/1 envelopes, official wire 1.0, Core/Renderer 0.15.0 and Plugin SDK 1.0. They explicitly limit claims to verified commands/Catalog/plugin Actions; optional function RPC is not claimed. No SDK/protocol implementation or compatibility version was changed by this documentation work.
+The first six bilingual library guides documented the 0.1.0 public exports, enterprise-agent-ui/1 envelopes, official wire 1.0, Core/Renderer 0.15.0 and Plugin SDK 1.0. They explicitly limit claims to verified commands/Catalog/plugin Actions; optional function RPC is not claimed. No SDK/protocol implementation or compatibility version was changed by this documentation work.
 
-pnpm docs:verify loads the standalone consumer's installed @enterprise/agent-ui package and real release manifest. Both language variants' TypeScript examples pass strict checking. Documented raw create/updateDataModel/updateComponents/delete and expense template readiness/result/deletion batches execute through official Core. Displayed normalized Text output is compared exactly with Adapter output, including creation defaults and policies. Complete Action samples are validated without dropping source/context metadata. See artifacts/library-docs/verification.json.
+pnpm docs:verify loads the standalone consumer's installed @aap/agent-ui package and real release manifest. Both language variants' TypeScript examples pass strict checking. Documented raw create/updateDataModel/updateComponents/delete and expense template readiness/result/deletion batches execute through official Core. Displayed normalized Text output is compared exactly with Adapter output, including creation defaults and policies. Complete Action samples are validated without dropping source/context metadata. See artifacts/library-docs/verification.json.
 
 ## 2026-11-14 — CapabilityProfile enterprise component
 
@@ -54,7 +54,7 @@ Actual installed tarball + compiled static Host verification: artifacts/capabili
 
 ## 2026-11-15 — Library appearance and generated consumers
 
-Library package and matching static Host/manifest are now 0.2.0. Transport remains `enterprise-agent-ui/1`, official wire 1.0, Core/React 0.15.0 and Plugin SDK protocol 1.0. Installed public declarations and the existing v1.0 Basic Catalog were checked: no generic component `style` field is assumed. `themeTokens` and `componentAppearances[surfaceId][componentId]` are strict project RunConfig configuration, exported through `@enterprise/agent-ui/protocol`. Official Core still owns all Surface/business data; appearance updates do not replay messages or replace it.
+Library package and matching static Host/manifest are now 0.2.0. Transport remains `enterprise-agent-ui/1`, official wire 1.0, Core/React 0.15.0 and Plugin SDK protocol 1.0. Installed public declarations and the existing v1.0 Basic Catalog were checked: no generic component `style` field is assumed. `themeTokens` and `componentAppearances[surfaceId][componentId]` are strict project RunConfig configuration, exported through `@aap/agent-ui/protocol`. Official Core still owns all Surface/business data; appearance updates do not replay messages or replace it.
 
 Both Hosts use one Runtime implementation. A stable component boundary applies only validated declarations; node IDs never become arbitrary selectors. Native plugins receive the theme environment; opaque Sandbox frames receive validated generated CSS and `{mode,tokens}` through the existing authenticated channel. The optional `useHostTheme()` SDK hook is additive; old artifacts without it continue to mount. Unknown plugins advertise container properties only. Canvas/SVG business graphics, risk scales and plugin hard-coded internals retain their own business contracts.
 

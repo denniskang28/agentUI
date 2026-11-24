@@ -297,7 +297,7 @@ Raw messages retain official fields. renderPolicy/readyWhen are platform configu
 Template batch 1 describes only template/version/data/lifecycle. Raw creation requires resolving Catalog/component identity and providing bindings:
 
 ```ts
-import type { HostManifest, UiInput } from "@enterprise/agent-ui/protocol";
+import type { HostManifest, UiInput } from "@aap/agent-ui/protocol";
 function createExpenseRaw(manifest: HostManifest): UiInput {
   const entry = manifest.entries.find((item) => item.key === "expense.approval-form");
   if (!entry?.catalogId) throw new Error("EXPENSE_NOT_INSTALLED");

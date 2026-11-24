@@ -2,7 +2,7 @@
 
 ## 两种构建命令，解决不同问题
 
-`pnpm library:build` 仅构建公开 ESM 入口、类型声明并打包，输出 `artifacts/packages/enterprise-agent-ui-0.2.0.tgz`。它不会生成一整套可显示插件的 Host 发布环境。
+`pnpm library:build` 仅构建公开 ESM 入口、类型声明并打包，输出 `artifacts/packages/aap-agent-ui-0.2.0.tgz`。它不会生成一整套可显示插件的 Host 发布环境。
 
 `pnpm chatbot:prepare` 会先构建 Library，再打包示例源码、同步受控 runtime 依赖、构建 Embedded Host、通过真实 Docker Builder 安装/编译两个示例插件，最后导出并复制 .tgz、manifest、Host 和插件制品到 with-agent-ui。仅构建 Library 不需要编译插件；准备完整插件发布需要 Docker。
 
@@ -21,7 +21,7 @@ pnpm chatbot:prepare
 ```text
 examples/chatbot-comparison/with-agent-ui/
   package.json + package-lock.json
-  vendor/enterprise-agent-ui-0.2.0.tgz
+  vendor/aap-agent-ui-0.2.0.tgz
   release/
     host/                  index.html、Host bundles、runtime.css、受控 runtime 依赖
     artifacts/{buildId}/   plugin.js、validator.js、可选 plugin.css

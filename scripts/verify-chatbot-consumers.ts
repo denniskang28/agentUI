@@ -123,7 +123,7 @@ try {
   }
   const integrated = path.join(scratch, "with-agent-ui");
   const packageRoot = await realpath(
-    path.join(integrated, "node_modules/@enterprise/agent-ui"),
+    path.join(integrated, "node_modules/@aap/agent-ui"),
   );
   if (!packageRoot.startsWith(scratch + path.sep))
     throw Error("Consumer library resolved outside the isolated installation");
@@ -132,7 +132,7 @@ try {
     [
       "--input-type=module",
       "-e",
-      "import {AgentUiAdapter} from '@enterprise/agent-ui/server'; const a=new AgentUiAdapter('consumer_run'); console.log(a.snapshot()); a.dispose();",
+      "import {AgentUiAdapter} from '@aap/agent-ui/server'; const a=new AgentUiAdapter('consumer_run'); console.log(a.snapshot()); a.dispose();",
     ],
     integrated,
   );

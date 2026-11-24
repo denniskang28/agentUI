@@ -24,7 +24,7 @@ Preview 与 embedded Host 共用 RuntimeAppearance 和稳定节点边界，更�
 - `pnpm test`：17 files、84 tests 通过。
 - `NO_PROXY=localhost,127.0.0.1 no_proxy=localhost,127.0.0.1 pnpm test:e2e`：最终 70/70 通过，包含真实 API/官方 Core/DOM/Actions、Builder 和隔离回归。
 - 同样回环代理例外下 `pnpm chatbot:test`：最终 18/18 通过，包含 Host 旧版号拒绝、原始消息、未知资产/CSP、Native/Sandbox、移动端、Action 结果和重连。
-- `pnpm chatbot:prepare`：实际生成 `enterprise-agent-ui-0.2.0.tgz`、编译独立 Host、批准的真实插件制品与同步 demo 输入；`npm ci --ignore-scripts` 安装该 tarball 后运行验证。
+- `pnpm chatbot:prepare`：实际生成 `aap-agent-ui-0.2.0.tgz`、编译独立 Host、批准的真实插件制品与同步 demo 输入；`npm ci --ignore-scripts` 安装该 tarball 后运行验证。
 - `pnpm library:experience:verify`：仓库外全新消费者通过。生成的 Node 和 React 严格编译/执行；真实 template/raw/streaming、完整 Action 后端确认与渲染，以及 Native/Sandbox 插件主题直接检查。具体最新步骤见本地 `artifacts/library-experience/consumer/report.json`。
 - `pnpm chatbot:consumer`：两套原有独立消费者实际安装/编译/UI/部署用例 passed=true。`pnpm chatbot:compare`：14 identical / 8 allowed differences / 0 unexpected。
 - `pnpm docs:verify`：14 guides、46 links、14 strict TS examples、2 executed server examples、14 JSON blocks、18 batches、2 Actions、2 normalized、2 fragments 通过，使用安装的公共包。
@@ -70,3 +70,9 @@ Library 草稿导出保留真实输入，生成 Node/React 使用实际 runId；
 
 
 冻结源码后的最终全量 `NO_PROXY=localhost,127.0.0.1 no_proxy=localhost,127.0.0.1 pnpm test:e2e`：84/84 通过（2.5m），包含上述 11 项新用例及原有真实 API、插件上传构建、Action、性能采集和运行隔离回归。最后的 typecheck/lint/build、docs:verify、87 项单元／集成和真实独立消费者均通过，`git diff --check` 通过。开发服务保留运行于 localhost:5173 和独立 127.0.0.1:4173；未做外部发布。
+
+## 2026-11-25 — AAP Agent UI 包名迁移
+
+- 接入包改为 `@aap/agent-ui@0.2.0`，分发文件为 `aap-agent-ui-0.2.0.tgz`。`/react`、`/server`、`/protocol` 继续作为公开入口，Host 握手和批次仍使用 `enterprise-agent-ui/1`。
+- `pnpm chatbot:prepare` 生成新包与配套 Host，两个消费示例使用更新后的锁文件安装。`pnpm docs:verify` 通过 14 个 strict TypeScript 示例。`pnpm capability:consumer` 使用实际安装包和独立 Host 验证渲染、Action 回传和流式更新。
+- `pnpm test` 通过 97 项，文档浏览器测试通过 3 项。独立 Chatbot 消费验证使用空闲端口重跑，通过 18 项浏览器测试。

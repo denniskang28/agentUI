@@ -297,7 +297,7 @@ live 在第一次满足 ready 后保持挂载，即使后续 ready 变 false 也
 便捷入口第 1 批只描述 template、version、data 和 lifecycle。对应的原始创建需要自己从 manifest 取 Catalog/组件身份并指定绑定：
 
 ```ts
-import type { HostManifest, UiInput } from "@enterprise/agent-ui/protocol";
+import type { HostManifest, UiInput } from "@aap/agent-ui/protocol";
 function createExpenseRaw(manifest: HostManifest): UiInput {
   const entry = manifest.entries.find((item) => item.key === "expense.approval-form");
   if (!entry?.catalogId) throw new Error("EXPENSE_NOT_INSTALLED");

@@ -5,7 +5,7 @@
 
 ## M1 — 公共契约与官方 SDK
 
-已实现单个可分发包 `@enterprise/agent-ui@0.1.0`，公开 `/protocol`、`/server`、`/react`。三入口独立构建为 ESM，附类型声明和 README；不要求接入方读取仓库 src、使用 TS alias 或 workspace 链接。服务端入口无需 React/DOM。版本锁定 Core/React Renderer 0.15.0、Plugin SDK 1.0、transport enterprise-agent-ui/1。
+0.1.0 初版已实现单个可分发包，当前包名为 `@aap/agent-ui`，公开 `/protocol`、`/server`、`/react`。三入口独立构建为 ESM，附类型声明和 README；不要求接入方读取仓库 src、使用 TS alias 或 workspace 链接。服务端入口无需 React/DOM。版本锁定 Core/React Renderer 0.15.0、Plugin SDK 1.0、transport enterprise-agent-ui/1。
 
 模板 create/patch/delete 和原始四种消息共用真实 Core；完整规范化 Action 保留来源、时间戳、context 与扩展字段。序号按输入命令计数，生成消息数独立记录。明确定义浅更新、数组替换、null、ready、混用失效、幂等、原子拒绝、快照恢复和运行上限。
 

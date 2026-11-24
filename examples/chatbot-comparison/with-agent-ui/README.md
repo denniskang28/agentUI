@@ -1,8 +1,8 @@
 # Agent UI chatbot / Agent UI 接入版
 
-与 baseline 共享相同的业务骨架，通过安装 @enterprise/agent-ui 的 .tgz 使用模板/原始 A2UI 双入口及隔离 Host。先在仓库根目录执行 `pnpm chatbot:prepare`，以生成 vendor/ 与 release/；之后可以将本目录单独复制出去。
+与 baseline 共享相同的业务骨架，通过安装 @aap/agent-ui 的 .tgz 使用模板/原始 A2UI 双入口及隔离 Host。先在仓库根目录执行 `pnpm chatbot:prepare`，以生成 vendor/ 与 release/；之后可以将本目录单独复制出去。
 
-Shares the baseline's business skeleton and consumes the packaged @enterprise/agent-ui tarball. Run `pnpm chatbot:prepare` at the repository root to generate vendor/ and release/; then this directory can be copied and run independently.
+Shares the baseline's business skeleton and consumes the packaged @aap/agent-ui tarball. Run `pnpm chatbot:prepare` at the repository root to generate vendor/ and release/; then this directory can be copied and run independently.
 
 ```sh
 npm ci --ignore-scripts

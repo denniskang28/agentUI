@@ -1,6 +1,6 @@
 # MCP Apps Host 接入
 
-适用版本：`@enterprise/mcp-apps-host@0.1.0`，Node 24+、React 19、TypeScript strict。A2UI 使用原有 `@enterprise/agent-ui`，两个通道互不转换。MCP Apps 使用 ext-apps 2.0.4、Client/Server 2.4.0 和 Node Transport 2.1.2；新包独立依赖 Zod 4，现有 A2UI Zod 3 不变。
+适用版本：`@enterprise/mcp-apps-host@0.1.0`，Node 24+、React 19、TypeScript strict。A2UI 使用原有 `@aap/agent-ui`，两个通道互不转换。MCP Apps 使用 ext-apps 2.0.4、Client/Server 2.4.0 和 Node Transport 2.1.2；新包独立依赖 Zod 4，现有 A2UI Zod 3 不变。
 
 ## 本地运行和发布产物
 

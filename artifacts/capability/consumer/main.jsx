@@ -4,7 +4,7 @@ import {
   AgentUiClient,
   AgentUiHost,
   AgentUiProvider,
-} from "@enterprise/agent-ui/react";
+} from "@aap/agent-ui/react";
 import batches from "./batches.json";
 const client = new AgentUiClient(
   "consumer-capability",

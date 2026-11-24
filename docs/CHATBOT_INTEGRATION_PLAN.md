@@ -38,11 +38,11 @@ Playground 用于发现、模板调试、插件上传编译、Action 检查和�
 
 ## 4. 可分发产物
 
-建议三个面向接入方的入口，可复用现有包并调整名称，不强制创建重复实现：
+通过 `@aap/agent-ui` 提供三个接入入口。
 
-1. React 接入包（拟名 @enterprise/agent-ui-react）：Provider/客户端、消息应用接口、Surface 容器、Action/错误/连接回调；内部管理 iframe、MessageChannel、尺寸、顺序、重置和销毁。一个会话 Runtime 可容纳多个 Surface，聊天消息容器按 Surface 选择展示，避免一条消息建一个不相干 Runtime。
-2. 服务端适配包（拟名 @enterprise/agent-ui-server）：发现数据、模板实例化/命令规范化、共享校验、插件制品清单解析和类型；无 React/DOM 副作用，不强制业务后端启动 Playground API。
-3. 公共协议类型和 Schema（复用或扩展 protocol）：双入口信封、配置、Action 和错误类型；使用官方 SDK 真实公开导出。
+1. React 入口（`@aap/agent-ui/react`）：Provider/客户端、消息应用接口、Surface 容器、Action/错误/连接回调；内部管理 iframe、MessageChannel、尺寸、顺序、重置和销毁。一个会话 Runtime 可容纳多个 Surface，聊天消息容器按 Surface 选择展示，避免一条消息建一个不相干 Runtime。
+2. 服务端入口（`@aap/agent-ui/server`）：发现数据、模板实例化/命令规范化、共享校验、插件制品清单解析和类型；无 React/DOM 副作用，不强制业务后端启动 Playground API。
+3. 公共协议入口（`@aap/agent-ui/protocol`）：双入口信封、配置、Action 和错误类型；使用官方 SDK 真实公开导出。
 
 同时交付独立 Host 静态产物和部署配置、版本化插件/Catalog/模板清单、经受控构建产生的插件制品。明确包与 Host/Plugin SDK 的兼容版本，启动时诊断不兼容。
 

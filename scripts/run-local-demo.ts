@@ -5,7 +5,7 @@ for (const file of [
   "examples/chatbot-comparison/baseline/dist/web/index.html",
   "examples/chatbot-comparison/with-agent-ui/dist/web/index.html",
   "examples/chatbot-comparison/with-agent-ui/release/manifest.json",
-  "examples/chatbot-comparison/with-agent-ui/vendor/enterprise-agent-ui-0.2.0.tgz",
+  "examples/chatbot-comparison/with-agent-ui/vendor/aap-agent-ui-0.2.0.tgz",
 ])
   if (!existsSync(file))
     throw Error("Run pnpm setup:demo first. / 请先执行 pnpm setup:demo。");

@@ -7,23 +7,23 @@ Local distribution 0.2.0. One package exposes three independent public entry poi
 
 | Import                          | Purpose / 用途                                                                           |
 | ------------------------------- | ---------------------------------------------------------------------------------------- |
-| `@enterprise/agent-ui/server`   | Trusted template/raw adapter, official Core validation and replay / 服务端适配与历史恢复 |
-| `@enterprise/agent-ui/react`    | React Provider, isolated Host and MessageChannel client / 前端隔离接入                   |
-| `@enterprise/agent-ui/protocol` | Public transport types and runtime schemas / 公共类型与 Schema                           |
+| `@aap/agent-ui/server`   | Trusted template/raw adapter, official Core validation and replay / 服务端适配与历史恢复 |
+| `@aap/agent-ui/react`    | React Provider, isolated Host and MessageChannel client / 前端隔离接入                   |
+| `@aap/agent-ui/protocol` | Public transport types and runtime schemas / 公共类型与 Schema                           |
 
 Install the supplied tarball with Node 24. Server-only consumers do not need React. React consumers supply React 19. Host CSS, Core/Renderer, Plugin SDK and approved plugin assets are delivered separately in the static release; the chatbot does not load plugin JavaScript.
 
 Node 24 安装随附 `.tgz`。仅服务端使用不需要 React；React 调用方提供 React 19。Host 的样式、Core/Renderer、Plugin SDK 和批准使用的制品随独立静态产物部署；业务主页面不加载上传 JS。
 
 ```sh
-npm install ./vendor/enterprise-agent-ui-0.2.0.tgz
+npm install ./vendor/aap-agent-ui-0.2.0.tgz
 ```
 
 ## Server / 后端
 
 ```ts
-import { AgentUiAdapter, EMBED_PROTOCOL } from "@enterprise/agent-ui/server";
-import { hostManifestSchema } from "@enterprise/agent-ui/protocol";
+import { AgentUiAdapter, EMBED_PROTOCOL } from "@aap/agent-ui/server";
+import { hostManifestSchema } from "@aap/agent-ui/protocol";
 import { readFile } from "node:fs/promises";
 
 const manifest = hostManifestSchema.parse(
